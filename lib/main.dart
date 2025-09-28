@@ -1,9 +1,9 @@
-import 'package:ez_pantry/scan_page.dart';
+import 'package:ez_pantry/screens/scan_page.dart';
 import 'package:flutter/material.dart';
-import 'pantry_page.dart';
-import 'recipes_page.dart';
-import 'shopping_page.dart';
-import 'login_page.dart';
+import 'screens/pantry_page.dart';
+import 'screens/recipes_page.dart';
+import 'screens/shopping_page.dart';
+import 'screens/login_page.dart';
 
 void main() {
   runApp(const MyApp());

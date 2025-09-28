@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main.dart'; // Make sure this imports MyHomePage
+import '../main.dart'; // Make sure this imports MyHomePage
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,8 +35,9 @@ class _LoginPageState extends State<LoginPage> {
   void _handleLogin() {
     final username = _usernameController.text;
     final password = _passwordController.text;
+    int registrationResult = validateCredentials(username, password);
 
-    if (username == "dev" && password == "dev") {
+    if (registrationResult == 0) {
       // Navigate to MyHomePage (home screen)
       Navigator.pushReplacement(
         context,
@@ -46,19 +47,54 @@ class _LoginPageState extends State<LoginPage> {
       );
     } else {
       // Show error if credentials are incorrect
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Login Failed"),
-          content: const Text("Incorrect username or password."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
-      );
+      if (registrationResult == 1) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Login Failed"),
+            content: const Text("Incorrect username."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+
+
+      if (registrationResult == 2) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Login Failed"),
+            content: const Text("Incorrect password."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+
+      if (registrationResult == 3) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Login Failed"),
+            content: const Text("Incorrect username and password."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -141,3 +177,30 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+/**
+* Returns a code indicating the validity of the provided username and password.
+***/
+int validateCredentials(String user, String password) {
+    // Dummy validation logic
+    RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_]{3,16}$');
+    RegExp passwordRegExp = RegExp(r'^.{3,16}$');
+    bool   passwordValid  = passwordRegExp.hasMatch(user);
+    bool   userValid      = usernameRegExp.hasMatch(user);
+    int    resultCode     = 0; 
+
+    if (!userValid || !passwordValid) {
+      // Failure
+      if (!userValid) {
+        resultCode += 1;
+      }
+
+      if (!passwordValid) {
+        resultCode += 2;
+      }
+    }
+
+    return resultCode; 
+  }
+
+// TODO: my life

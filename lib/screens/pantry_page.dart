@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import the login page
-import 'package:ez_pantry/scan_page.dart';
+import 'package:ez_pantry/screens/scan_page.dart';
 
 class PantryPage extends StatelessWidget {
   const PantryPage({super.key});
