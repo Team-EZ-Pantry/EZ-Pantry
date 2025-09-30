@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import the login page
 import 'package:ez_pantry/screens/scan_page.dart';
+import 'package:ez_pantry/widgets/pantry_item.dart';
 
 class PantryPage extends StatelessWidget {
   const PantryPage({super.key});
@@ -26,12 +27,10 @@ class PantryPage extends StatelessWidget {
       body: Stack(
         children: [
           // Main content of the Pantry page
-          const Center(
-            child: Text(
-              'Pantry',
-              style: TextStyle(fontSize: 24),
-            ),
+          Material(
+            child: PantryItem(title: 'food')
           ),
+
           // Login button positioned at the top right
           Positioned(
             top: 10,
