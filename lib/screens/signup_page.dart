@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../main.dart'; // Make sure this imports MyHomePage
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _usernameFocus = FocusNode();
@@ -32,12 +32,12 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  void _handleSignup() {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    int registrationResult = validateCredentials(username, password);
+    int signupResult = validateCredentials(username, password);
 
-    if (registrationResult == 0) {
+    if (signupResult == 0) {
       // Navigate to MyHomePage (home screen)
       Navigator.pushReplacement(
         context,
@@ -47,11 +47,11 @@ class _LoginPageState extends State<LoginPage> {
       );
     } else {
       // Show error if credentials are incorrect
-      if (registrationResult == 1) {
+      if (signupResult == 1) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text("Login Failed"),
+            title: const Text("Signup Failed"),
             content: const Text("Incorrect username."),
             actions: [
               TextButton(
@@ -64,11 +64,11 @@ class _LoginPageState extends State<LoginPage> {
       }
 
 
-      if (registrationResult == 2) {
+      if (signupResult == 2) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text("Login Failed"),
+            title: const Text("Signup Failed"),
             content: const Text("Incorrect password."),
             actions: [
               TextButton(
@@ -80,11 +80,11 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
 
-      if (registrationResult == 3) {
+      if (signupResult == 3) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text("Login Failed"),
+            title: const Text("Signup Failed"),
             content: const Text("Incorrect username and password."),
             actions: [
               TextButton(
@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Signup'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
@@ -112,9 +112,14 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Image.asset(
+                '../../assets/logo/logo.png', // same asset as login page
+                height: 150,
+                width: 500,
+              ),
               const Center(
                 child: Text(
-                  'Login',
+                  'Signup',
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -155,18 +160,18 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(),
                   hintText: "Enter your password",
                 ),
-                onSubmitted: (_) => _handleLogin(),
+                onSubmitted: (_) => _handleSignup(),
               ),
               const SizedBox(height: 30),
 
-              // Login Button
+              // Signup Button
               ElevatedButton(
-                onPressed: _handleLogin,
+                onPressed: _handleSignup,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: const Text(
-                  'Login',
+                  'Signup',
                   style: TextStyle(fontSize: 18),
                 ),
               ),
@@ -202,5 +207,3 @@ int validateCredentials(String user, String password) {
 
     return resultCode; 
   }
-
-// TODO: my life

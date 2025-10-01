@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../main.dart'; // Correct relative path to import MyHomePage
+import 'signup_page.dart'; // Import SignupPage class
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -65,10 +66,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
@@ -76,10 +73,16 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Image.asset(
+                '../../assets/logo/logo.png', // Ensure this path matches your asset structure
+                height: 150,
+                width: 500,
+              ),
               const Center(
                 child: Text(
                   'Login',
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.left,
                 ),
               ),
               const SizedBox(height: 40),
@@ -95,7 +98,9 @@ class _LoginPageState extends State<LoginPage> {
                 focusNode: _usernameFocus,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
                   hintText: "Enter your username",
                 ),
                 onSubmitted: (_) {
@@ -116,7 +121,9 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
                 textInputAction: TextInputAction.done,
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
                   hintText: "Enter your password",
                 ),
                 onSubmitted: (_) => _handleLogin(),
@@ -134,6 +141,15 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontSize: 18),
                 ),
               ),
+              TextButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignupPage()),
+                ),
+                child: Padding(
+                  padding: EdgeInsetsGeometry.directional(top: 50),
+                  child: Text('New user? Sign up' ),)
+              )
             ],
           ),
         ),
