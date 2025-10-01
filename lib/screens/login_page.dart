@@ -39,12 +39,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (username == "dev" && password == "dev") {
       // Navigate to MyHomePage (home screen)
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MyHomePage(title: 'EZ Pantry'),
-        ),
-      );
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       // Show error if credentials are incorrect
       showDialog(
