@@ -28,7 +28,7 @@ class PantryPage extends StatelessWidget {
         children: [
           // Main content of the Pantry page
           Material(
-            child: PantryItem(title: 'food')
+            child: PantryItemTile(title: 'food')
           ),
 
           // Login button positioned at the top right
