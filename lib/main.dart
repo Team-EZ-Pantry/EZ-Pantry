@@ -15,13 +15,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'EZ Pantry',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      // home: const MyHomePage(title: 'EZ Pantry'),
-      home: const LoginPage(),
+      home: const MyHomePage(title: 'EZ Pantry'),
     );
   }
 }
