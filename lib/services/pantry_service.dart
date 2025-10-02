@@ -9,10 +9,15 @@ class PantryService {
   Future<List<PantryItemModel>> fetchPantryItems() async {
     final response = await http.get(Uri.parse("$baseUrl/pantry"));
     if (response.statusCode == 200) {
+      final response = await http.get(Uri.parse("$baseUrl/pantry"));
+      print('Response body: ${response.body}');
+
       final List data = jsonDecode(response.body);
       return data.map((json) => PantryItemModel.fromJson(json)).toList();
+
     } else {
       throw Exception("Failed to load pantry items");
     }
+
   }
 }

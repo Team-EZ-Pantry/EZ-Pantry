@@ -5,8 +5,21 @@ import 'package:ez_pantry/widgets/pantry_item.dart';
 import 'package:provider/provider.dart';
 import '../providers/pantry_provider.dart';
 
-class PantryPage extends StatelessWidget {
+class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
+
+  @override
+  State<PantryPage> createState() => _PantryPageState();
+}
+
+class _PantryPageState extends State<PantryPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Safe to call provider here
+    final pantryProvider = context.read<PantryProvider>();
+    pantryProvider.loadPantryItems();
+  }
 
   void _onScanButtonPressed(BuildContext context) async {
     final result = await Navigator.push(
@@ -25,10 +38,6 @@ class PantryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // initial loading
-    final pantryProvider = context.read<PantryProvider>();
-    pantryProvider.loadPantryItems();
-
     return Scaffold(
       body: Stack(
         children: [
@@ -38,7 +47,7 @@ class PantryPage extends StatelessWidget {
                 if (pantry.loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                // error here?
+
                 if (pantry.items.isEmpty) {
                   return const Center(child: Text("Empty Pantry"));
                 }
@@ -49,13 +58,13 @@ class PantryPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
-                      title: item.name,
+                      title: item.title, // or item.title depending on your model
                     );
                   },
-                ); // added missing semicolon
+                );
               },
-            ), // added missing comma
-          ), // added missing comma
+            ),
+          ),
 
           // Login button positioned at the top right
           Positioned(
@@ -64,7 +73,7 @@ class PantryPage extends StatelessWidget {
             child: IconButton(
               icon: const Icon(
                 Icons.account_circle_outlined,
-                size: 32, // Adjust size as needed
+                size: 32,
               ),
               onPressed: () {
                 Navigator.push(

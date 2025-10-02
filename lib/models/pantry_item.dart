@@ -1,11 +1,11 @@
 class PantryItemModel {
   final int id;
-  final String name;
+  final String title;
   final int quantity;
 
   PantryItemModel({
     required this.id,
-    required this.name,
+    required this.title,
     required this.quantity,
   });
 
@@ -13,7 +13,7 @@ class PantryItemModel {
   factory PantryItemModel.fromJson(Map<String, dynamic> json) {
     return PantryItemModel(
       id: json['id'],
-      name: json['name'],
+      title: json['title'],
       quantity: json['quantity'],
     );
   }
@@ -22,7 +22,7 @@ class PantryItemModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'title': title,
       'quantity': quantity,
     };
   }

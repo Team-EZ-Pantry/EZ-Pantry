@@ -13,16 +13,18 @@ class PantryProvider extends ChangeNotifier {
   bool get loading => _loading;
 
   Future<void> loadPantryItems() async {
-    _items = await _service.fetchPantryItems();
-    notifyListeners(); // tells widgets to rebuild
+    _loading = true;
+    notifyListeners();
 
     try {
       _items = await _service.fetchPantryItems();
+      print('========================Fetched items: $_items');
     } catch (e) {
-     // _error = e.toString();            // store error
+      print('Error fetching pantry items: $e');
     } finally {
       _loading = false;
-      notifyListeners();                // tells UI: loading finished (success or fail)
+      notifyListeners();
     }
   }
 }
+
