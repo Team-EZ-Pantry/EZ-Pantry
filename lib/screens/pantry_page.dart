@@ -65,24 +65,6 @@ class _PantryPageState extends State<PantryPage> {
               },
             ),
           ),
-
-          // Login button positioned at the top right
-          Positioned(
-            top: 10,
-            right: 10,
-            child: IconButton(
-              icon: const Icon(
-                Icons.account_circle_outlined,
-                size: 32,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-            ),
-          ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
