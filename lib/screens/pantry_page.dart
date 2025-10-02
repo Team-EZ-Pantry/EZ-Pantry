@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import the login page
 import 'package:ez_pantry/screens/scan_page.dart';
 import 'package:ez_pantry/widgets/pantry_item.dart';
+import 'package:provider/provider.dart';
+import '../providers/pantry_provider.dart';
 
 class PantryPage extends StatelessWidget {
   const PantryPage({super.key});
@@ -23,13 +25,37 @@ class PantryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // initial loading
+    final pantryProvider = context.read<PantryProvider>();
+    pantryProvider.loadPantryItems();
+
     return Scaffold(
       body: Stack(
         children: [
-          // Main content of the Pantry page
           Material(
-            child: PantryItemTile(title: 'food')
-          ),
+            child: Consumer<PantryProvider>(
+              builder: (context, pantry, child) {
+                if (pantry.loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                // error here?
+                if (pantry.items.isEmpty) {
+                  return const Center(child: Text("Empty Pantry"));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  itemCount: pantry.items.length,
+                  itemBuilder: (context, index) {
+                    final item = pantry.items[index];
+                    return PantryItemTile(
+                      title: item.name,
+                    );
+                  },
+                ); // added missing semicolon
+              },
+            ), // added missing comma
+          ), // added missing comma
 
           // Login button positioned at the top right
           Positioned(

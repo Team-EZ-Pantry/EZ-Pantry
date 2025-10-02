@@ -1,10 +1,28 @@
-// fetch pantry items here
-// then store them in the relevant model
+// providers/pantry_provider.dart
+import 'package:flutter/material.dart';
+import '../models/pantry_item.dart';
+import '../services/pantry_service.dart';
 
-import 'package:http/http.dart' as http;
+class PantryProvider extends ChangeNotifier {
+  final PantryService _service = PantryService();
 
-Future<http.Response> fetchAlbum() {
-  return http.get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));   // sample http get request
+  List<PantryItemModel> _items = [];
+  List<PantryItemModel> get items => _items;
+
+  bool _loading = false;
+  bool get loading => _loading;
+
+  Future<void> loadPantryItems() async {
+    _items = await _service.fetchPantryItems();
+    notifyListeners(); // tells widgets to rebuild
+
+    try {
+      _items = await _service.fetchPantryItems();
+    } catch (e) {
+     // _error = e.toString();            // store error
+    } finally {
+      _loading = false;
+      notifyListeners();                // tells UI: loading finished (success or fail)
+    }
+  }
 }
-
-// make the model here? or transfer the data?

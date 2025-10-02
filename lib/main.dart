@@ -1,12 +1,19 @@
+import 'package:ez_pantry/providers/pantry_provider.dart';
 import 'package:ez_pantry/screens/scan_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
 import 'screens/shopping_page.dart';
 import 'screens/login_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+        create: (_) => PantryProvider(),
+      child: const MyApp()
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
