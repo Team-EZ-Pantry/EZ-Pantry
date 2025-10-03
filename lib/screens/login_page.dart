@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../main.dart'; // Correct relative path to import MyHomePage
-import 'signup_page.dart'; // Import SignupPage class
+import '../utilities/check_login.dart';
+import 'registration_page.dart'; // Import RegistrationPage class
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,28 +35,28 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleLogin() {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
 
-    if (username == "dev" && password == "dev") {
+    if (checkLogin(username, password) == 0) {
       // Navigate to MyHomePage (home screen)
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const MyHomePage(title: 'EZ Pantry'),
+          builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
         ),
       );
     } else {
       // Show error if credentials are incorrect
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Login Failed"),
-          content: const Text("Incorrect username or password."),
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Login Failed'),
+          content: const Text('Incorrect username or password.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -89,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Username
               const Text(
-                "Username",
+                'Username',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -101,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
-                  hintText: "Enter your username",
+                  hintText: 'Enter your username',
                 ),
                 onSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_passwordFocus);
@@ -111,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Password
               const Text(
-                "Password",
+                'Password',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -124,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
-                  hintText: "Enter your password",
+                  hintText: 'Enter your password',
                 ),
                 onSubmitted: (_) => _handleLogin(),
               ),
@@ -144,9 +145,9 @@ class _LoginPageState extends State<LoginPage> {
               TextButton(
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SignupPage()),
+                  MaterialPageRoute(builder: (context) => const RegistrationPage()),
                 ),
-                child: Padding(
+                child: const Padding(
                   padding: EdgeInsetsGeometry.directional(top: 50),
                   child: Text('New user? Sign up' ),)
               )
