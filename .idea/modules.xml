@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ez_pantry.iml" filepath="$PROJECT_DIR$/ez_pantry.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/ez_pantry_android.iml" filepath="$PROJECT_DIR$/android/ez_pantry_android.iml" />
     </modules>
   </component>
 </project>

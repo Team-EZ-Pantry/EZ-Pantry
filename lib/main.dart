@@ -1,8 +1,9 @@
-import 'package:ez_pantry/scan_page.dart';
+import 'package:ez_pantry/screens/scan_page.dart';
 import 'package:flutter/material.dart';
-import 'pantry_page.dart'; // Import the new pantry page
-import 'recipes_page.dart'; // Import the new recipes page
-import 'shopping_page.dart'; // Import the new shopping page
+import 'screens/pantry_page.dart';
+import 'screens/recipes_page.dart';
+import 'screens/shopping_page.dart';
+import 'screens/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'EZ Pantry',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
@@ -34,36 +35,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0; // 0 for Pantry, 1 for Recipes, 2 for Shopping
+  int _selectedIndex = 1; // 0 for Recipes, 1 for Pantry, 2 for Shopping
 
   static const List<Widget> _widgetOptions = <Widget>[
-    PantryPage(),
     RecipesPage(),
+    PantryPage(),
     ShoppingPage(),
+    LoginPage(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  void _onScanButtonPressed() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ScanPage()),
-    );
-
-    if (result != null) {
-      // Here you can handle what to do with the scanned code
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Scanned barcode: $result')),
-      );
-
-      print('Scanned barcode: $result');
-
-      // TODO: Call API or update pantry items with this barcode
-    }
   }
 
   @override
@@ -79,12 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.inventory_2_outlined),
-            label: 'Pantry',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.menu_book_outlined),
             label: 'Recipes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory_2_outlined),
+            label: 'Pantry',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart_outlined),
@@ -95,15 +79,6 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedItemColor: Colors.blue,
         onTap: _onItemTapped,
       ),
-      // Conditionally render the FloatingActionButton
-      floatingActionButton: _selectedIndex == 0 // Show only if Pantry tab (index 0) is selected
-          ? FloatingActionButton.extended(
-        onPressed: _onScanButtonPressed,
-        icon: const Icon(Icons.qr_code_scanner),
-        label: const Text('Scan'),
-      )
-          : null, // Render nothing if not on the Pantry tab
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Or your preferred location
     );
   }
 }
