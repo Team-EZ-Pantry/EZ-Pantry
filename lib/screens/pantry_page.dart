@@ -2,9 +2,24 @@ import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import the login page
 import 'package:ez_pantry/screens/scan_page.dart';
 import 'package:ez_pantry/widgets/pantry_item.dart';
+import 'package:provider/provider.dart';
+import '../providers/pantry_provider.dart';
 
-class PantryPage extends StatelessWidget {
+class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
+
+  @override
+  State<PantryPage> createState() => _PantryPageState();
+}
+
+class _PantryPageState extends State<PantryPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Safe to call provider here
+    final pantryProvider = context.read<PantryProvider>();
+    pantryProvider.loadPantryItems();
+  }
 
   void _onScanButtonPressed(BuildContext context) async {
     final result = await Navigator.push(
@@ -26,24 +41,27 @@ class PantryPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Main content of the Pantry page
           Material(
-            child: PantryItem(title: 'food')
-          ),
+            child: Consumer<PantryProvider>(
+              builder: (context, pantry, child) {
+                if (pantry.loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          // Login button positioned at the top right
-          Positioned(
-            top: 10,
-            right: 10,
-            child: IconButton(
-              icon: const Icon(
-                Icons.account_circle_outlined,
-                size: 32, // Adjust size as needed
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                if (pantry.items.isEmpty) {
+                  return const Center(child: Text("Empty Pantry"));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  itemCount: pantry.items.length,
+                  itemBuilder: (context, index) {
+                    final item = pantry.items[index];
+                    return PantryItemTile(
+                      title: item.title, // or item.title depending on your model
+                      quantity: item.quantity,
+                    );
+                  },
                 );
               },
             ),

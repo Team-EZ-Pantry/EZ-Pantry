@@ -7,7 +7,7 @@ class RecipesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Text(
-        'Recipes',
+        'Under construction. Come back soon!',
         style: TextStyle(fontSize: 24),
       ),
     );

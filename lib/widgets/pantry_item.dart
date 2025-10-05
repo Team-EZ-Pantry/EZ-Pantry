@@ -1,34 +1,60 @@
 import 'package:flutter/material.dart';
 
-//***************************************//
-//     Reusable pantry item widget       //
-//***************************************//
-
-// icon parts are commented out for now, but fix it later when icons are made
-
-class PantryItem extends StatelessWidget {
+class PantryItemTile extends StatelessWidget {
   final String title;
   final String subtitle;
-  //final IconData icon;
-  int quantity = 0;
-  final VoidCallback? onTap;   // in the future, add a detailed pop up on-tap
+  final int quantity;
+  final VoidCallback? onTap;
 
-  PantryItem({
+  const PantryItemTile({
     super.key,
     required this.title,
     this.subtitle = '',
-    //required this.icon,
+    required this.quantity,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      //leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: const Icon(Icons.arrow_forward_ios),
-      onTap: onTap,
+    return Container(
+      height: 52,
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey, // light grey line
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: ListTile(
+        title: Row(
+          children: [
+            Container(
+              width: 40, // fixed width
+              height: 28, // adjust height for the badge
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.green.shade100, // light background color
+                borderRadius: BorderRadius.circular(6), // rounded corners
+              ),
+              child: Text(
+                'x$quantity',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.normal),
+            ),
+          ],
+        ),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_right),
+        onTap: onTap,
+      ),
     );
   }
 }
