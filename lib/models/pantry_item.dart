@@ -1,19 +1,19 @@
-class PantryItem {
+class PantryItemModel {
   final int id;
-  final String name;
+  final String title;
   final int quantity;
 
-  PantryItem({
+  PantryItemModel({
     required this.id,
-    required this.name,
+    required this.title,
     required this.quantity,
   });
 
   // Create a PantryItem from JSON
-  factory PantryItem.fromJson(Map<String, dynamic> json) {
-    return PantryItem(
+  factory PantryItemModel.fromJson(Map<String, dynamic> json) {
+    return PantryItemModel(
       id: json['id'],
-      name: json['name'],
+      title: json['title'],
       quantity: json['quantity'],
     );
   }
@@ -22,7 +22,7 @@ class PantryItem {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'title': title,
       'quantity': quantity,
     };
   }
