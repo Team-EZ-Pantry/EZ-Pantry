@@ -6,6 +6,7 @@ import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
 import 'screens/shopping_page.dart';
 import 'screens/login_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'EZ Pantry',
       theme: ThemeData(
+        textTheme: GoogleFonts.notoSansTextTheme(),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),

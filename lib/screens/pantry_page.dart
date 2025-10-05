@@ -59,6 +59,7 @@ class _PantryPageState extends State<PantryPage> {
                     final item = pantry.items[index];
                     return PantryItemTile(
                       title: item.title, // or item.title depending on your model
+                      quantity: item.quantity,
                     );
                   },
                 );
