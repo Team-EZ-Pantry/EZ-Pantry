@@ -94,7 +94,6 @@ class _PantryPageState extends State<PantryPage> {
           ),
         ],
       ),
-
     );
   }
 }
