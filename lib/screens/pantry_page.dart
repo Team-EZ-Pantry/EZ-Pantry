@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import the login page
 import 'package:ez_pantry/screens/scan_page.dart';
 import 'package:ez_pantry/widgets/pantry_item.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/pantry_provider.dart';
+import 'add-item_page.dart';
 
 class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
@@ -34,6 +36,13 @@ class _PantryPageState extends State<PantryPage> {
       print('Scanned barcode: $result');
       // TODO: Call API or update pantry items with this barcode
     }
+  }
+
+  void _onAddItemButtonPressed(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddItemPage()),
+    );
   }
 
   @override
@@ -68,12 +77,24 @@ class _PantryPageState extends State<PantryPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _onScanButtonPressed(context),
-        icon: const Icon(Icons.qr_code_scanner),
-        label: const Text('Scan'),
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.close,
+        backgroundColor: Colors.blue,
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.qr_code_scanner),
+            label: 'Scan Item',
+            onTap: () => _onScanButtonPressed(context),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.menu),
+            label: 'Add Item',
+            onTap: () => _onAddItemButtonPressed(context),
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
     );
   }
 }

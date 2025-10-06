@@ -10,11 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d235502-0c6f-4fce-9aa4-26c4da7afaa6" name="Changes" comment="added login page">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/models/pantry_item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/pantry_item.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/providers/registration_request" beforeDir="false" afterPath="$PROJECT_DIR$/lib/providers/registration_request.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/registration_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/registration_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/services/pantry_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/pantry_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/add-item_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/add-item_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/pantry_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/pantry_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +60,7 @@
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "dev",
+    "git-widget-placeholder": "add-item-form",
     "ignore.virus.scanning.warn.message": "true",
     "io.flutter.reload.alreadyRun": "true",
     "last_opened_file_path": "C:/dev/EZ-Pantry",
