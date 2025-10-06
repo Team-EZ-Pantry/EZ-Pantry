@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../main.dart'; // Make sure this imports MyHomePage
-import '../providers/registration_request';
 import '../providers/registration_request.dart'; // Import the registration function
 
 class RegistrationPage extends StatefulWidget {

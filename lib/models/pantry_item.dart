@@ -1,7 +1,4 @@
 class PantryItemModel {
-  final int id;
-  final String title;
-  final int quantity;
 
   PantryItemModel({
     required this.id,
@@ -12,11 +9,14 @@ class PantryItemModel {
   // Create a PantryItem from JSON
   factory PantryItemModel.fromJson(Map<String, dynamic> json) {
     return PantryItemModel(
-      id: json['id'],
-      title: json['title'],
-      quantity: json['quantity'],
+      id: json['id'] as int,
+      title: json['title'] as String,
+      quantity: json['quantity'] as int,
     );
   }
+  final int id;
+  final String title;
+  final int quantity;
 
   // Convert PantryItem to JSON (useful for POST requests)
   Map<String, dynamic> toJson() {
