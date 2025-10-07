@@ -76,15 +76,11 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Image.asset(
                 '../../assets/logo/logo.png', // Ensure this path matches your asset structure
-                height: 150,
+                height: 300,
                 width: 500,
               ),
               const Center(
-                child: Text(
-                  'Login',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,
-                ),
+            
               ),
               const SizedBox(height: 40),
 
@@ -142,15 +138,17 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontSize: 18),
                 ),
               ),
-              TextButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) => const RegistrationPage()),
-                ),
-                child: const Padding(
-                  padding: EdgeInsetsGeometry.directional(top: 50),
-                  child: Text('New user? Sign up' ),)
-              )
+
+              /// Sign Up Text Button
+              Padding(
+                padding:  const EdgeInsets.only(top: 20.0), 
+                child: TextButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const RegistrationPage()),
+                    ),
+                child: const Text('New user? Sign up' ),) ,),
             ],
           ),
         ),
