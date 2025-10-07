@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-Future<void> registerUser({
+Future<bool> registerUser({
   required String username,
   required String email,
   required String password,
+
+  bool registrationSuccess = false,
+
 }) async {
   final Uri requestUrl = Uri.parse('http://localhost:3000/api/auth/register');
 
@@ -14,7 +17,7 @@ Future<void> registerUser({
   };
 
   final String body = jsonEncode({
-    'name':     username,
+    'username': username,
     'email':    email,
     'password': password,
   });
@@ -24,6 +27,7 @@ Future<void> registerUser({
 
     if (response.statusCode == 201) {
       // Success — parse response if needed
+      registrationSuccess = true;
       final data = jsonDecode(response.body);
       debugPrint('User registered: $data');
     } else {
@@ -40,4 +44,6 @@ Future<void> registerUser({
   } catch (e) {
     debugPrint('Exception occurred: $e');
   }
+
+  return registrationSuccess;
 }

@@ -62,9 +62,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
 
     try {
-      await registerUser(username: username, email: email, password: password);
       // On success, navigate to MyHomePage (home screen)
-      if (mounted) {
+      if (await registerUser(username: username, email: email, password: password)) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -97,11 +96,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
         title: const Text('Register'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(16.0,0,16.0,0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/logo/logo.png', height: 200),
+            Image.asset('logo/logo.png', 
+                        height: 300,
+                        width: 500,
+            ),
+
             TextField(
               controller: _emailController,
               focusNode: _emailFocus,
@@ -128,10 +131,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
               onSubmitted: (_) => _handleRegistration(),
             ),
             const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: _handleRegistration,
-              child: const Text('Register'),
-            ),
+
+             // Login Button
+              ElevatedButton(
+                onPressed: _handleRegistration,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.fromLTRB(100,15,100,15),
+                ),
+                child: const Text(
+                  'Register',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
           ],
         ),
       ),
