@@ -5,6 +5,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/pantry_provider.dart';
+import '../widgets/add_item.dart';
 import 'add-item_page.dart';
 
 class PantryPage extends StatefulWidget {
@@ -33,16 +34,17 @@ class _PantryPageState extends State<PantryPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Scanned barcode: $result')),
       );
-      print('Scanned barcode: $result');
+      debugPrint('Scanned barcode: $result');
       // TODO: Call API or update pantry items with this barcode
     }
   }
 
-  void _onAddItemButtonPressed(BuildContext context) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AddItemPage()),
+  Future<void> _onAddItemButtonPressed() async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => const AddItemDialog(title: 'Enter item', hintText: 'hintText'),
     );
+    if (result == null) return;
   }
 
   @override
@@ -90,7 +92,7 @@ class _PantryPageState extends State<PantryPage> {
           SpeedDialChild(
             child: const Icon(Icons.menu),
             label: 'Add Item',
-            onTap: () => _onAddItemButtonPressed(context),
+            onTap: () => _onAddItemButtonPressed(),
           ),
         ],
       ),
