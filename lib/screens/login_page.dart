@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 8),
               TextField(
                 controller: _passwordController,
-                focusNode: _passwordFocus,
+                focusNode:  _passwordFocus,
                 obscureText: true,
                 textInputAction: TextInputAction.done,
                 decoration: const InputDecoration(
@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
               TextButton(
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const RegistrationPage()),
+                  MaterialPageRoute(builder: (BuildContext context) => const RegistrationPage()),
                 ),
                 child: const Padding(
                   padding: EdgeInsetsGeometry.directional(top: 50),
