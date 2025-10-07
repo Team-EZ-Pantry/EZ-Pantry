@@ -12,7 +12,7 @@ void main() {
   runApp(
       ChangeNotifierProvider(
         create: (_) => PantryProvider(),
-      child: const MyApp()
+      child: MyApp()
       )
   );
 }
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/login',
+      initialRoute: '/auth',
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const MyHomePage(title: 'EZ Pantry'),
@@ -51,11 +51,25 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 1; // 0 for Recipes, 1 for Pantry, 2 for Shopping
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    RecipesPage(),
-    PantryPage(),
-    ShoppingPage(),
-  ];
+  late List<Widget> _widgetOptions = <Widget>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _widgetOptions = [
+      const RecipesPage(),
+      PantryPage(), // non-const
+      const ShoppingPage(),
+    ];
+
+    // Safe async call after first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PantryProvider>().loadPantryItems();
+    });
+  }
+
+
+
 
   void _onItemTapped(int index) {
     setState(() {

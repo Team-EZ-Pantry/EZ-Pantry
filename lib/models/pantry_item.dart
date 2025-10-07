@@ -9,8 +9,8 @@ class PantryItemModel {
   // Create a PantryItem from JSON
   factory PantryItemModel.fromJson(Map<String, dynamic> json) {
     return PantryItemModel(
-      id: json['id'] as int,
-      title: json['title'] as String,
+      id: json['pantry_id'] as int,
+      title: json['name'] as String,
       quantity: json['quantity'] as int,
     );
   }
