@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/auth',
+      initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const MyHomePage(title: 'EZ Pantry'),
