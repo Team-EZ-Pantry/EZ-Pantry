@@ -63,7 +63,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     try {
       // On success, navigate to MyHomePage (home screen)
-      if (await registerUser(username: username, email: email, password: password)) {
+      if (await registerUser(username: username, email: email, password: password) == 0) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

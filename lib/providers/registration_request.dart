@@ -2,12 +2,17 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-Future<bool> registerUser({
+Future<int> registerUser({
   required String username,
   required String email,
   required String password,
 
-  bool registrationSuccess = false,
+  int registrationSuccess = -1, /// if -1 then unexpected error, 0 if success
+
+  int badRequestCode = 400,
+  int userConflictCode = 409, 
+  int serverErrorCode = 500,
+  
 
 }) async {
   final Uri requestUrl = Uri.parse('http://localhost:3000/api/auth/register');
@@ -27,16 +32,16 @@ Future<bool> registerUser({
 
     if (response.statusCode == 201) {
       // Success — parse response if needed
-      registrationSuccess = true;
+      registrationSuccess = 0;
       final data = jsonDecode(response.body);
       debugPrint('User registered: $data');
     } else {
-      if (response.statusCode == 400) {
-        debugPrint('Bad Request: ${response.body}');
-      } else if (response.statusCode == 409) {
-        debugPrint('User already exists: ${response.body}');
-      } else if (response.statusCode == 500) {
-        debugPrint('Server error: ${response.body}');
+      if (response.statusCode == badRequestCode) {
+        debugPrint('$badRequestCode Bad Request: ${response.body}');
+      } else if (response.statusCode == userConflictCode) {
+        debugPrint('$userConflictCode User already exists: ${response.body}');
+      } else if (response.statusCode == serverErrorCode) {
+        debugPrint('$serverErrorCode Server error: ${response.body}');
       } else {
         debugPrint('Unexpected status code: ${response.statusCode}');
       }
