@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/pantry_item.dart';
 
 class PantryService {
-  final String baseUrl = 'http://localhost:3000';
+  final String baseUrl = 'http://localhost:3000/api';
 
   Future<List<PantryItemModel>> fetchPantryItems() async {
     final response = await http.get(Uri.parse('$baseUrl/pantry'));
