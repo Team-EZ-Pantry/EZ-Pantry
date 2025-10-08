@@ -29,6 +29,7 @@ Future<int> registerUser({
 
   try {
     final http.Response response = await http.post(requestUrl, headers: headers, body: body);
+    registrationSuccess = response.statusCode;
 
     if (response.statusCode == 201) {
       // Success — parse response if needed

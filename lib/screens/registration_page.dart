@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../main.dart'; // Make sure this imports MyHomePage
 import '../providers/registration_request.dart'; // Import the registration function
 
+
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
-
+  
   @override
   State<RegistrationPage> createState() => _RegistrationPageState();
 }
@@ -17,6 +18,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final FocusNode _emailFocus         = FocusNode();
   final FocusNode _usernameFocus      = FocusNode();
   final FocusNode _passwordFocus      = FocusNode();
+
+  final int badRequestCode   = 400;
+  final int userConflictCode = 409;
+  final int serverErrorCode  = 500;
 
   @override
   void initState() {
@@ -43,6 +48,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
+    String errorDialog = 'Error not set.';
+
     if (email.isEmpty || username.isEmpty || password.isEmpty) {
       // Show error if any field is empty
       showDialog(
@@ -62,12 +69,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
 
     try {
+      int requestResponse = await registerUser(username: username, email: email, password: password);
       // On success, navigate to MyHomePage (home screen)
-      if (await registerUser(username: username, email: email, password: password) == 0) {
+      if (requestResponse == 0) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
+          ),
+        );
+      }
+      else {
+        // Show error dialog on failure
+        if (requestResponse == badRequestCode){
+                errorDialog = 'Bad Request: Please check your input.';
+              } else if (requestResponse == userConflictCode) {
+                errorDialog = 'User already exists. Please choose a different email.';
+              } else if (requestResponse == serverErrorCode) {
+                errorDialog = 'Server error. Please try again later.';
+              } else {
+                errorDialog = 'An unexpected error occurred. Please try again.';
+            }
+            
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Registration Failed'),
+            content: Text(errorDialog),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
           ),
         );
       }
