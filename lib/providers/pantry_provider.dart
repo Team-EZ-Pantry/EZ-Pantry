@@ -12,6 +12,11 @@ class PantryProvider extends ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
 
+  void init() {
+    // schedule after first frame to avoid calling notifyListeners during build
+    Future.microtask(() => loadPantryItems());
+  }
+
   Future<void> loadPantryItems() async {
     _loading = true;
     notifyListeners();

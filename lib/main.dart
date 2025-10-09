@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(
-      ChangeNotifierProvider(
+      ChangeNotifierProvider<PantryProvider>(
         create: (_) => PantryProvider(),
       child: MyApp()
       )
@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
-        '/login': (context) => const LoginPage(),
-        '/home': (context) => const MyHomePage(title: 'EZ Pantry'),
+        '/login': (BuildContext context) => const LoginPage(),
+        '/home': (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
       },
 
     );
