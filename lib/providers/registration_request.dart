@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 Future<int> registerUser({
@@ -7,12 +7,10 @@ Future<int> registerUser({
   required String email,
   required String password,
 
-  int registrationSuccess = -1, /// if -1 then unexpected error, 0 if success
-
-  int badRequestCode = 400,
-  int userConflictCode = 409, 
-  int serverErrorCode = 500,
-  
+        int registrationCode    = -1,  /// if -1 then unexpected error, 0 if registration succeeded
+  final int badRequestCode      = 400, /// API returned bad request
+  final int userConflictCode    = 409, /// API returned user already exists
+  final int serverErrorCode     = 500, /// API returned server error
 
 }) async {
   final Uri requestUrl = Uri.parse('http://localhost:3000/api/auth/register');
@@ -29,27 +27,27 @@ Future<int> registerUser({
 
   try {
     final http.Response response = await http.post(requestUrl, headers: headers, body: body);
-    registrationSuccess = response.statusCode;
+    registrationCode = response.statusCode;
 
     if (response.statusCode == 201) {
       // Success — parse response if needed
-      registrationSuccess = 0;
+      registrationCode = 0;
       final data = jsonDecode(response.body);
       debugPrint('User registered: $data');
+
     } else {
-      if (response.statusCode == badRequestCode) {
-        debugPrint('$badRequestCode Bad Request: ${response.body}');
+      if (response.statusCode == badRequestCode && kDebugMode) {
+        debugPrint('registerUser() Bad Request: ${response.body}');
       } else if (response.statusCode == userConflictCode) {
-        debugPrint('$userConflictCode User already exists: ${response.body}');
+        debugPrint('regeisterUser() User already exists: ${response.body}');
       } else if (response.statusCode == serverErrorCode) {
-        debugPrint('$serverErrorCode Server error: ${response.body}');
+        debugPrint('registerUser() Server error: ${response.body}');
       } else {
-        debugPrint('Unexpected status code: ${response.statusCode}');
+        debugPrint('registerUser() Unexpected status code: ${response.statusCode}');
       }
     }
   } catch (e) {
     debugPrint('Exception occurred: $e');
   }
-
-  return registrationSuccess;
+  return registrationCode;
 }

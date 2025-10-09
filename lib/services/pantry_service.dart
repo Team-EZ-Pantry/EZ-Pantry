@@ -20,7 +20,7 @@ class PantryService {
           .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
-      throw Exception("Failed to load pantry items");
+      throw Exception('Failed to load pantry items');
     }
   }
 }

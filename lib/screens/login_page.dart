@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../main.dart'; // Correct relative path to import MyHomePage
 import '../utilities/check_login.dart';
+import '../widgets/login_registration_TextFormField.dart';
 import 'registration_page.dart'; // Import RegistrationPage class
 
 class LoginPage extends StatefulWidget {
@@ -13,8 +16,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FocusNode _usernameFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
+  
+  final FocusNode _usernameFocus                  = FocusNode();
+  final FocusNode _passwordFocus                  = FocusNode();
+
+  final double elementSpacing                     = 15;
 
   @override
   void initState() {
@@ -79,76 +85,56 @@ class _LoginPageState extends State<LoginPage> {
                 height: 300,
                 width: 500,
               ),
-              const Center(
-            
-              ),
-              const SizedBox(height: 40),
+                SizedBox(height: elementSpacing + 20),
 
-              // Username
-              const Text(
-                'Username',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _usernameController,
-                focusNode: _usernameFocus,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  ),
+                /// Username field
+                RegistrationLoginTextField(
+                  label: 'Username',
+                  focusNode: _usernameFocus,
                   hintText: 'Enter your username',
+                  controller: _usernameController,
+                  onSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(_passwordFocus);
+                  },
                 ),
-                onSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_passwordFocus);
-                },
-              ),
-              const SizedBox(height: 20),
 
-              // Password
-              const Text(
-                'Password',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _passwordController,
-                focusNode:  _passwordFocus,
-                obscureText: true,
-                textInputAction: TextInputAction.done,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  ),
+                SizedBox(height: elementSpacing),
+
+                /// Password field
+                RegistrationLoginTextField(
+                  label: 'Password',
+                  focusNode: _passwordFocus,
                   hintText: 'Enter your password',
+                  controller: _passwordController,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _handleLogin(),
                 ),
-                onSubmitted: (_) => _handleLogin(),
-              ),
-              const SizedBox(height: 30),
 
-              // Login Button
-              ElevatedButton(
-                onPressed: _handleLogin,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-                child: const Text(
-                  'Login',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
+                SizedBox(height: elementSpacing + 5),
 
-              /// Sign Up Text Button
-              Padding(
-                padding:  const EdgeInsets.only(top: 20.0), 
-                child: TextButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => const RegistrationPage()),
-                    ),
-                child: const Text('New user? Sign up' ),) ,),
+                // Login Button
+                ElevatedButton(
+                  onPressed: _handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+
+                /// Sign Up Text Button
+                Padding(
+                  padding:  const EdgeInsets.only(top: 20.0), 
+                  child: TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => const RegistrationPage()),
+                      ),
+                  child: const Text('New user? Sign up' ),) ,),
             ],
           ),
         ),
