@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
 
 class AddItemDialog extends StatefulWidget{
+  
+  AddItemDialog({Key? key, required this.title, this.hintText = '', this.itemName = '', this.itemQuantity = 0, this.itemSize = ''}) : super(key: key);
+
+
   final String title;
   final String hintText;
+  String itemName;
+  int itemQuantity;
+  String itemSize;
 
-  const AddItemDialog({Key? key, required this.title, this.hintText = ''}) : super(key: key);
-
+ 
   @override
   State<AddItemDialog> createState() => _AddItemDialogState();
 }
 
 class _AddItemDialogState extends State<AddItemDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _controller = TextEditingController();
+  final _nameController = TextEditingController();
+  final _quantityController = TextEditingController();
+  final _sizeController = TextEditingController();
   bool _isSaving = false;
 
   @override
   void dispose() {
-    _controller.dispose();
+    _nameController.dispose();
+    _quantityController.dispose();
+    _sizeController.dispose();
     super.dispose();
   }
 
@@ -25,7 +35,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
     // Validate first
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final value = _controller.text.trim();
+    final value = _nameController.text.trim();
     setState(() => _isSaving = true);
 
     // We return the value to the caller (who will save to DB).
@@ -37,14 +47,32 @@ class _AddItemDialogState extends State<AddItemDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      contentPadding: EdgeInsets.all(12),
       title: Text(widget.title),
       content: Form(
         key: _formKey,
-        child: TextFormField(
-          controller: _controller,
-          autofocus: true,
-          decoration: InputDecoration(hintText: widget.hintText),
-          validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a value' : null,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _nameController,
+              autofocus: true,
+              decoration: InputDecoration(hintText: widget.hintText),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product name' : null,
+            ),
+            TextFormField(
+              controller: _quantityController,
+              autofocus: true,
+              decoration: InputDecoration(hintText: widget.hintText),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product quantity' : null,
+            ),
+            TextFormField(
+              controller: _sizeController,
+              autofocus: true,
+              decoration: InputDecoration(hintText: widget.hintText),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product size' : null,
+            ),
+          ],
         ),
       ),
       actions: [

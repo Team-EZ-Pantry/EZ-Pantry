@@ -43,7 +43,7 @@ class _PantryPageState extends State<PantryPage> {
   Future<void> _onAddItemButtonPressed() async {
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => const AddItemDialog(title: 'Enter item', hintText: 'hintText'),
+      builder: (context) => AddItemDialog(title: 'Enter item', hintText: 'hintText'),
     );
     if (result == null) return;
   }
