@@ -1,5 +1,3 @@
-import 'package:ez_pantry/screens/scan_page.dart';
-import 'package:ez_pantry/widgets/pantry_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
 import 'add-item_page.dart';
+import 'scan_page.dart';
 
 class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
@@ -20,8 +19,10 @@ class _PantryPageState extends State<PantryPage> {
   void initState() {
     super.initState();
     // Safe to call provider here
-    final pantryProvider = context.read<PantryProvider>();
-    pantryProvider.loadPantryItems();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pantryProvider = context.read<PantryProvider>();
+      pantryProvider.loadPantryItems();
+    });
   }
 
   void _onScanButtonPressed(BuildContext context) async {
@@ -69,7 +70,7 @@ class _PantryPageState extends State<PantryPage> {
                   itemBuilder: (context, index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
-                      title: item.title, // or item.title depending on your model
+                      title: item.name, // or item.title depending on your model
                       quantity: item.quantity,
                     );
                   },
@@ -96,7 +97,6 @@ class _PantryPageState extends State<PantryPage> {
           ),
         ],
       ),
-
     );
   }
 }

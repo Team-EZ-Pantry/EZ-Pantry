@@ -6,11 +6,16 @@ import '../services/pantry_service.dart';
 class PantryProvider extends ChangeNotifier {
   final PantryService _service = PantryService();
 
-  List<PantryItemModel> _items = [];
+  List<PantryItemModel> _items = <PantryItemModel>[];
   List<PantryItemModel> get items => _items;
 
   bool _loading = false;
   bool get loading => _loading;
+
+  void init() {
+    // schedule after first frame to avoid calling notifyListeners during build
+    Future.microtask(() => loadPantryItems());
+  }
 
   Future<void> loadPantryItems() async {
     _loading = true;
