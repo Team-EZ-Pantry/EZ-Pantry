@@ -10,6 +10,9 @@ String checkRegistration(String email, String username, String password){
     } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) { 
       // Show error if email format is invalid
       registrationResult = 'Invalid email format.';
+    } else if (username.length > 30) {
+      // Show error if username is too long
+      registrationResult = 'Username cannot exceed 30 characters.';
 
     } else if (password.length < 6) {
       // Show error if password is too short

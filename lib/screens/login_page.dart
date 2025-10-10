@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       showDialog<ErrorDescription>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('Registration Failed'),
+          title: const Text('Login Failed'),
           content: Text(loginCheck),
           actions: <Widget>[
             TextButton(
