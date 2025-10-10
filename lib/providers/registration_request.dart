@@ -7,10 +7,13 @@ Future<int> registerUser({
   required String email,
   required String password,
 
-        int registrationCode    = -1,  /// if -1 then unexpected error, 0 if registration succeeded
-  final int badRequestCode      = 400, /// API returned bad request
-  final int userConflictCode    = 409, /// API returned user already exists
-  final int serverErrorCode     = 500, /// API returned server error
+  /// Constants for status codes
+  final int successfulRegistrationCode = 201, /// API returned successful login
+  final int badRequestCode             = 400, /// API returned bad request
+  final int userConflictCode           = 409, /// API returned user already exists
+  final int serverErrorCode            = 500, /// API returned server error
+
+        int registrationCode           = -1,  /// if -1 then unexpected error, 0 if registration succeeded
 
 }) async {
   final Uri requestUrl = Uri.parse('http://localhost:3000/api/auth/register');
@@ -29,7 +32,7 @@ Future<int> registerUser({
     final http.Response response = await http.post(requestUrl, headers: headers, body: body);
     registrationCode = response.statusCode;
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == successfulRegistrationCode) {
       // Success — parse response if needed
       registrationCode = 0;
       final data = jsonDecode(response.body);
@@ -39,7 +42,7 @@ Future<int> registerUser({
       if (response.statusCode == badRequestCode && kDebugMode) {
         debugPrint('registerUser() Bad Request: ${response.body}');
       } else if (response.statusCode == userConflictCode) {
-        debugPrint('regeisterUser() User already exists: ${response.body}');
+        debugPrint('registerUser() User already exists: ${response.body}');
       } else if (response.statusCode == serverErrorCode) {
         debugPrint('registerUser() Server error: ${response.body}');
       } else {

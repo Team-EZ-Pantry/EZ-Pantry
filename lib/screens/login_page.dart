@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import '../main.dart'; // Correct relative path to import MyHomePage
-import '../utilities/check_login.dart';
+import '../providers/login_request.dart';
+import '../utilities/checkLogin.dart';
 import '../widgets/login_registration_TextFormField.dart';
 import 'registration_page.dart'; // Import RegistrationPage class
 
@@ -14,10 +15,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController    = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   
-  final FocusNode _usernameFocus                  = FocusNode();
+  final FocusNode _emailFocus                     = FocusNode();
   final FocusNode _passwordFocus                  = FocusNode();
 
   final double elementSpacing                     = 15;
@@ -27,39 +28,32 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     // Request focus after first frame to reliably show keyboard
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _usernameFocus.requestFocus();
+      _emailFocus.requestFocus();
     });
   }
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
-    _usernameFocus.dispose();
+    _emailFocus.dispose();
     _passwordFocus.dispose();
     super.dispose();
   }
 
-  void _handleLogin() {
-    final String username = _usernameController.text;
+  Future<void> _handleLogin() async {
+    final String email = _emailController.text;
     final String password = _passwordController.text;
 
-    if (checkLogin(username, password) == 0) {
-      // Navigate to MyHomePage (home screen)
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
-        ),
-      );
-    } else {
-      // Show error if credentials are incorrect
-      showDialog(
+    final String loginCheck = checkLogin(email, password);
+
+    if (loginCheck != 'OK') {
+      showDialog<ErrorDescription>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('Login Failed'),
-          content: const Text('Incorrect username or password.'),
-          actions: [
+          title: const Text('Registration Failed'),
+          content: Text(loginCheck),
+          actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('OK'),
@@ -67,9 +61,43 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       );
-    }
-  }
 
+      return;
+    }
+    else
+    {
+      try {
+        final int requestResponse = await loginUser(email: email, password: password);
+      
+        // On success, navigate to MyHomePage (home screen)
+        if (requestResponse == 0) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
+            ),
+          );
+        } else {
+          // Show error if credentials are incorrect
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Login Failed'),
+              content: const Text('Incorrect email or password.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+      }
+      } catch (e) {
+        debugPrint('Exception occurred: $e');
+      }
+    }
+  } 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,12 +115,12 @@ class _LoginPageState extends State<LoginPage> {
               ),
                 SizedBox(height: elementSpacing + 20),
 
-                /// Username field
+                /// email field
                 RegistrationLoginTextField(
-                  label: 'Username',
-                  focusNode: _usernameFocus,
-                  hintText: 'Enter your username',
-                  controller: _usernameController,
+                  label: 'Email',
+                  focusNode: _emailFocus,
+                  hintText: 'Enter your email',
+                  controller: _emailController,
                   onSubmitted: (_) {
                     FocusScope.of(context).requestFocus(_passwordFocus);
                   },

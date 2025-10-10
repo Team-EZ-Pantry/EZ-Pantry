@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import '../main.dart';                           // Make sure this imports MyHomePage
 import '../providers/registration_request.dart';
+import '../utilities/checkRegistration.dart';
 import '../widgets/login_registration_TextFormField.dart'; // Import the registration function
 
 class RegistrationPage extends StatefulWidget {
@@ -22,10 +21,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final FocusNode _passwordFocus                  = FocusNode();
 
   final int badRequestCode                        = 400;
-  final int userConflictCode                      = 409;
+  final int unauhtorizedUserCode                  = 401;
   final int serverErrorCode                       = 500;
 
-  final double elementSpacing                        = 15;
+  final double elementSpacing                     = 15;
 
   @override
   void initState() {
@@ -52,15 +51,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
-    String errorDialog = 'Improper Error.';
+    String errorDialog    = 'Improper Error.';
 
-    if (email.isEmpty || username.isEmpty || password.isEmpty) {
-      // Show error if any field is empty
-      showDialog(
+    final String registrationCheck = checkRegistration(email, username, password);
+
+    if (registrationCheck != 'OK'){
+      showDialog<ErrorDescription>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Registration Failed'),
-          content: const Text('All fields are required.'),
+          content: Text(registrationCheck),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -69,44 +69,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ],
         ),
       );
-      return;
-    }
 
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      // Show error if email format is invalid
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Registration Failed'),
-          content: const Text('Please enter a valid email address.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
       return;
-    }
-
-    if (password.length < 6) {
-      // Show error if password is too short
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Registration Failed'),
-          content: const Text('Password must be at least 6 characters long.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
+    } 
 
     try {
       final int requestResponse = await registerUser(username: username, email: email, password: password);
@@ -123,15 +88,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
         // Show error dialog on failure
         if (requestResponse == badRequestCode){
                 errorDialog = 'Bad Request: Please check your input.';
-              } else if (requestResponse == userConflictCode) {
-                errorDialog = 'User already exists. Please choose a different email.';
+              } else if (requestResponse == unauhtorizedUserCode) {
+                errorDialog = 'Incorrect username or password.';
               } else if (requestResponse == serverErrorCode) {
                 errorDialog = 'Server error. Please try again later.';
               } else {
                 errorDialog = 'An unexpected error occurred. Please try again.';
             }
             
-        showDialog(
+        showDialog<ErrorDescription>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Registration Failed'),
@@ -147,7 +112,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       }
     } catch (e) {
       // Show error dialog on failure
-      showDialog(
+      showDialog<ErrorDescription>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Registration Failed'),
