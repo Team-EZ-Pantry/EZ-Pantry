@@ -35,7 +35,7 @@ Future<int> loginUser({
       // Success — parse response if needed
       loginCode = 0;
       final data = jsonDecode(response.body);
-      debugPrint('User registered: $data');
+      debugPrint('User Logged in: $data');
 
     } else {
       if (response.statusCode == badRequestCode && kDebugMode) {

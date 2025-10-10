@@ -1,6 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import '../main.dart'; // Correct relative path to import MyHomePage
 import '../providers/login_request.dart';
 import '../utilities/checkLogin.dart';
@@ -73,13 +73,13 @@ class _LoginPageState extends State<LoginPage> {
         if (requestResponse == 0) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
+            MaterialPageRoute<ActionDispatcher>(
               builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
             ),
           );
         } else {
           // Show error if credentials are incorrect
-          showDialog(
+          showDialog<ErrorDescription>(
             context: context,
             builder: (BuildContext context) => AlertDialog(
               title: const Text('Login Failed'),
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: <Widget>[
               Image.asset(
                 '../../assets/logo/logo.png', // Ensure this path matches your asset structure
                 height: 300,
@@ -159,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: TextButton(
                       onPressed: () => Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        MaterialPageRoute<SystemNavigator>(
                           builder: (BuildContext context) => const RegistrationPage()),
                       ),
                   child: const Text('New user? Sign up' ),) ,),

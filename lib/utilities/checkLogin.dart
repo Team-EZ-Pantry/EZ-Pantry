@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+/// Validates login credentials.
 
 String checkLogin(String username, String password){
   String loginResult; //
