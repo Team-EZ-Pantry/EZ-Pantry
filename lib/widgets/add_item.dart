@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/pantry_provider.dart';
+
 
 class AddItemDialog extends StatefulWidget{
   
@@ -32,17 +35,21 @@ class _AddItemDialogState extends State<AddItemDialog> {
   }
 
   Future<void> _onSave() async {
-    // Validate first
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final value = _nameController.text.trim();
+    final name = _nameController.text.trim();
+    final quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
+
     setState(() => _isSaving = true);
 
-    // We return the value to the caller (who will save to DB).
-    // If you wanted this dialog to save directly, you could call
-    // your DB function here instead.
-    Navigator.of(context).pop(value);
+    // Send directly to the provider
+    await context.read<PantryProvider>().addItem(name, quantity, 2); // example userId = 2
+
+    setState(() => _isSaving = false);
+
+    Navigator.of(context).pop(); // close dialog
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +64,14 @@ class _AddItemDialogState extends State<AddItemDialog> {
             TextFormField(
               controller: _nameController,
               autofocus: true,
-              decoration: InputDecoration(hintText: widget.hintText),
+              decoration: const InputDecoration(hintText: 'Product'),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product name' : null,
             ),
             TextFormField(
               controller: _quantityController,
               autofocus: true,
-              decoration: InputDecoration(hintText: widget.hintText),
+              decoration: const InputDecoration(hintText: 'Quantity'),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product quantity' : null,
-            ),
-            TextFormField(
-              controller: _sizeController,
-              autofocus: true,
-              decoration: InputDecoration(hintText: widget.hintText),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product size' : null,
             ),
           ],
         ),

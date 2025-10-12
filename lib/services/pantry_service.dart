@@ -23,4 +23,22 @@ class PantryService {
       throw Exception('Failed to load pantry items');
     }
   }
+
+  Future<void> addItem(PantryItemModel item) async {
+    final url = Uri.parse(baseUrl); // Need to have user_id in this url. Not sure where to get it from.
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(<String, Object>{
+        'user_id': item.id,
+        'name': item.name,
+        'quantity': item.quantity,
+      }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to add item: ${response.body}');
+    }
+  }
 }
