@@ -40,7 +40,7 @@ Future<int> loginUser({
       /// Save the token securely
       final SessionController sessionController = SessionController();
       sessionController.saveAuthToken(data['token'] as String);
-      debugPrint('AuthToken: $data["token"]');
+      debugPrint('AuthToken: ' + data.toString());
 
       debugPrint('User Logged in: $data');
 
