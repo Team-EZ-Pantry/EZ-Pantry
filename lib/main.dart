@@ -29,7 +29,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/login',
+
+			/// Check for the auth token
+      final SessionController sessionController = SessionController();
+      
+			String launchRoute = '/login'
+			if (sessionController.readAuthToken() != null){
+				initialRoute: '/home',
+			}
+			
+			initialRoute: launchRoute
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/home': (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
