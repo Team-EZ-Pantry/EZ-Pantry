@@ -7,6 +7,7 @@ import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
 import 'screens/shopping_page.dart';
+import 'utilities/session_controller.dart'
 
 void main() {
   runApp(
