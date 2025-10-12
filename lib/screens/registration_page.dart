@@ -22,7 +22,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final FocusNode _passwordFocus                  = FocusNode();
 
   final int badRequestCode                        = 400;
-  final int unauhtorizedUserCode                  = 401;
+  final int unauthorizedUserCode                  = 401;
   final int serverErrorCode                       = 500;
 
   final double elementSpacing                     = 15;
@@ -89,7 +89,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         // Show error dialog on failure
         if (requestResponse == badRequestCode){
                 errorDialog = 'Bad Request: Please check your input.';
-              } else if (requestResponse == unauhtorizedUserCode) {
+              } else if (requestResponse == unauthorizedUserCode) {
                 errorDialog = 'Incorrect username or password.';
               } else if (requestResponse == serverErrorCode) {
                 errorDialog = 'Server error. Please try again later.';
