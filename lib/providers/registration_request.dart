@@ -38,8 +38,6 @@ Future<int> registerUser({
       final data = jsonDecode(response.body);
       debugPrint('User registered: $data');
 
-      
-
     } else {
       if (response.statusCode == badRequestCode && kDebugMode) {
         debugPrint('registerUser() Bad Request: ${response.body}');

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../utilities/session_controller.dart';
 
 Future<int> loginUser({
   required String email,
@@ -35,6 +36,12 @@ Future<int> loginUser({
       // Success — parse response if needed
       loginCode = 0;
       final data = jsonDecode(response.body);
+
+      /// Save the token securely
+      final SessionController sessionController = SessionController();
+      sessionController.saveAuthToken(data['token'] as String);
+      debugPrint('AuthToken: $data["token"]');
+
       debugPrint('User Logged in: $data');
 
     } else {
