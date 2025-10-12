@@ -36,6 +36,12 @@ Future<int> registerUser({
       // Success — parse response if needed
       registrationCode = 0;
       final data = jsonDecode(response.body);
+
+      /// Save the token securely
+      final SessionController sessionController = SessionController();
+      sessionController.saveAuthToken(data['token'] as String);
+      debugPrint('saveAuthToken: $data["token"]');
+
       debugPrint('User registered: $data');
 
     } else {
