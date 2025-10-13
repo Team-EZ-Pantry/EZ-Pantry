@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 import '../models/pantry_item.dart';
 
 class PantryService {
-  final String baseUrl = 'http://localhost:3000';
+  final String baseUrl = 'http://localhost:3000/api/pantry/2';
 
   Future<List<PantryItemModel>> fetchPantryItems() async {
-    final response = await http.get(Uri.parse('$baseUrl/pantry'));
+    final response = await http.get(Uri.parse(baseUrl)); // Need to have user_id in this url. Not sure where to get it from.
 
     if (response.statusCode == 200) {
      print('Response body: ${response.body}');
@@ -21,6 +21,24 @@ class PantryService {
           .toList();
     } else {
       throw Exception('Failed to load pantry items');
+    }
+  }
+
+  Future<void> addItem(PantryItemModel item) async {
+    final url = Uri.parse(baseUrl); // Need to have user_id in this url. Not sure where to get it from.
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(<String, Object>{
+        'user_id': item.id,
+        'name': item.name,
+        'quantity': item.quantity,
+      }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to add item: ${response.body}');
     }
   }
 }

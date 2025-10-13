@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import the login page
-import 'scan_page.dart';
-import 'package:ez_pantry/widgets/pantry_item.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import '../widgets/pantry_item.dart';
 import '../providers/pantry_provider.dart';
+import '../widgets/add_item.dart';
+import 'add-item_page.dart';
+import 'scan_page.dart';
 
 class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
@@ -17,8 +19,10 @@ class _PantryPageState extends State<PantryPage> {
   void initState() {
     super.initState();
     // Safe to call provider here
-    final pantryProvider = context.read<PantryProvider>();
-    pantryProvider.loadPantryItems();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pantryProvider = context.read<PantryProvider>();
+      pantryProvider.loadPantryItems();
+    });
   }
 
   Future<void> _onScanButtonPressed(BuildContext context) async {
@@ -32,8 +36,16 @@ class _PantryPageState extends State<PantryPage> {
         SnackBar(content: Text('Scanned barcode: $result')),
       );
       debugPrint('Scanned barcode: $result');
-      // TODO(Noah): Call API or update pantry items with this barcode.
+      // TODO: Call API or update pantry items with this barcode
     }
+  }
+
+  Future<void> _onAddItemButtonPressed() async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AddItemDialog(title: 'Enter item', hintText: 'hintText'),
+    );
+    if (result == null) return;
   }
 
   @override
@@ -58,7 +70,7 @@ class _PantryPageState extends State<PantryPage> {
                   itemBuilder: (BuildContext context, int index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
-                      title: item.title, // or item.title depending on your model
+                      title: item.name, // or item.title depending on your model
                       quantity: item.quantity,
                     );
                   },
@@ -68,12 +80,23 @@ class _PantryPageState extends State<PantryPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _onScanButtonPressed(context),
-        icon: const Icon(Icons.qr_code_scanner),
-        label: const Text('Scan'),
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.close,
+        backgroundColor: Colors.blue,
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.qr_code_scanner),
+            label: 'Scan Item',
+            onTap: () => _onScanButtonPressed(context),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.menu),
+            label: 'Add Item',
+            onTap: () => _onAddItemButtonPressed(),
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
