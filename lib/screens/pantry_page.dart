@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import the login page
 import 'scan_page.dart';
 import 'package:ez_pantry/widgets/pantry_item.dart';
 import 'package:provider/provider.dart';
