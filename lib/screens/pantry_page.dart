@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'login_page.dart'; // Import the login page
+import 'scan_page.dart';
+import 'package:ez_pantry/widgets/pantry_item.dart';
 import 'package:provider/provider.dart';
 import '../widgets/pantry_item.dart';
 import '../providers/pantry_provider.dart';
@@ -25,10 +28,10 @@ class _PantryPageState extends State<PantryPage> {
     });
   }
 
-  void _onScanButtonPressed(BuildContext context) async {
+  Future<void> _onScanButtonPressed(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ScanPage()),
+      MaterialPageRoute(builder: (BuildContext context) => const ScanPage()),
     );
 
     if (result != null) {
@@ -55,19 +58,19 @@ class _PantryPageState extends State<PantryPage> {
         children: [
           Material(
             child: Consumer<PantryProvider>(
-              builder: (context, pantry, child) {
+              builder: (BuildContext context, pantry, child) {
                 if (pantry.loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
                 if (pantry.items.isEmpty) {
-                  return const Center(child: Text("Empty Pantry"));
+                  return const Center(child: Text('Empty Pantry'));
                 }
 
                 return ListView.builder(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   itemCount: pantry.items.length,
-                  itemBuilder: (context, index) {
+                  itemBuilder: (BuildContext context, int index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
                       title: item.name, // or item.title depending on your model

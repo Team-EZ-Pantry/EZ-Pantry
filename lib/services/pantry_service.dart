@@ -10,7 +10,7 @@ class PantryService {
     final response = await http.get(Uri.parse(baseUrl)); // Need to have user_id in this url. Not sure where to get it from.
 
     if (response.statusCode == 200) {
-      print('Response body: ${response.body}');
+     print('Response body: ${response.body}');
 
       // Decode JSON into a List<dynamic>
       final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;

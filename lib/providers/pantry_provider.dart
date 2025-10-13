@@ -25,9 +25,9 @@ class PantryProvider extends ChangeNotifier {
 
     try {
       _items = await _service.fetchPantryItems();
-      print('========================Fetched items: $_items');
+      debugPrint('========================Fetched items: $_items');
     } catch (e) {
-      print('Error fetching pantry items: $e');
+      debugPrint('Error fetching pantry items: $e');
     } finally {
       _loading = false;
       notifyListeners();

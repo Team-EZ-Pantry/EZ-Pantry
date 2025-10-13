@@ -17,9 +17,9 @@ class ScanPage extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Barcode found: $code')),
               );
-              print('Barcode found: $code');
+              debugPrint('Barcode found: $code');
 
-              // TODO: Call your API to fetch product info
+              // TODO(all): Call your API to fetch product info
             }
           }
         },

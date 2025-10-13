@@ -1,12 +1,13 @@
-import 'package:ez_pantry/providers/pantry_provider.dart';
-import 'package:ez_pantry/screens/scan_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
+import 'providers/pantry_provider.dart';
+import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
 import 'screens/shopping_page.dart';
-import 'screens/login_page.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'utilities/session_controller.dart';
 
 void main() {
   runApp(
@@ -22,6 +23,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SessionController sessionController = SessionController();
+    
+    /// Check for the auth token
+    String launchRoute;
+
+    //sessionController.clearAuthToken();
+    //debugPrint('Cleared AuthToken for testing.');
+
+    if (sessionController.checkAuthToken()) {
+      launchRoute = '/home';
+      debugPrint('AuthToken found, navigating to home.');
+    }
+    else {
+      launchRoute = '/login';
+      debugPrint('No AuthToken, navigating to login.');
+    }
+
     return MaterialApp(
       title: 'EZ Pantry',
       theme: ThemeData(
@@ -29,7 +47,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/login',
+
+			initialRoute: launchRoute,
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/home': (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
@@ -85,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         actions: [
           IconButton(
-            icon: Icon(Icons.account_circle),
+            icon: const Icon(Icons.account_circle),
             onPressed: () {
               Navigator.pushNamed(context, '/login');
             }
