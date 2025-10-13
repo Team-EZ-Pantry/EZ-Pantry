@@ -28,7 +28,7 @@ class PantryItemTile extends StatelessWidget {
       ),
       child: ListTile(
         title: Row(
-          children: [
+          children: <Widget>[
             Container(
               width: 40, // fixed width
               height: 28, // adjust height for the badge

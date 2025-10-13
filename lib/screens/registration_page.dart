@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';                           // Make sure this imports MyHomePage
 import '../providers/registration_request.dart';
 import '../utilities/checkRegistration.dart';
-import '../widgets/login_registration_TextFormField.dart'; // Import the registration function
+import '../widgets/text_form_feld.dart'; // Import the registration function
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});

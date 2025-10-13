@@ -7,7 +7,8 @@ import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
 import 'screens/shopping_page.dart';
-import 'utilities/session_controller.dart';
+import 'utilities/logout_user.dart';  
+
 
 void main() {
   runApp(
@@ -23,23 +24,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SessionController sessionController = SessionController();
+
     
     /// Check for the auth token
     String launchRoute;
 
-    //sessionController.clearAuthToken();
-    //debugPrint('Cleared AuthToken for testing.');
-
-    if (sessionController.checkAuthToken()) {
-      launchRoute = '/home';
-      debugPrint('AuthToken found, navigating to home.');
-    }
-    else {
       launchRoute = '/login';
-      debugPrint('No AuthToken, navigating to login.');
-    }
-
+    
     return MaterialApp(
       title: 'EZ Pantry',
       theme: ThemeData(
@@ -87,9 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
-
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -106,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              Navigator.pushNamed(context, '/login');
+              logoutUser(context);
             }
           )
         ],
