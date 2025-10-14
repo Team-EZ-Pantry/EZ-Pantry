@@ -43,7 +43,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
     setState(() => _isSaving = true);
 
     // Send directly to the provider
-    await context.read<PantryProvider>().addItem(name, quantity, 2); // example userId = 2
+    await context.read<PantryProvider>().addItem(name, quantity, 2, '2027'); // example userId = 2
 
     setState(() => _isSaving = false);
 

@@ -58,12 +58,10 @@ class PantryService {
     if (response.statusCode == 200) {
      print('Response body: ${response.body}');
 
+      final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
+      final List<dynamic> products = decoded['pantry']['products'] as List<dynamic>;
 
-      // Decode JSON into a List<dynamic>
-      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
-
-      // Cast each element to Map<String, dynamic>
-      return data
+      return products
           .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
@@ -72,15 +70,21 @@ class PantryService {
   }
 
   Future<void> addItem(PantryItemModel item) async {
-    final url = Uri.parse(baseUrl); // Need to have user_id in this url. Not sure where to get it from.
+
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController().getAuthToken()}',
+    };
+
+    final url = Uri.parse('$baseUrl/$getPantryId()/products');
 
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: header,
       body: jsonEncode(<String, Object>{
-        'user_id': item.id,
-        'name': item.name,
+        'productId': item.id,
         'quantity': item.quantity,
+        'expiration_date': item.expirationDate,
       }),
     );
 
