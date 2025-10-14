@@ -10,12 +10,14 @@ class SessionController {
   }
 
   Future<String?> getAuthToken() async {
-    if (_authToken != '') {
+    if (_authToken != null && _authToken!.isNotEmpty) {
+      print('Token from memory: $_authToken');
       return _authToken;
     }
-    
+
     _authToken = await _secureStorage.read(key: 'authToken');
-    
+
+    print('Token from storage: $_authToken');
     return _authToken;
   }
 
