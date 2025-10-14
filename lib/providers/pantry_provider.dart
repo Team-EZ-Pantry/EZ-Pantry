@@ -36,13 +36,13 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addItem(String name, int quantity, int userId, String expirationDate) async {
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
       final PantryItemModel newItem = PantryItemModel(
-        id: userId,
-        name: name,
+        id: productId,
         quantity: quantity,
-        expirationDate: expirationDate
+        expirationDate: expirationDate,
+        name: ''
       );
 
       // Save to backend

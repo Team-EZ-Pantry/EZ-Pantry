@@ -76,7 +76,9 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController().getAuthToken()}',
     };
 
-    final url = Uri.parse('$baseUrl/$getPantryId()/products');
+    final pantryId = await getPantryId(); // async returns a String
+    final url = Uri.parse('$baseUrl/$pantryId/products');
+
 
     final response = await http.post(
       url,

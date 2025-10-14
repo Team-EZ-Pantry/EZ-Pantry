@@ -1,10 +1,10 @@
 class PantryItemModel {
 
   PantryItemModel({
-    required this.id,
     required this.name,
     required this.quantity,
     required this.expirationDate,
+    required this.id,
   });
 
   // Create a PantryItem from JSON
