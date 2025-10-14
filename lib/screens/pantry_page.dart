@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../widgets/pantry_item.dart';
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
-import 'add-item_page.dart';
 import 'scan_page.dart';
 
 class PantryPage extends StatefulWidget {
