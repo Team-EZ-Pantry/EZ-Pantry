@@ -10,7 +10,7 @@ class PantryItemModel {
   factory PantryItemModel.fromJson(Map<String, dynamic> json) {
     return PantryItemModel(
       id: json['pantry_id'] as int,
-      name: json['display_name'] as String,
+      name: json['name'] as String,
       quantity: json['quantity'] as int,
     );
   }
@@ -22,8 +22,8 @@ class PantryItemModel {
   // Convert PantryItem to JSON (useful for POST requests)
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'display_name': name,
+      'pantry_id': id,
+      'name': name,
       'quantity': quantity,
     };
   }
