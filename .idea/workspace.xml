@@ -9,13 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d235502-0c6f-4fce-9aa4-26c4da7afaa6" name="Changes" comment="added login page">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/models/pantry_item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/pantry_item.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/providers/pantry_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/providers/pantry_provider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/services/pantry_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/pantry_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/utilities/session_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utilities/session_controller.dart" afterDir="false" />
-    </list>
+    <list default="true" id="9d235502-0c6f-4fce-9aa4-26c4da7afaa6" name="Changes" comment="added login page" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
