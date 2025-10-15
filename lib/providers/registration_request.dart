@@ -39,12 +39,11 @@ Future<int> registerUser({
       final data = jsonDecode(response.body);
 
       /// Save the token securely
-      final SessionController sessionController = SessionController();
-      sessionController.saveAuthToken(data['token'] as String);
+      final session = SessionController.instance;
+      session.setSession(data['token'] as String);
+      
       debugPrint('saveAuthToken: $data["token"]');
-
       debugPrint('User registered: $data');
-
     } else {
       if (response.statusCode == badRequestCode && kDebugMode) {
         debugPrint('registerUser() Bad Request: ${response.body}');

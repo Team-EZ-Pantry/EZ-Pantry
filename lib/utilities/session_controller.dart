@@ -1,31 +1,55 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SessionController {
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
-  String? _authToken;
+  SessionController._internal();
 
-  Future<void> saveAuthToken(String token) async {
-    _authToken = token;
-    await _secureStorage.write(key: 'authToken', value: token);
+  static final SessionController _instance = SessionController._internal();
+  static SessionController get instance => _instance;
+
+  String? authToken;
+
+
+  Future<void> setSession(String token) async {
+    const secureStorage = FlutterSecureStorage();
+    this.authToken = token;
+
+    await secureStorage.write(key: 'authToken', value: token);
+
+    debugPrint('AuthToken set: $token');
+  }
+
+  Future<void> loadSession() async {
+    const secureStorage = FlutterSecureStorage();
+    authToken = await secureStorage.read(key: 'authToken');
+
+    debugPrint('AuthToken loaded: $authToken');
   }
 
   Future<String?> getAuthToken() async {
-    if (_authToken != '') {
-      return _authToken;
+    if (authToken != '' || authToken != null) {
+      return authToken;
     }
+
+    const secureStorage = FlutterSecureStorage();
+    authToken = await secureStorage.read(key: 'authToken');
     
-    _authToken = await _secureStorage.read(key: 'authToken');
-    
-    return _authToken;
+    debugPrint('AuthToken retrieved: $authToken');
+
+    return authToken;
   }
 
-  Future<void> clearAuthToken() async {
-    _authToken = '';
-    await _secureStorage.delete(key: 'authToken');
+  Future<void> clearSession() async {
+    const secureStorage = FlutterSecureStorage();
+    await secureStorage.delete(key: 'authToken');
+    authToken = null;
+    debugPrint('AuthToken cleared');
   }
 
   bool checkAuthToken() {
-    return _authToken != null && _authToken != '';
+
+    debugPrint('Valid AuthToken: ${authToken != null && authToken != ''}');
+    return authToken != null && authToken != '';
   }
 }
 

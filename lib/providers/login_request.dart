@@ -38,12 +38,11 @@ Future<int> loginUser({
       final data = jsonDecode(response.body);
 
       /// Save the token securely
-      final SessionController sessionController = SessionController();
-      sessionController.saveAuthToken(data['token'] as String);
+      final session = SessionController.instance;
+      session.setSession(data['token'] as String);
+
       debugPrint('AuthToken: ' + data.toString());
-
       debugPrint('User Logged in: $data');
-
     } else {
       if (response.statusCode == badRequestCode && kDebugMode) {
         debugPrint('loginUser() Bad Request: ${response.body}');
