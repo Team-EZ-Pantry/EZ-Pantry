@@ -5,7 +5,11 @@ import '../models/pantry_item.dart';
 import '../utilities/session_controller.dart';
 
 class PantryService {
+  // for web
   final String baseUrl = 'http://localhost:3000/api/pantry';
+
+  // for android emulator
+  //final String baseUrl = 'http://10.0.2.2:3000/api/pantry';
 
   Future<int> getPantryId() async {
     final headers = {
