@@ -9,7 +9,9 @@ import 'screens/recipes_page.dart';
 import 'screens/shopping_page.dart';
 import 'utilities/session_controller.dart';
 
-void main() {
+void main() {  
+  SessionController.instance.loadSession();
+
   runApp(
       ChangeNotifierProvider<PantryProvider>(
         create: (_) => PantryProvider(),
@@ -23,23 +25,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SessionController sessionController = SessionController();
-    
-    /// Check for the auth token
-    String launchRoute;
-
-    //sessionController.clearAuthToken();
-    //debugPrint('Cleared AuthToken for testing.');
-
-    if (sessionController.checkAuthToken()) {
-      launchRoute = '/home';
-      debugPrint('AuthToken found, navigating to home.');
-    }
-    else {
-      launchRoute = '/login';
-      debugPrint('No AuthToken, navigating to login.');
-    }
-
     return MaterialApp(
       title: 'EZ Pantry',
       theme: ThemeData(
@@ -47,13 +32,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
+ 
+      initialRoute: SessionController.instance.checkAuthToken() ? '/home' : '/login',
 
-			initialRoute: launchRoute,
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/home': (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
       },
-
     );
   }
 }
@@ -75,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     _widgetOptions = [
       const RecipesPage(),
       PantryPage(), // non-const
@@ -86,9 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
       context.read<PantryProvider>().loadPantryItems();
     });
   }
-
-
-
 
   void _onItemTapped(int index) {
     setState(() {

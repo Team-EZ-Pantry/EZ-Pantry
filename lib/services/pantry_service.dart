@@ -11,7 +11,7 @@ class PantryService {
   Future<int> getPantryId() async {
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await SessionController().getAuthToken()}',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
     final response = await http.get(
@@ -45,7 +45,7 @@ class PantryService {
 
     final header = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await SessionController().getAuthToken()}',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
     print('Request headers: $header');
@@ -73,7 +73,7 @@ class PantryService {
 
     final header = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await SessionController().getAuthToken()}',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
     final pantryId = await getPantryId(); // async returns a String
