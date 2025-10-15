@@ -7,49 +7,46 @@ class SessionController {
   static final SessionController _instance = SessionController._internal();
   static SessionController get instance => _instance;
 
-  String? authToken;
+  String? _authToken;
+
+  final secureStorage = const FlutterSecureStorage();
 
 
   Future<void> setSession(String token) async {
-    const secureStorage = FlutterSecureStorage();
-    this.authToken = token;
+    _authToken = token;
+    await secureStorage.write(key: '_authToken', value: token);
 
-    await secureStorage.write(key: 'authToken', value: token);
-
-    debugPrint('AuthToken set: $token');
+    debugPrint('_authToken set: $token');
   }
 
   Future<void> loadSession() async {
-    const secureStorage = FlutterSecureStorage();
-    authToken = await secureStorage.read(key: 'authToken');
+    _authToken = await secureStorage.read(key: '_authToken');
 
-    debugPrint('AuthToken loaded: $authToken');
+    debugPrint('_authToken loaded: $_authToken');
   }
 
-  Future<String?> getAuthToken() async {
-    if (authToken != '' || authToken != null) {
-      return authToken;
+  Future<String?> getauthToken() async {
+    if (_authToken != null && _authToken!.isNotEmpty) {
+      debugPrint('Token from memory: $_authToken');
+      return _authToken;
     }
 
-    const secureStorage = FlutterSecureStorage();
-    authToken = await secureStorage.read(key: 'authToken');
-    
-    debugPrint('AuthToken retrieved: $authToken');
+    _authToken = await secureStorage.read(key: 'authToken');
 
-    return authToken;
+    debugPrint('Token from storage: $_authToken');
+    return _authToken;
   }
 
   Future<void> clearSession() async {
-    const secureStorage = FlutterSecureStorage();
     await secureStorage.delete(key: 'authToken');
-    authToken = null;
+    _authToken = null;
+    
     debugPrint('AuthToken cleared');
   }
 
   bool checkAuthToken() {
 
-    debugPrint('Valid AuthToken: ${authToken != null && authToken != ''}');
-    return authToken != null && authToken != '';
+    debugPrint('Valid AuthToken: ${_authToken != null && _authToken != ''}');
+    return _authToken != null && _authToken != '';
   }
 }
-

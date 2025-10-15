@@ -24,7 +24,9 @@ class PantryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _items = await _service.fetchPantryItems();
+      final pantryId = await _service.getPantryId();
+      debugPrint('fetched pantry id: $pantryId in provider');
+      _items = await _service.fetchPantryItems(pantryId);
       debugPrint('========================Fetched items: $_items');
     } catch (e) {
       debugPrint('Error fetching pantry items: $e');
@@ -34,12 +36,13 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addItem(String name, int quantity, int userId) async {
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
       final PantryItemModel newItem = PantryItemModel(
-        id: userId,
-        name: name,
+        id: productId,
         quantity: quantity,
+        expirationDate: expirationDate,
+        name: ''
       );
 
       // Save to backend
