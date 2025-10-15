@@ -47,9 +47,9 @@ class PantryProvider extends ChangeNotifier {
 
       // Save to backend
       await _service.addItem(newItem);
-
+      loadPantryItems();
       // Update local state immediately
-      _items.add(newItem);  // remove this. Just fetch after adding.
+      //_items.add(newItem);  // remove this. Just fetch after adding.
       notifyListeners();
 
       print('✅ Added item: ${newItem.name} (${newItem.quantity})');
