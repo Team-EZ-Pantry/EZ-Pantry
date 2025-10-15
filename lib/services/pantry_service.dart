@@ -86,7 +86,7 @@ class PantryService {
       body: jsonEncode(<String, Object>{
         'productId': item.id,
         'quantity': item.quantity,
-        'expiration_date': item.expirationDate,
+        'expiration_date': ?item.expirationDate,
       }),
     );
 
