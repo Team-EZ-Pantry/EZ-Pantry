@@ -11,29 +11,28 @@ class SessionController {
 
   final secureStorage = const FlutterSecureStorage();
 
-
   Future<void> setSession(String token) async {
     _authToken = token;
-    await secureStorage.write(key: '_authToken', value: token);
+    await secureStorage.write(key: 'authToken', value: token);
 
-    debugPrint('_authToken set: $token');
+    debugPrint('authToken set: $token');
   }
 
   Future<void> loadSession() async {
-    _authToken = await secureStorage.read(key: '_authToken');
+    _authToken = await secureStorage.read(key: 'authToken');
 
-    debugPrint('_authToken loaded: $_authToken');
+    debugPrint('authToken loaded: $_authToken');
   }
 
   Future<String?> getAuthToken() async {
     if (_authToken != null && _authToken!.isNotEmpty) {
-      debugPrint('Token from memory: $_authToken');
+      debugPrint('authToken from memory: $_authToken');
       return _authToken;
     }
 
     _authToken = await secureStorage.read(key: 'authToken');
 
-    debugPrint('Token from storage: $_authToken');
+    debugPrint('authToken from storage: $_authToken');
     return _authToken;
   }
 
@@ -41,12 +40,12 @@ class SessionController {
     await secureStorage.delete(key: 'authToken');
     _authToken = null;
 
-    debugPrint('AuthToken cleared');
+    debugPrint('authToken cleared');
   }
 
   bool checkAuthToken() {
 
-    debugPrint('Valid AuthToken: ${_authToken != null && _authToken != ''}');
+    debugPrint('Valid authToken: ${_authToken != null && _authToken != ''}');
     return _authToken != null && _authToken != '';
   }
 }
