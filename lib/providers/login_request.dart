@@ -16,7 +16,11 @@ Future<int> loginUser({
         int loginCode            = -1,  /// if -1 then unexpected error, 0 if login succeeded
 
 }) async {
+  // for web
   final Uri requestUrl = Uri.parse('http://localhost:3000/api/auth/login');
+
+  // for android emulator
+  //final Uri requestUrl = Uri.parse('http://10.0.2.2:3000/api/auth/login');
 
   final Map<String, String> headers = {
     'Content-Type': 'application/json',
