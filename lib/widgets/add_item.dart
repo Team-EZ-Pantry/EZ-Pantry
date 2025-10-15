@@ -13,7 +13,6 @@ class AddItemDialog extends StatefulWidget{
   int itemQuantity;
   String itemExpirationDate;
 
- 
   @override
   State<AddItemDialog> createState() => _AddItemDialogState();
 }

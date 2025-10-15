@@ -38,8 +38,7 @@ Future<int> loginUser({
       final data = jsonDecode(response.body);
 
       /// Save the token securely
-      final session = SessionController.instance;
-      session.setSession(data['token'] as String);
+      SessionController.instance.setSession(data['token'] as String);
 
       debugPrint('AuthToken: ' + data.toString());
       debugPrint('User Logged in: $data');
