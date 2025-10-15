@@ -7,7 +7,6 @@ import '../utilities/session_controller.dart';
 class PantryService {
   final String baseUrl = 'http://localhost:3000/api/pantry';
 
-
   Future<int> getPantryId() async {
     final headers = {
       'Content-Type': 'application/json',
@@ -21,25 +20,21 @@ class PantryService {
 
     print('Response body: ${response.body}');
 
-
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
-
 
       final List<dynamic> pantries = data['pantries'] as List<dynamic>;
       if (pantries.isEmpty) {
         throw Exception('No pantries found for this user.');
       }
-      // Access pantry_id
-      final int pantryId = pantries[0]['pantry_id'] as int;
 
+      final int pantryId = pantries[0]['pantry_id'] as int;
       print('Pantry ID: $pantryId ------------------------------------------------------');
       return pantryId;
     } else {
       throw Exception('Failed to fetch pantry ID: ${response.statusCode}');
     }
   }
-
 
   Future<List<PantryItemModel>> fetchPantryItems(int pantryId) async {
 

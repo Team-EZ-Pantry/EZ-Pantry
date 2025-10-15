@@ -39,7 +39,6 @@ class _AddItemDialogState extends State<AddItemDialog> {
     final quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
     final expirationDate = _expirationDateController.text.trim();
 
-
     setState(() => _isSaving = true);
 
     // Send directly to the provider
@@ -75,8 +74,8 @@ class _AddItemDialogState extends State<AddItemDialog> {
             TextFormField(
               controller: _expirationDateController,
               autofocus: true,
-              decoration: const InputDecoration(hintText: 'Expiration date'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product expiration date' : null,
+              decoration: const InputDecoration(hintText: 'Expiration date (optional)'),
+              //validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product expiration date' : null,
             ),
           ],
         ),

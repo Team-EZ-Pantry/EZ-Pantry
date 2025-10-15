@@ -7,11 +7,9 @@ class PantryProvider extends ChangeNotifier {
   final PantryService _service = PantryService();
 
   List<PantryItemModel> _items = <PantryItemModel>[];
-
   List<PantryItemModel> get items => _items;
 
   bool _loading = false;
-
   bool get loading => _loading;
 
   void init() {
@@ -59,4 +57,3 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 }
-
