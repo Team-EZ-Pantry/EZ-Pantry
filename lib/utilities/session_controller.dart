@@ -25,7 +25,7 @@ class SessionController {
     debugPrint('_authToken loaded: $_authToken');
   }
 
-  Future<String?> getauthToken() async {
+  Future<String?> getAuthToken() async {
     if (_authToken != null && _authToken!.isNotEmpty) {
       debugPrint('Token from memory: $_authToken');
       return _authToken;
@@ -40,7 +40,7 @@ class SessionController {
   Future<void> clearSession() async {
     await secureStorage.delete(key: 'authToken');
     _authToken = null;
-    
+
     debugPrint('AuthToken cleared');
   }
 
