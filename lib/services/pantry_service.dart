@@ -78,7 +78,6 @@ class PantryService {
     final pantryId = await getPantryId(); // async returns a String
     final url = Uri.parse('$baseUrl/$pantryId/products');
 
-
     final response = await http.post(
       url,
       headers: header,
@@ -91,6 +90,30 @@ class PantryService {
 
     if(response.statusCode != 200 && response.statusCode != 201) {
       throw Exception('Failed to add item: ${response.body}');
+    }
+  }
+
+  Future<void> updateQuantity(int productId, int quantity) async {
+
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final pantryId = await getPantryId(); // async returns a String
+
+    final url = Uri.parse('$baseUrl/$pantryId/products/$productId/quantity');
+
+    final response = await http.put(
+      url,
+      headers: header,
+      body: jsonEncode(<String, Object> {
+        'quantity': quantity,
+      }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to change quantity: ${response.body}');
     }
   }
 }

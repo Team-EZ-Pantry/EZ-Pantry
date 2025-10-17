@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'scan_page.dart';
-import 'package:ez_pantry/widgets/pantry_item.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
+import '../widgets/pantry_item.dart';
+import 'scan_page.dart';
 
 class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
@@ -72,6 +72,17 @@ class _PantryPageState extends State<PantryPage> {
                     return PantryItemTile(
                       title: item.name, // or item.title depending on your model
                       quantity: item.quantity,
+                      onIncrement: () {
+                        item.quantity++;
+                        pantry.updateQuantity(item.id, item.quantity);
+                      },
+                      onDecrement: () {
+                          item.quantity--;
+                          pantry.updateQuantity(item.id, item.quantity);
+                          if(item.quantity <= 0) {
+                            pantry.removeItemAt(index);
+                          }
+                      }
                     );
                   },
                 );
