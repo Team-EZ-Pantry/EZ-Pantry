@@ -12,7 +12,7 @@ void logoutUser(BuildContext context) {
 
   // Redirect to login screen
   Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+  debugPrint('logout_user(): redirected to login screen');
 
-  debugPrint('User logged out? successfully.');
   return;
 }
