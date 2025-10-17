@@ -58,12 +58,17 @@ class PantryProvider extends ChangeNotifier {
   Future<void> updateQuantity(int productId, int quantity) async {
     try {
       await _service.updateQuantity(productId, quantity);
-      loadPantryItems();
+      //loadPantryItems();
       notifyListeners();
 
       print('Updated quantity of $productId to $quantity');
     } catch(e) {
       print('Error updating quantity: $e');
     }
+    }
+
+    void removeItemAt(int index) {
+      items.removeAt(index);
+      notifyListeners();
     }
   }

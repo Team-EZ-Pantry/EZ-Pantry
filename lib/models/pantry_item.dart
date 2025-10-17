@@ -17,7 +17,7 @@ class PantryItemModel {
 
   final int id;
   final String name;
-  final int quantity;
+  int quantity;
   final String? expirationDate; // nullable
 
   Map<String, dynamic> toJson() {
