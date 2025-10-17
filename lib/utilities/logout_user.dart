@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 void logoutUser(BuildContext context) {
   // Clear user session data
+  SessionController.instance.clearSession();
+
   // Add any additional cleanup here, such as clearing caches or user-specific files
   ImageCache().clear();
   ImageCache().clearLiveImages();
