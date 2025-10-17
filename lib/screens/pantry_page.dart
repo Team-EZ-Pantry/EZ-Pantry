@@ -74,7 +74,7 @@ class _PantryPageState extends State<PantryPage> {
                       quantity: item.quantity,
                       onIncrement: () {
                         item.quantity++;
-                      pantry.updateQuantity(item.id, item.quantity);
+                        pantry.updateQuantity(item.id, item.quantity);
                       },
                       onDecrement: () {
                           item.quantity--;

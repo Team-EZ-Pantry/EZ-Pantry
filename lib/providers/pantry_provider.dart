@@ -64,7 +64,7 @@ class PantryProvider extends ChangeNotifier {
       print('Updated quantity of $productId to $quantity');
     } catch(e) {
       print('Error updating quantity: $e');
-    }
+      }
     }
 
     void removeItemAt(int index) {

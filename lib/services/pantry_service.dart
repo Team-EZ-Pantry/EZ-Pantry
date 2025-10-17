@@ -78,7 +78,6 @@ class PantryService {
     final pantryId = await getPantryId(); // async returns a String
     final url = Uri.parse('$baseUrl/$pantryId/products');
 
-
     final response = await http.post(
       url,
       headers: header,
@@ -103,16 +102,12 @@ class PantryService {
 
     final pantryId = await getPantryId(); // async returns a String
 
-    // get product id and quantity of said item here
-
-
     final url = Uri.parse('$baseUrl/$pantryId/products/$productId/quantity');
-
 
     final response = await http.put(
       url,
       headers: header,
-      body: jsonEncode(<String, Object>{
+      body: jsonEncode(<String, Object> {
         'quantity': quantity,
       }),
     );
