@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'login_page.dart'; // Import the login page
-import 'scan_page.dart';
-import 'package:ez_pantry/widgets/pantry_item.dart';
 import 'package:provider/provider.dart';
-import '../widgets/pantry_item.dart';
+
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
+import '../widgets/pantry_item.dart';
 import 'scan_page.dart';
 
 class PantryPage extends StatefulWidget {
@@ -74,6 +72,17 @@ class _PantryPageState extends State<PantryPage> {
                     return PantryItemTile(
                       title: item.name, // or item.title depending on your model
                       quantity: item.quantity,
+                      incrementQuantity: () {
+                        item.quantity++;
+                        pantry.updateQuantity(item.id, item.quantity);
+                      },
+                      decrementQuantity: () {
+                          item.quantity--;
+                          pantry.updateQuantity(item.id, item.quantity);
+                          if(item.quantity <= 0) {
+                            pantry.removeItemAt(index);
+                          }
+                      }
                     );
                   },
                 );

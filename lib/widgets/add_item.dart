@@ -5,51 +5,49 @@ import '../providers/pantry_provider.dart';
 
 class AddItemDialog extends StatefulWidget{
   
-  AddItemDialog({Key? key, required this.title, this.hintText = '', this.itemName = '', this.itemQuantity = 0, this.itemSize = ''}) : super(key: key);
-
+  AddItemDialog({Key? key, required this.title, this.hintText = '', this.itemName = '', this.itemQuantity = 0, this.itemExpirationDate = ''}) : super(key: key);
 
   final String title;
   final String hintText;
   String itemName;
   int itemQuantity;
-  String itemSize;
+  String itemExpirationDate;
 
- 
   @override
   State<AddItemDialog> createState() => _AddItemDialogState();
 }
 
 class _AddItemDialogState extends State<AddItemDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _productIdController = TextEditingController();
   final _quantityController = TextEditingController();
-  final _sizeController = TextEditingController();
+  final _expirationDateController = TextEditingController();
   bool _isSaving = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _productIdController.dispose();
     _quantityController.dispose();
-    _sizeController.dispose();
+    _expirationDateController.dispose();
     super.dispose();
   }
 
   Future<void> _onSave() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final name = _nameController.text.trim();
+    final productId = int.parse(_productIdController.text.trim());
     final quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
+    final expirationDate = _expirationDateController.text.trim();
 
     setState(() => _isSaving = true);
 
     // Send directly to the provider
-    await context.read<PantryProvider>().addItem(name, quantity, 2); // example userId = 2
+    await context.read<PantryProvider>().addItem(productId, quantity, expirationDate); // example userId = 2
 
     setState(() => _isSaving = false);
 
     Navigator.of(context).pop(); // close dialog
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,16 +60,22 @@ class _AddItemDialogState extends State<AddItemDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
-              controller: _nameController,
+              controller: _productIdController,
               autofocus: true,
-              decoration: const InputDecoration(hintText: 'Product'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product name' : null,
+              decoration: const InputDecoration(hintText: 'Product #'),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
             ),
             TextFormField(
               controller: _quantityController,
               autofocus: true,
               decoration: const InputDecoration(hintText: 'Quantity'),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product quantity' : null,
+            ),
+            TextFormField(
+              controller: _expirationDateController,
+              autofocus: true,
+              decoration: const InputDecoration(hintText: 'Expiration date (optional)'),
+              //validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product expiration date' : null,
             ),
           ],
         ),

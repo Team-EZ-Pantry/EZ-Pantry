@@ -16,7 +16,11 @@ Future<int> loginUser({
         int loginCode            = -1,  /// if -1 then unexpected error, 0 if login succeeded
 
 }) async {
+  // for web
   final Uri requestUrl = Uri.parse('http://localhost:3000/api/auth/login');
+
+  // for android emulator
+  //final Uri requestUrl = Uri.parse('http://10.0.2.2:3000/api/auth/login');
 
   final Map<String, String> headers = {
     'Content-Type': 'application/json',
@@ -38,12 +42,10 @@ Future<int> loginUser({
       final data = jsonDecode(response.body);
 
       /// Save the token securely
-      final SessionController sessionController = SessionController();
-      sessionController.saveAuthToken(data['token'] as String);
+      SessionController.instance.setSession(data['token'] as String);
+
       debugPrint('AuthToken: ' + data.toString());
-
       debugPrint('User Logged in: $data');
-
     } else {
       if (response.statusCode == badRequestCode && kDebugMode) {
         debugPrint('loginUser() Bad Request: ${response.body}');
