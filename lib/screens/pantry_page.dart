@@ -79,16 +79,10 @@ class _PantryPageState extends State<PantryPage> {
                       decrementQuantity: () {
                           item.quantity--;
                           pantry.updateQuantity(item.id, item.quantity);
-                          if(item.quantity <= 0) {
-                            pantry.removeItemAt(index);
-                          }
                       },
                       changeQuantity: (int newQuantity) {
                         item.quantity = newQuantity;
                         pantry.updateQuantity(item.id, item.quantity);
-                        if(item.quantity <= 0) {
-                          pantry.removeItemAt(index);
-                        }
                       },
                     );
                   },
