@@ -7,7 +7,7 @@ class PantryItemTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? incrementQuantity;
   final VoidCallback? decrementQuantity;
-  final ValueChanged<int>? changeQuantity; // new callback
+  final ValueChanged<int>? changeQuantity;
 
   const PantryItemTile({
     super.key,
@@ -17,7 +17,7 @@ class PantryItemTile extends StatelessWidget {
     this.onTap,
     this.incrementQuantity,
     this.decrementQuantity,
-    this.changeQuantity, // added to constructor
+    this.changeQuantity,
   });
 
   @override
