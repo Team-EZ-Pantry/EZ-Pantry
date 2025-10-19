@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ez_pantry/screens/login_page.dart.';
 
-class RegistrationLoginTextField extends StatelessWidget {
+class RegistrationLoginTextField extends TextField {
   final String label;
   final String? hintText;
   final TextEditingController? controller;
@@ -27,6 +28,7 @@ class RegistrationLoginTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onSubmitted: (String value) {},
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
