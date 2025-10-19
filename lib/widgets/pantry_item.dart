@@ -7,6 +7,7 @@ class PantryItemTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? incrementQuantity;
   final VoidCallback? decrementQuantity;
+  final ValueChanged<int>? changeQuantity; // new callback
 
   const PantryItemTile({
     super.key,
@@ -16,6 +17,7 @@ class PantryItemTile extends StatelessWidget {
     this.onTap,
     this.incrementQuantity,
     this.decrementQuantity,
+    this.changeQuantity, // added to constructor
   });
 
   @override
@@ -36,7 +38,7 @@ class PantryItemTile extends StatelessWidget {
           children: [
             // Item name
             SizedBox(
-              width: 220, // adjust this to your layout
+              width: 220,
               child: Text(
                 title,
                 style: const TextStyle(fontWeight: FontWeight.normal),
@@ -66,20 +68,58 @@ class PantryItemTile extends StatelessWidget {
 
             const SizedBox(width: 6),
 
-            // Quantity badge
-            Container(
-              width: 40,
-              height: 28,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.green.shade100,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                '$quantity',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+            // Editable quantity badge
+            InkWell(
+              onTap: () async {
+                final controller = TextEditingController(text: quantity.toString());
+                final newQuantity = await showDialog<int>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Edit Quantity'),
+                    content: TextField(
+                      controller: controller,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Quantity',
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          final value = int.tryParse(controller.text);
+                          if (value != null) {
+                            Navigator.pop(context, value);
+                          }
+                        },
+                        child: const Text('Save'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (newQuantity != null) {
+                  changeQuantity?.call(newQuantity);
+                }
+              },
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                width: 40,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '$quantity',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
@@ -106,9 +146,7 @@ class PantryItemTile extends StatelessWidget {
           ],
         ),
 
-        // Subtitle below item
         subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
-        // Removed trailing icon entirely
       ),
     );
   }
