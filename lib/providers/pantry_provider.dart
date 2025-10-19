@@ -1,2 +1,74 @@
-// fetch pantry items here
-// then store them in the relevant model
+// providers/pantry_provider.dart
+import 'package:flutter/material.dart';
+import '../models/pantry_item.dart';
+import '../services/pantry_service.dart';
+
+class PantryProvider extends ChangeNotifier {
+  final PantryService _service = PantryService();
+
+  List<PantryItemModel> _items = <PantryItemModel>[];
+  List<PantryItemModel> get items => _items;
+
+  bool _loading = false;
+  bool get loading => _loading;
+
+  void init() {
+    // schedule after first frame to avoid calling notifyListeners during build
+    Future.microtask(() => loadPantryItems());
+  }
+
+  Future<void> loadPantryItems() async {
+    _loading = true;
+    notifyListeners();
+
+    try {
+      final pantryId = await _service.getPantryId();
+      debugPrint('fetched pantry id: $pantryId in provider');
+      _items = await _service.fetchPantryItems(pantryId);
+      debugPrint('========================Fetched items: $_items');
+    } catch (e) {
+      debugPrint('Error fetching pantry items: $e');
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
+    try {
+      final PantryItemModel newItem = PantryItemModel(
+        id: productId,
+        quantity: quantity,
+        expirationDate: expirationDate,
+        name: ''
+      );
+
+      // Save to backend
+      await _service.addItem(newItem);
+      loadPantryItems();
+      notifyListeners();
+
+      print('✅ Added item: ${newItem.name} (${newItem.quantity})');
+    } catch (e) {
+      print('❌ Error adding pantry item: $e');
+      rethrow; // optional: let UI handle error display
+    }
+  }
+
+  Future<void> updateQuantity(int productId, int quantity) async {
+    try {
+      await _service.updateQuantity(productId, quantity);
+      //loadPantryItems();
+      notifyListeners();
+
+      print('Updated quantity of $productId to $quantity');
+    } catch(e) {
+      print('Error updating quantity: $e');
+      }
+    }
+
+    void removeItemAt(int index) {
+      items.removeAt(index);
+      notifyListeners();
+    }
+  }

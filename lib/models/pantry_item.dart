@@ -1,29 +1,36 @@
-class PantryItem {
-  final int id;
-  final String name;
-  final int quantity;
-
-  PantryItem({
+class PantryItemModel {
+  PantryItemModel({
     required this.id,
     required this.name,
     required this.quantity,
+    this.expirationDate, // now nullable
   });
 
-  // Create a PantryItem from JSON
-  factory PantryItem.fromJson(Map<String, dynamic> json) {
-    return PantryItem(
-      id: json['id'],
-      name: json['name'],
-      quantity: json['quantity'],
+  factory PantryItemModel.fromJson(Map<String, dynamic> json) {
+    return PantryItemModel(
+      id: json['product_id'] as int,
+      name: json['product_name'] as String,
+      quantity: json['quantity'] as int,
+      expirationDate: json['expiration_date']?.toString(), // safely convert
     );
   }
 
-  // Convert PantryItem to JSON (useful for POST requests)
+  final int id;
+  final String name;
+  int quantity;
+  final String? expirationDate; // nullable
+
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
+      'product_id': id,
+      'product_name': name,
       'quantity': quantity,
+      'expiration_date': expirationDate,
     };
+  }
+
+  @override
+  String toString() {
+    return 'PantryItemModel(id: $id, name: $name, quantity: $quantity, expirationDate: $expirationDate)';
   }
 }

@@ -1,24 +1,51 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import the login page
-import 'package:ez_pantry/screens/scan_page.dart';
-import 'package:ez_pantry/widgets/pantry_item.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
 
-class PantryPage extends StatelessWidget {
+import '../providers/pantry_provider.dart';
+import '../widgets/add_item.dart';
+import '../widgets/pantry_item.dart';
+import 'scan_page.dart';
+
+class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
 
-  void _onScanButtonPressed(BuildContext context) async {
+  @override
+  State<PantryPage> createState() => _PantryPageState();
+}
+
+class _PantryPageState extends State<PantryPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Safe to call provider here
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pantryProvider = context.read<PantryProvider>();
+      pantryProvider.loadPantryItems();
+    });
+  }
+
+  Future<void> _onScanButtonPressed(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ScanPage()),
+      MaterialPageRoute(builder: (BuildContext context) => const ScanPage()),
     );
 
     if (result != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Scanned barcode: $result')),
       );
-      print('Scanned barcode: $result');
+      debugPrint('Scanned barcode: $result');
       // TODO: Call API or update pantry items with this barcode
     }
+  }
+
+  Future<void> _onAddItemButtonPressed() async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AddItemDialog(title: 'Enter item', hintText: 'hintText'),
+    );
+    if (result == null) return;
   }
 
   @override
@@ -26,36 +53,61 @@ class PantryPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Main content of the Pantry page
           Material(
-            child: PantryItem(title: 'food')
-          ),
+            child: Consumer<PantryProvider>(
+              builder: (BuildContext context, pantry, child) {
+                if (pantry.loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          // Login button positioned at the top right
-          Positioned(
-            top: 10,
-            right: 10,
-            child: IconButton(
-              icon: const Icon(
-                Icons.account_circle_outlined,
-                size: 32, // Adjust size as needed
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                if (pantry.items.isEmpty) {
+                  return const Center(child: Text('Empty Pantry'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  itemCount: pantry.items.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = pantry.items[index];
+                    return PantryItemTile(
+                      title: item.name, // or item.title depending on your model
+                      quantity: item.quantity,
+                      incrementQuantity: () {
+                        item.quantity++;
+                        pantry.updateQuantity(item.id, item.quantity);
+                      },
+                      decrementQuantity: () {
+                          item.quantity--;
+                          pantry.updateQuantity(item.id, item.quantity);
+                          if(item.quantity <= 0) {
+                            pantry.removeItemAt(index);
+                          }
+                      }
+                    );
+                  },
                 );
               },
             ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _onScanButtonPressed(context),
-        icon: const Icon(Icons.qr_code_scanner),
-        label: const Text('Scan'),
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.close,
+        backgroundColor: Colors.blue,
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.qr_code_scanner),
+            label: 'Scan Item',
+            onTap: () => _onScanButtonPressed(context),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.menu),
+            label: 'Add Item',
+            onTap: () => _onAddItemButtonPressed(),
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
