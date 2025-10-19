@@ -72,11 +72,11 @@ class _PantryPageState extends State<PantryPage> {
                     return PantryItemTile(
                       title: item.name, // or item.title depending on your model
                       quantity: item.quantity,
-                      onIncrement: () {
+                      incrementQuantity: () {
                         item.quantity++;
                         pantry.updateQuantity(item.id, item.quantity);
                       },
-                      onDecrement: () {
+                      decrementQuantity: () {
                           item.quantity--;
                           pantry.updateQuantity(item.id, item.quantity);
                           if(item.quantity <= 0) {

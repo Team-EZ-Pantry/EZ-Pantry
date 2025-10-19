@@ -5,8 +5,8 @@ class PantryItemTile extends StatelessWidget {
   final String subtitle;
   final int quantity;
   final VoidCallback? onTap;
-  final VoidCallback? onIncrement;
-  final VoidCallback? onDecrement;
+  final VoidCallback? incrementQuantity;
+  final VoidCallback? decrementQuantity;
 
   const PantryItemTile({
     super.key,
@@ -14,8 +14,8 @@ class PantryItemTile extends StatelessWidget {
     this.subtitle = '',
     required this.quantity,
     this.onTap,
-    this.onIncrement,
-    this.onDecrement,
+    this.incrementQuantity,
+    this.decrementQuantity,
   });
 
   @override
@@ -48,7 +48,7 @@ class PantryItemTile extends StatelessWidget {
 
             // Decrement button
             InkWell(
-              onTap: onDecrement,
+              onTap: decrementQuantity,
               borderRadius: BorderRadius.circular(6),
               child: Container(
                 width: 28,
@@ -88,7 +88,7 @@ class PantryItemTile extends StatelessWidget {
 
             // Increment button
             InkWell(
-              onTap: onIncrement,
+              onTap: incrementQuantity,
               borderRadius: BorderRadius.circular(6),
               child: Container(
                 width: 28,
