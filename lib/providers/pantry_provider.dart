@@ -18,22 +18,25 @@ class PantryProvider extends ChangeNotifier {
     Future.microtask(() => loadPantryItems());
   }
 
-  Future<void> loadPantryItems() async {
+  Future<bool> loadPantryItems() async {
     _loading = true;
     notifyListeners();
 
     try {
       final pantryId = await _service.getPantryId();
-      debugPrint('fetched pantry id: $pantryId in provider');
+      debugPrint('Fetched pantry id: $pantryId in provider');
       _items = await _service.fetchPantryItems(pantryId);
-      debugPrint('========================Fetched items: $_items');
+      debugPrint('Fetched items: $_items');
+      return true; // Pantry loaded successfully
     } catch (e) {
       debugPrint('Error fetching pantry items: $e');
+      return false; // Pantry not found or some other failure
     } finally {
       _loading = false;
       notifyListeners();
     }
   }
+
 
   Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
@@ -72,4 +75,14 @@ class PantryProvider extends ChangeNotifier {
       items.removeAt(index);
       notifyListeners();
     }
+
+  Future<void> createPantry(String pantryName) async {
+    try {
+      await _service.createPantry(pantryName);
+    } catch(e) {
+
+    }
   }
+}
+
+
