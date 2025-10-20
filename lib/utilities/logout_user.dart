@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'session_controller.dart';
+
 void logoutUser(BuildContext context) {
   // Clear user session data
   SessionController.instance.clearSession();
