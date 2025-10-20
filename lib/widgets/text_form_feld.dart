@@ -1,3 +1,4 @@
+/// A reusable TextField widget for login and registration forms.
 import 'package:flutter/material.dart';
 
 class RegistrationLoginTextField extends StatelessWidget {
@@ -11,7 +12,7 @@ class RegistrationLoginTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final void Function(String)? onSubmitted; 
 
-  RegistrationLoginTextField({
+  const RegistrationLoginTextField({
     Key? key,
     required this.label,
     this.hintText,

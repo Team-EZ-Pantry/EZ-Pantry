@@ -163,6 +163,13 @@
             </list>
           </value>
         </entry>
+        <entry key="flutter_speed_dial">
+          <value>
+            <list>
+              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_speed_dial-7.0.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter_test">
           <value>
             <list>

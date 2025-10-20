@@ -7,7 +7,8 @@ import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
 import 'screens/shopping_page.dart';
-import 'utilities/session_controller.dart';
+import 'utilities/logout_user.dart';  
+
 
 void main() {  
   SessionController.instance.loadSession();
@@ -89,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              Navigator.pushNamed(context, '/login');
+              logoutUser(context);
             }
           )
         ],

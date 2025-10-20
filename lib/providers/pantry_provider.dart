@@ -10,6 +10,7 @@ class PantryProvider extends ChangeNotifier {
   List<PantryItemModel> get items => _items;
 
   bool _loading = false;
+
   bool get loading => _loading;
 
   void init() {
