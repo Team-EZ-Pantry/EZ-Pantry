@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // needed for FilteringTextInputFormatter
 
 class PantryItemTile extends StatelessWidget {
   final String title;
@@ -79,8 +80,12 @@ class PantryItemTile extends StatelessWidget {
                     content: TextField(
                       controller: controller,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                       decoration: const InputDecoration(
                         labelText: 'Quantity',
+                        hintText: 'Enter a positive number',
                       ),
                     ),
                     actions: [
@@ -91,7 +96,7 @@ class PantryItemTile extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           final value = int.tryParse(controller.text);
-                          if (value != null) {
+                          if (value != null && value >= 0) {
                             Navigator.pop(context, value);
                           }
                         },
