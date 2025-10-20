@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
  
       initialRoute: SessionController.instance.checkAuthToken() ? '/home' : '/login',
 
+
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/home': (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
@@ -83,16 +84,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-        actions: [
-          IconButton(
+        leading: IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
               Navigator.pushNamed(context, '/login');
             }
-          )
-        ],
+        ),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+        centerTitle: true,
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
