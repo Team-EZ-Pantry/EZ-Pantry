@@ -10,7 +10,9 @@ import 'screens/shopping_page.dart';
 import 'utilities/logout_user.dart';  
 
 
-void main() {
+void main() {  
+  SessionController.instance.loadSession();
+
   runApp(
       ChangeNotifierProvider<PantryProvider>(
         create: (_) => PantryProvider(),
@@ -24,13 +26,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    
-    /// Check for the auth token
-    String launchRoute;
-
-      launchRoute = '/login';
-    
     return MaterialApp(
       title: 'EZ Pantry',
       theme: ThemeData(
@@ -38,13 +33,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
+ 
+      initialRoute: SessionController.instance.checkAuthToken() ? '/home' : '/login',
 
-			initialRoute: launchRoute,
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/home': (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
       },
-
     );
   }
 }
@@ -66,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     _widgetOptions = [
       const RecipesPage(),
       PantryPage(), // non-const

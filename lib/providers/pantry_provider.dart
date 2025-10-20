@@ -7,7 +7,6 @@ class PantryProvider extends ChangeNotifier {
   final PantryService _service = PantryService();
 
   List<PantryItemModel> _items = <PantryItemModel>[];
-
   List<PantryItemModel> get items => _items;
 
   bool _loading = false;
@@ -24,7 +23,9 @@ class PantryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _items = await _service.fetchPantryItems();
+      final pantryId = await _service.getPantryId();
+      debugPrint('fetched pantry id: $pantryId in provider');
+      _items = await _service.fetchPantryItems(pantryId);
       debugPrint('========================Fetched items: $_items');
     } catch (e) {
       debugPrint('Error fetching pantry items: $e');
@@ -34,26 +35,41 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addItem(String name, int quantity, int userId) async {
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
       final PantryItemModel newItem = PantryItemModel(
-        id: userId,
-        name: name,
+        id: productId,
         quantity: quantity,
+        expirationDate: expirationDate,
+        name: ''
       );
 
       // Save to backend
       await _service.addItem(newItem);
-
-      // Update local state immediately
-      _items.add(newItem);
+      loadPantryItems();
       notifyListeners();
 
-      debugPrint('✅ Added item: ${newItem.name} (${newItem.quantity})');
+      print('✅ Added item: ${newItem.name} (${newItem.quantity})');
     } catch (e) {
-      debugPrint('❌ Error adding pantry item: $e');
+      print('❌ Error adding pantry item: $e');
       rethrow; // optional: let UI handle error display
     }
   }
-}
 
+  Future<void> updateQuantity(int productId, int quantity) async {
+    try {
+      await _service.updateQuantity(productId, quantity);
+      //loadPantryItems();
+      notifyListeners();
+
+      print('Updated quantity of $productId to $quantity');
+    } catch(e) {
+      print('Error updating quantity: $e');
+      }
+    }
+
+    void removeItemAt(int index) {
+      items.removeAt(index);
+      notifyListeners();
+    }
+  }
