@@ -70,19 +70,24 @@ class _PantryPageState extends State<PantryPage> {
                   itemBuilder: (BuildContext context, int index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
-                      title: item.name, // or item.title depending on your model
+                      title: item.name,
                       quantity: item.quantity,
                       incrementQuantity: () {
                         item.quantity++;
                         pantry.updateQuantity(item.id, item.quantity);
                       },
                       decrementQuantity: () {
+                        if(item.quantity > 0) {
                           item.quantity--;
                           pantry.updateQuantity(item.id, item.quantity);
-                          if(item.quantity <= 0) {
-                            pantry.removeItemAt(index);
+                        }
+                      },
+                      changeQuantity: (int newQuantity) {
+                        if(newQuantity >= 0) {
+                          item.quantity = newQuantity;
+                          pantry.updateQuantity(item.id, item.quantity);
                           }
-                      }
+                        },
                     );
                   },
                 );
