@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ez_pantry/screens/login_page.dart.';
 
-class RegistrationLoginTextField extends TextField {
+class RegistrationLoginTextField extends StatelessWidget {
   final String label;
   final String? hintText;
   final TextEditingController? controller;
