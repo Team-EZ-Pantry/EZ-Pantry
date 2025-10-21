@@ -79,8 +79,8 @@ class PantryProvider extends ChangeNotifier {
   Future<void> createPantry(String pantryName) async {
     try {
       await _service.createPantry(pantryName);
-    } catch(e) {
-
+    } catch (e) {
+      debugPrint('Error creating pantry: $e');
     }
   }
 }
