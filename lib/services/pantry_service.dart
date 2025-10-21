@@ -30,6 +30,7 @@ class PantryService {
       final List<dynamic> pantries = data['pantries'] as List<dynamic>;
       if (pantries.isEmpty) {
         throw Exception('No pantries found for this user.');
+
       }
 
       final int pantryId = pantries[0]['pantry_id'] as int;
@@ -114,6 +115,28 @@ class PantryService {
 
     if(response.statusCode != 200 && response.statusCode != 201) {
       throw Exception('Failed to change quantity: ${response.body}');
+    }
+  }
+
+  Future<void> createPantry(String pantryName) async {
+
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final url = Uri.parse('$baseUrl/');
+
+    final response = await http.post(
+        url,
+        headers: header,
+        body: jsonEncode(<String, Object> {
+          'name': pantryName,
+        }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to create pantry: ${response.body}');
     }
   }
 }
