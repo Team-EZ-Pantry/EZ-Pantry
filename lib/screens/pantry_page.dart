@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
+import '../widgets/new_pantry_prompt.dart';
 import '../widgets/pantry_item.dart';
 import 'scan_page.dart';
 
@@ -18,12 +19,36 @@ class _PantryPageState extends State<PantryPage> {
   @override
   void initState() {
     super.initState();
-    // Safe to call provider here
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final pantryProvider = context.read<PantryProvider>();
-      pantryProvider.loadPantryItems();
+
+      final loaded = await pantryProvider.loadPantryItems();
+
+      if (!loaded) {
+        String? pantryName;
+
+        // Keep showing the dialog until user enters a name
+        while (pantryName == null || pantryName.isEmpty) {
+          pantryName = await showDialog<String>(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const NewPantryPrompt(),
+          );
+
+          if (pantryName == null || pantryName.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('You must create a pantry to continue.')),
+            );
+          }
+        }
+
+        await pantryProvider.createPantry(pantryName);
+        await pantryProvider.loadPantryItems();
+      }
     });
   }
+
 
   Future<void> _onScanButtonPressed(BuildContext context) async {
     final result = await Navigator.push(

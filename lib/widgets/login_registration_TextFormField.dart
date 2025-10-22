@@ -1,5 +1,6 @@
 /// A reusable TextField widget for login and registration forms.
 import 'package:flutter/material.dart';
+import 'package:ez_pantry/screens/login_page.dart.';
 
 class RegistrationLoginTextField extends StatelessWidget {
   final String label;
@@ -28,6 +29,7 @@ class RegistrationLoginTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onSubmitted: (String value) {},
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
