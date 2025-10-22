@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../main.dart'; // Correct relative path to import MyHomePage
 import '../providers/login_request.dart';
-import '../utilities/checkLogin.dart';
+import '../utilities/check_login.dart';
 import '../widgets/text_form_feld.dart';
 import 'registration_page.dart'; // Import RegistrationPage class
 

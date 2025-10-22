@@ -64,6 +64,13 @@ class _AddItemDialogState extends State<AddItemDialog> {
               autofocus: true,
               decoration: const InputDecoration(hintText: 'Product #'),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
+              onTap: () {
+                if (_productIdController.text.length > 1) {
+                  /// Create search dialog to select product from list
+                  
+
+                }
+              },
             ),
             TextFormField(
               controller: _quantityController,

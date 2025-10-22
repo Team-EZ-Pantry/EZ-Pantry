@@ -18,6 +18,9 @@ class _PantryPageState extends State<PantryPage> {
   @override
   void initState() {
     super.initState();
+
+    
+
     // Safe to call provider here
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final pantryProvider = context.read<PantryProvider>();
