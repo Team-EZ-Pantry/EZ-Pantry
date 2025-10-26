@@ -83,6 +83,15 @@ class PantryProvider extends ChangeNotifier {
       debugPrint('Error creating pantry: $e');
     }
   }
+
+  Future<void> addItemByBarcode(String barcode, int quantity, String? expirationDate) async {
+    try {
+      //await _service.addItemByBarcode(barcode, quantity, expirationDate);
+    } catch (e) {
+      debugPrint('Error adding item by barcode: $e');
+    }
+  }
+
 }
 
 

@@ -139,4 +139,28 @@ class PantryService {
       throw Exception('Failed to create pantry: ${response.body}');
     }
   }
+
+  // NEEDS TO BE FINISHED
+  Future<void> addItemByBarcode(String barcode, int quantity, String expirationDate) async {
+
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final url = Uri.parse('$baseUrl/');  // change to whatever gets setup on the backside
+
+    final response = await http.post(
+      url,
+      headers: header,
+      body: jsonEncode(<String, Object> {
+
+      })
+    );
+
+
+
+
+  }
+
 }
