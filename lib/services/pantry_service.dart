@@ -94,6 +94,36 @@ class PantryService {
     }
   }
 
+  Future<void> updateItem({
+    required int productId,
+    int? quantity,
+    String? expirationDate,
+  }) async {
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final pantryId = await getPantryId(); // async returns a String
+
+    final url = Uri.parse('$baseUrl/$pantryId/products/$productId');
+
+    final Map<String, Object> body = {};
+
+    if (quantity != null) body['quantity'] = quantity;
+    if (expirationDate != null)  body['expirationDate'] = expirationDate;
+
+    final response = await http.put(
+      url,
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to change item details: ${response.body}');
+    }
+  }
+
   Future<void> updateQuantity(int productId, int quantity) async {
 
     final header = {

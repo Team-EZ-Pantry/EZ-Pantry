@@ -5,19 +5,19 @@ import '../providers/pantry_provider.dart';
 
 class EditItemDialog extends StatefulWidget{
   
-  EditItemDialog({Key? key, required this.title, this.hintText = '', this.itemName = '', this.itemQuantity = 0, this.itemExpirationDate = ''}) : super(key: key);
+  EditItemDialog({Key? key, required this.title, this.itemName = '', this.itemQuantity = 0, this.itemId = 0, this.itemExpirationDate}) : super(key: key);
 
   final String title;
-  final String hintText;
   final String itemName;
+  final String? itemExpirationDate;
+  final int itemId;
   final int itemQuantity;
-  final String itemExpirationDate;
 
   @override
-  State<EditItemDialog> createState() => _AddItemDialogState();
+  State<EditItemDialog> createState() => _EditItemDialogState();
 }
 
-class _AddItemDialogState extends State<EditItemDialog> {
+class _EditItemDialogState extends State<EditItemDialog> {
   final _formKey = GlobalKey<FormState>();
   final _productIdController = TextEditingController();
   final _quantityController = TextEditingController();
@@ -42,7 +42,7 @@ class _AddItemDialogState extends State<EditItemDialog> {
     setState(() => _isSaving = true);
 
     // Send directly to the provider
-    await context.read<PantryProvider>().addItem(productId, quantity, expirationDate); // example userId = 2
+    await context.read<PantryProvider>().updateItem(productId, quantity, expirationDate); // example userId = 2
 
     setState(() => _isSaving = false);
 
@@ -51,47 +51,37 @@ class _AddItemDialogState extends State<EditItemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: EdgeInsets.all(12),
-      title: Text(widget.title),
-      content: Form(
-        key: _formKey,
+    return Dialog(
+      child: Container(
+        margin: EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+        width: double.infinity,
+        height: double.infinity,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _productIdController,
-              autofocus: true,
-              decoration: const InputDecoration(hintText: 'Product #'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
-            ),
-            TextFormField(
-              controller: _quantityController,
-              autofocus: true,
-              decoration: const InputDecoration(hintText: 'Quantity'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product quantity' : null,
-            ),
-            TextFormField(
-              controller: _expirationDateController,
-              autofocus: true,
-              decoration: const InputDecoration(hintText: 'Expiration date (optional)'),
-              //validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product expiration date' : null,
-            ),
-          ],
+          children: [ 
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _isSaving ? null : _onSave,
+                    child: _isSaving
+                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Text('Save')
+                  ),
+                ],
+              ),
+            )
+          ]
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _isSaving ? null : _onSave,
-          child: _isSaving
-            ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Text('Save'),
-        ),
-      ],
     );
   }
 }

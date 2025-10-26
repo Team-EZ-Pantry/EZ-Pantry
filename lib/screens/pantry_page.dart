@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
+import '../widgets/edit_item.dart';
 import '../widgets/new_pantry_prompt.dart';
 import '../widgets/pantry_item.dart';
-import '../widgets/edit_item.dart';
 import 'scan_page.dart';
 
 class PantryPage extends StatefulWidget {
@@ -74,10 +74,10 @@ class _PantryPageState extends State<PantryPage> {
     if (result == null) return;
   }
 
-  Future<void> _onItemTapped() async {
+  Future<void> _onItemTapped(String name, int quantity, int id, String? expirationDate) async {
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => EditItemDialog(title: 'Enter item', hintText: 'hintText'),
+      builder: (context) => EditItemDialog(title: 'Edit item', itemName: name, itemQuantity: quantity, itemId: id, itemExpirationDate: expirationDate),
     );
     if (result == null) return;
   }
@@ -104,6 +104,7 @@ class _PantryPageState extends State<PantryPage> {
                   itemBuilder: (BuildContext context, int index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
+                      onTap: () => _onItemTapped(item.name, item.quantity, item.id, item.expirationDate),
                       title: item.name,
                       quantity: item.quantity,
                       incrementQuantity: () {
@@ -122,7 +123,6 @@ class _PantryPageState extends State<PantryPage> {
                           pantry.updateQuantity(item.id, item.quantity);
                         }
                       },
-                      onTap: () => _onItemTapped(),
                     );
                   },
                 );
