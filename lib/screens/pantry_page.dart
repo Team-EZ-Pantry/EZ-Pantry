@@ -6,6 +6,7 @@ import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
 import '../widgets/new_pantry_prompt.dart';
 import '../widgets/pantry_item.dart';
+import '../widgets/edit_item.dart';
 import 'scan_page.dart';
 
 class PantryPage extends StatefulWidget {
@@ -73,6 +74,14 @@ class _PantryPageState extends State<PantryPage> {
     if (result == null) return;
   }
 
+  Future<void> _onItemTapped() async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => EditItemDialog(title: 'Enter item', hintText: 'hintText'),
+    );
+    if (result == null) return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,8 +120,9 @@ class _PantryPageState extends State<PantryPage> {
                         if(newQuantity >= 0) {
                           item.quantity = newQuantity;
                           pantry.updateQuantity(item.id, item.quantity);
-                          }
-                        },
+                        }
+                      },
+                      onTap: () => _onItemTapped(),
                     );
                   },
                 );

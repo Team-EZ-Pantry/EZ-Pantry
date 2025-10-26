@@ -29,10 +29,20 @@ class RegistrationLoginTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onSubmitted: (String value) {},
+      focusNode: focusNode,
+      textInputAction: textInputAction,
+      maxLines: 1,
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      onSubmitted: (String value) {
+        if (textInputAction == TextInputAction.next) {
+          FocusScope.of(context).nextFocus();
+        }
+        if (onSubmitted != null) {
+          onSubmitted!(value);
+        }
+      },
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,

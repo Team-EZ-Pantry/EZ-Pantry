@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import '../providers/pantry_provider.dart';
 
 
-class AddItemDialog extends StatefulWidget{
+class EditItemDialog extends StatefulWidget{
   
-  AddItemDialog({Key? key, required this.title, this.hintText = '', this.itemName = '', this.itemQuantity = 0, this.itemExpirationDate = ''}) : super(key: key);
+  EditItemDialog({Key? key, required this.title, this.hintText = '', this.itemName = '', this.itemQuantity = 0, this.itemExpirationDate = ''}) : super(key: key);
 
   final String title;
   final String hintText;
@@ -14,10 +14,10 @@ class AddItemDialog extends StatefulWidget{
   final String itemExpirationDate;
 
   @override
-  State<AddItemDialog> createState() => _AddItemDialogState();
+  State<EditItemDialog> createState() => _AddItemDialogState();
 }
 
-class _AddItemDialogState extends State<AddItemDialog> {
+class _AddItemDialogState extends State<EditItemDialog> {
   final _formKey = GlobalKey<FormState>();
   final _productIdController = TextEditingController();
   final _quantityController = TextEditingController();

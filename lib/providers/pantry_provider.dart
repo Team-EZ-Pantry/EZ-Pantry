@@ -52,9 +52,9 @@ class PantryProvider extends ChangeNotifier {
       loadPantryItems();
       notifyListeners();
 
-      print('✅ Added item: ${newItem.name} (${newItem.quantity})');
+      debugPrint('✅ Added item: ${newItem.name} (${newItem.quantity})');
     } catch (e) {
-      print('❌ Error adding pantry item: $e');
+      debugPrint('❌ Error adding pantry item: $e');
       rethrow; // optional: let UI handle error display
     }
   }

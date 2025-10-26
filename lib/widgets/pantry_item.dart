@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // needed for FilteringTextInputFormatter
+import '../screens/pantry_page.dart';
 
 class PantryItemTile extends StatelessWidget {
   final String title;
@@ -24,6 +25,7 @@ class PantryItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      onTap: onTap,
       height: 52,
       decoration: const BoxDecoration(
         border: Border(
@@ -34,7 +36,6 @@ class PantryItemTile extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        onTap: onTap,
         title: Row(
           children: [
             // Item name
