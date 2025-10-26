@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/pantry_provider.dart';
 
+import '../models/pantry_item.dart';
+import '../providers/pantry_provider.dart';
+import '../providers/search_provider.dart';
+
+        List<PantryItemModel> searchResults = List.empty();
 
 class AddItemDialog extends StatefulWidget{
   
@@ -9,9 +15,10 @@ class AddItemDialog extends StatefulWidget{
 
   final String title;
   final String hintText;
-  String itemName;
-  int itemQuantity;
-  String itemExpirationDate;
+        String itemName;
+        String itemExpirationDate;
+  
+        int itemQuantity;
 
   @override
   State<AddItemDialog> createState() => _AddItemDialogState();
@@ -19,10 +26,16 @@ class AddItemDialog extends StatefulWidget{
 
 class _AddItemDialogState extends State<AddItemDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _productIdController = TextEditingController();
-  final _quantityController = TextEditingController();
+
+  final _productIdController      = TextEditingController();
+  final _quantityController       = TextEditingController();
   final _expirationDateController = TextEditingController();
-  bool _isSaving = false;
+
+  String searchQuery = '';
+
+  bool  _isSaving                 = false;
+
+  final int debounceTime = 3000; // time(milliseconds) to wait before searching
 
   @override
   void dispose() {
@@ -64,14 +77,23 @@ class _AddItemDialogState extends State<AddItemDialog> {
               autofocus: true,
               decoration: const InputDecoration(hintText: 'Product #'),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
-              onTap: () {
+              onChanged: (String value) {
                 if (_productIdController.text.length > 1) {
                   /// Create search dialog to select product from list
-                  
-
+                  Timer (Duration(milliseconds: debounceTime), () async {
+                    /// Get first search results
+                    debugPrint('Search Query Set');
+                    searchResults = await searchAllItems(searchQuery);
+                    },  
+                  );
                 }
               },
             ),
+            ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index) => ListTile(title: Text(searchResults.toString())),
+                ),
+            
             TextFormField(
               controller: _quantityController,
               autofocus: true,

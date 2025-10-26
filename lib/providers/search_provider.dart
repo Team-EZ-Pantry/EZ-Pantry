@@ -17,23 +17,27 @@ import '../utilities/session_controller.dart';
 /// Variables
 int    searchLimit = 10; // number of results to return
 
-String searchQuery = ''; // to be set when searching
+String searchQuery = 'beef'; // to be set when searching
 String baseUrl     = 'http://localhost:3000/api/products/search?';
 
-Map<String, dynamic> decodedJson  = <String, dynamic>{};
+Map<String, dynamic> decodedJson   = <String, dynamic>{};
 
 List<dynamic>        foundProducts = <dynamic>[];
 
-Future<List<PantryItemModel>> searchAllItems() async {
+Future<List<PantryItemModel>> searchAllItems(String searchQuery) async {
     final Map<String, String> header = <String, String>{
       'Content-Type':  'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
+    debugPrint('Search Started');
+
   final http.Response response = await http.get(
         Uri.parse('$baseUrl/q=$searchQuery&limit=$searchLimit'),
         headers: header,
     );
+    
+    debugPrint('Search Response');
 
     if (response.statusCode == 200) {
      debugPrint('Response body: ${response.body}');
