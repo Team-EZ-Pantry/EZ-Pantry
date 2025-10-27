@@ -6,8 +6,9 @@ import 'package:provider/provider.dart';
 import '../models/pantry_item.dart';
 import '../providers/pantry_provider.dart';
 import '../providers/search_provider.dart';
+import 'pantry_item.dart';
 
-        List<PantryItemModel> searchResults = List.empty();
+        List<PantryItemModel> searchResults = [];
 
 class AddItemDialog extends StatefulWidget{
   
@@ -27,11 +28,9 @@ class AddItemDialog extends StatefulWidget{
 class _AddItemDialogState extends State<AddItemDialog> {
   final _formKey = GlobalKey<FormState>();
 
-  final _productIdController      = TextEditingController();
+  final _productNameController      = TextEditingController();
   final _quantityController       = TextEditingController();
   final _expirationDateController = TextEditingController();
-
-  String searchQuery = '';
 
   bool  _isSaving                 = false;
 
@@ -39,7 +38,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
   @override
   void dispose() {
-    _productIdController.dispose();
+    _productNameController.dispose();
     _quantityController.dispose();
     _expirationDateController.dispose();
     super.dispose();
@@ -48,7 +47,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
   Future<void> _onSave() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final productId = int.parse(_productIdController.text.trim());
+    final productId = int.parse(_productNameController.text.trim());
     final quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
     final expirationDate = _expirationDateController.text.trim();
 
@@ -67,60 +66,95 @@ class _AddItemDialogState extends State<AddItemDialog> {
     return AlertDialog(
       contentPadding: EdgeInsets.all(12),
       title: Text(widget.title),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _productIdController,
-              autofocus: true,
-              decoration: const InputDecoration(hintText: 'Product #'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
-              onChanged: (String value) {
-                if (_productIdController.text.length > 1) {
-                  /// Create search dialog to select product from list
-                  Timer (Duration(milliseconds: debounceTime), () async {
-                    /// Get first search results
-                    debugPrint('Search Query Set');
-                    searchResults = await searchAllItems(searchQuery);
-                    },  
-                  );
-                }
-              },
-            ),
-            ListView.builder(
-                  itemCount: 1,
-                  itemBuilder: (context, index) => ListTile(title: Text(searchResults.toString())),
-                ),
+      content:  Stack( children: [ 
+        Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _productNameController,
+                autofocus: true,
+                decoration: const InputDecoration(hintText: 'Product #'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
+                onChanged: (String value) {
+                  if (_productNameController.text.length > 1) {
+                    /// Create search dialog to select product from list
+                    Timer (Duration(milliseconds: debounceTime), () async {
+                      /// Get first search results
+                      debugPrint('Search Query Set');
+                      _productNameController.text.trim();
+                      setState(() {
+                        searchResults = searchAllItems(_productNameController.text) as List<PantryItemModel>;  
+                      },);
+                      },  
+                    );
+                  }
+                },
+              ),
+                
+              TextFormField(
+                controller: _quantityController,
+                autofocus: true,
+                decoration: const InputDecoration(hintText: 'Quantity'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product quantity' : null,
+              ),
+              TextFormField(
+                controller: _expirationDateController,
+                autofocus: true,
+                decoration: const InputDecoration(hintText: 'Expiration date (optional)'),
+                //validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product expiration date' : null,
+              ),
+              
+              
+            ],
             
-            TextFormField(
-              controller: _quantityController,
-              autofocus: true,
-              decoration: const InputDecoration(hintText: 'Quantity'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product quantity' : null,
-            ),
-            TextFormField(
-              controller: _expirationDateController,
-              autofocus: true,
-              decoration: const InputDecoration(hintText: 'Expiration date (optional)'),
-              //validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product expiration date' : null,
-            ),
-          ],
+          ),
+          
         ),
+        
+        // --- Overlay List for searchResults ---
+          if (searchResults.isNotEmpty)
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 55, // Adjust to sit below TextFormField
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 150),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: searchResults.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(searchResults[index].name),
+                        onTap: () {
+                          setState(() => searchResults.clear());
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+        
+      ] 
+    ),
+    actions: [
+      TextButton(
+        onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+        child: const Text('Cancel'),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _isSaving ? null : _onSave,
-          child: _isSaving
-            ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Text('Save'),
-        ),
-      ],
+      ElevatedButton(
+        onPressed: _isSaving ? null : _onSave,
+        child: _isSaving
+          ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+          : const Text('Save'),
+      ),
+    ],
+            
     );
   }
 }
