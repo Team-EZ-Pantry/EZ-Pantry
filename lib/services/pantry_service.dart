@@ -95,7 +95,7 @@ class PantryService {
   }
 
   Future<void> updateItem({
-    required int productId,
+    int? productId,
     int? quantity,
     String? expirationDate,
   }) async {

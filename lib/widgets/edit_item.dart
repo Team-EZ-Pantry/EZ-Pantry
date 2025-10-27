@@ -12,6 +12,7 @@ class EditItemDialog extends StatefulWidget{
   final String? itemExpirationDate;
   final int itemId;
   final int itemQuantity;
+  final String? itemBrand = "Welch's Concord";
 
   @override
   State<EditItemDialog> createState() => _EditItemDialogState();
@@ -53,13 +54,60 @@ class _EditItemDialogState extends State<EditItemDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
-        margin: EdgeInsets.all(20),
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+        margin: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(6, 5, 6, 6),
         width: double.infinity,
         height: double.infinity,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Column( // Overall Column
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [ 
+            IntrinsicHeight(
+              child: Row( // Information Row
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Container(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: DefaultTextStyle(
+                      style: const TextStyle(fontSize: 14),
+                      child: Column( // Text information column
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Product name: ${widget.itemName}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          Text(
+                            'Item brand: ${widget.itemBrand}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          Text(
+                            'Expiration date: ${widget.itemExpirationDate ?? 'none'}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          Text(
+                            'Item quantity: ${widget.itemQuantity}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 10, color: Colors.grey,),
             const Spacer(),
             Padding(
               padding: const EdgeInsets.only(top: 24),
