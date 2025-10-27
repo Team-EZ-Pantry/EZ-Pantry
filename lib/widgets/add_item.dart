@@ -8,7 +8,7 @@ import '../providers/pantry_provider.dart';
 import '../providers/search_provider.dart';
 import 'pantry_item.dart';
 
-        List<PantryItemModel> searchResults = [];
+        List<dynamic> searchResults = [];
 
 class AddItemDialog extends StatefulWidget{
   
@@ -28,7 +28,7 @@ class AddItemDialog extends StatefulWidget{
 class _AddItemDialogState extends State<AddItemDialog> {
   final _formKey = GlobalKey<FormState>();
 
-  final _productNameController      = TextEditingController();
+  final _productNameController    = TextEditingController();
   final _quantityController       = TextEditingController();
   final _expirationDateController = TextEditingController();
 
@@ -75,7 +75,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
               TextFormField(
                 controller: _productNameController,
                 autofocus: true,
-                decoration: const InputDecoration(hintText: 'Product #'),
+                decoration: const InputDecoration(hintText: 'Product name'),
                 validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
                 onChanged: (String value) {
                   if (_productNameController.text.length > 1) {
