@@ -1,7 +1,7 @@
 // services/pantry_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/pantry_item.dart';
+import '../models/pantry_item_model.dart';
 import '../utilities/session_controller.dart';
 
 class PantryService {
@@ -69,7 +69,7 @@ class PantryService {
     }
   }
 
-  Future<void> addItem(PantryItemModel item) async {
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
 
     final header = {
       'Content-Type': 'application/json',
@@ -83,9 +83,9 @@ class PantryService {
       url,
       headers: header,
       body: jsonEncode(<String, Object>{
-        'productId': item.id,
-        'quantity': item.quantity,
-        'expiration_date': ?item.expirationDate,
+        'productId': productId,
+        'quantity': quantity,
+        'expiration_date': expirationDate,
       }),
     );
 
@@ -141,26 +141,36 @@ class PantryService {
   }
 
   // NEEDS TO BE FINISHED
-  Future<void> addItemByBarcode(String barcode, int quantity, String expirationDate) async {
-
+  Future<PantryItemModel> getItemByBarcode(String barcode) async {
     final header = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final url = Uri.parse('$baseUrl/');  // change to whatever gets setup on the backside
+    final url = Uri.parse('$baseUrl/products/barcode/$barcode');
 
     final response = await http.post(
       url,
       headers: header,
-      body: jsonEncode(<String, Object> {
-
-      })
     );
 
+    if (response.statusCode == 200) {
+      print('Response body: ${response.body}');
 
+      // Decode JSON into a Map
+      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
 
+      // Access the 'product' part of the JSON
+      final productJson = data['product'];
 
+      // Use your model's fromJson constructor
+      final PantryItemModel product = PantryItemModel.fromJson(productJson as Map<String, dynamic>);
+
+      return product;
+    } else {
+      throw Exception('Failed to load pantry items');
+    }
   }
+
 
 }

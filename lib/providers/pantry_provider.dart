@@ -1,6 +1,6 @@
 // providers/pantry_provider.dart
 import 'package:flutter/material.dart';
-import '../models/pantry_item.dart';
+import '../models/pantry_item_model.dart';
 import '../services/pantry_service.dart';
 
 class PantryProvider extends ChangeNotifier {
@@ -40,19 +40,13 @@ class PantryProvider extends ChangeNotifier {
 
   Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
-      final PantryItemModel newItem = PantryItemModel(
-        id: productId,
-        quantity: quantity,
-        expirationDate: expirationDate,
-        name: ''
-      );
 
       // Save to backend
-      await _service.addItem(newItem);
+      await _service.addItem(productId, quantity, expirationDate);
       loadPantryItems();
       notifyListeners();
 
-      print('✅ Added item: ${newItem.name} (${newItem.quantity})');
+      print('✅ Added item: productID: $productId, quantity: $quantity');
     } catch (e) {
       print('❌ Error adding pantry item: $e');
       rethrow; // optional: let UI handle error display
@@ -84,11 +78,13 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addItemByBarcode(String barcode, int quantity, String? expirationDate) async {
+  Future<PantryItemModel?> getItemByBarcode(String barcode) async {
     try {
-      //await _service.addItemByBarcode(barcode, quantity, expirationDate);
+      final product = await _service.getItemByBarcode(barcode);
+      return product;
     } catch (e) {
-      debugPrint('Error adding item by barcode: $e');
+      debugPrint('Error getting item by barcode: $e');
+      return null;
     }
   }
 

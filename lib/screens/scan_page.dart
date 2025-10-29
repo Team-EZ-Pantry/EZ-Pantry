@@ -33,8 +33,16 @@ class _ScanPageState extends State<ScanPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Code: $code'),
+              Text('Code: $code'),       // fetch object and display somewhere around here
               const SizedBox(height: 10),
+              Ink.image(
+                image: NetworkImage('https://images.openfoodfacts.org/images/products/004/180/050/1694/front_en.11.400.jpg'),
+                width: 100,   // desired width
+                height: 100,  // desired height
+                fit: BoxFit.cover,
+              ),
+
+
               TextField(
                 controller: quantityController,
                 keyboardType: TextInputType.number,
@@ -63,17 +71,16 @@ class _ScanPageState extends State<ScanPage> {
             ElevatedButton(
               onPressed: () async {
                 final quantityText = quantityController.text.trim();
-                final expirationText = expirationController.text.trim();
+                final expirationDate = expirationController.text.trim();
 
                 if (quantityText.isEmpty) return; // Require quantity
 
                 final int quantity = int.tryParse(quantityText) ?? 1;
 
-                await pantryProvider.addItemByBarcode(
-                  code,
-                  quantity,
-                  expirationText.isNotEmpty ? expirationText : null,
-                );
+
+                final product = await pantryProvider.getItemByBarcode(code);
+
+                await pantryProvider.addItem(product.id, quantity, expirationDate);
 
                 Navigator.of(context).pop();
               },
