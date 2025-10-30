@@ -10,7 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d235502-0c6f-4fce-9aa4-26c4da7afaa6" name="Changes" comment="added login page">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/widgets/edit_item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/edit_item.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

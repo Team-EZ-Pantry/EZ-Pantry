@@ -71,7 +71,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
               child: Row( // Information Row
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
+                  /*SizedBox(
                     width: 60,
                     height: 60,
                     child: ClipRRect(
@@ -93,7 +93,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
                         child: const Icon(Icons.image_not_supported, color: Colors.grey),
                       ),
                     ),
-                  ),
+                  ),*/
                   const SizedBox(width: 5),
                   Expanded(
                     child: DefaultTextStyle(
