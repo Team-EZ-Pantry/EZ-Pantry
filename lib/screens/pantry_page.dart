@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
+import '../models/pantry_item.dart';
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
 import '../widgets/edit_item.dart';
@@ -74,10 +75,10 @@ class _PantryPageState extends State<PantryPage> {
     if (result == null) return;
   }
 
-  Future<void> _onItemTapped(String name, int quantity, int id, String? expirationDate) async {
+  Future<void> _onItemTapped(PantryItemModel item) async {
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => EditItemDialog(title: 'Edit item', itemName: name, itemQuantity: quantity, itemId: id, itemExpirationDate: expirationDate),
+      builder: (context) => EditItemDialog(item: item),
     );
     if (result == null) return;
   }
@@ -104,7 +105,7 @@ class _PantryPageState extends State<PantryPage> {
                   itemBuilder: (BuildContext context, int index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
-                      onTap: () => _onItemTapped(item.name, item.quantity, item.id, item.expirationDate),
+                      onTap: () => _onItemTapped(item),
                       title: item.name,
                       quantity: item.quantity,
                       incrementQuantity: () {
