@@ -22,9 +22,23 @@ class _ScanPageState extends State<ScanPage> {
     final pantryProvider = context.read<PantryProvider>();
 
     try {
-      final pantryItem = pantryProvider.getItemByBarcode(barcode) as PantryItemModel;
-
-      await _barcodeDialog(context, barcode, pantryItem, pantryProvider);
+      final PantryItemModel? pantryItem = await pantryProvider.getItemByBarcode(barcode);
+/*
+      if (pantryItem == null) {
+        // Item not found
+        await showDialog(
+          context: context,
+          builder: (context) => const AlertDialog(
+            title: Text('Item Not Found'),
+            content: Text('No product found for this barcode.'),
+          ),
+        );
+        _isDialogShowing = false;
+        _controller.start();
+        return;
+      }*/
+      debugPrint('Scanning barcode: $barcode');
+      await _barcodeDialog(context, barcode, pantryItem!, pantryProvider);
     } catch (e) {
       await showDialog(
         context: context,
@@ -140,3 +154,4 @@ class _ScanPageState extends State<ScanPage> {
     );
   }
 }
+

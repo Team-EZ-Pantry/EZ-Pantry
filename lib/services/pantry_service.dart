@@ -1,5 +1,6 @@
 // services/pantry_service.dart
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../models/pantry_item_model.dart';
 import '../utilities/session_controller.dart';
@@ -147,9 +148,9 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final url = Uri.parse('$baseUrl/products/barcode/$barcode');
+    final url = Uri.parse('http://localhost:3000/api/products/barcode/$barcode');
 
-    final response = await http.post(
+    final response = await http.get(
       url,
       headers: header,
     );
@@ -165,9 +166,10 @@ class PantryService {
 
       // Use your model's fromJson constructor
       final PantryItemModel product = PantryItemModel.fromJson(productJson as Map<String, dynamic>);
-
+      debugPrint('Product: ${product.name}');
       return product;
     } else {
+      print('Response body: ${response.body}');
       throw Exception('Failed to load pantry items');
     }
   }

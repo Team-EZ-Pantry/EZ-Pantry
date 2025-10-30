@@ -17,7 +17,7 @@ class PantryItemModel {
     return PantryItemModel(
       id: json['product_id'] as int,
       name: json['product_name'] as String,
-      quantity: json['quantity'] as int,
+      quantity: json['quantity'] != null ? json['quantity'] as int : 0,
       expirationDate: json['expiration_date']?.toString(),
       imageUrl: json['image_url']?.toString(),
       calories: json['calories_per_100g']?.toString() ?? '',
