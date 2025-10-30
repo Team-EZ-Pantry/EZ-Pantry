@@ -5,13 +5,14 @@ import '../providers/pantry_provider.dart';
 
 class EditItemDialog extends StatefulWidget{
   
-  EditItemDialog({Key? key, required this.title, this.itemName = '', this.itemQuantity = 0, this.itemId = 0, this.itemExpirationDate}) : super(key: key);
+  EditItemDialog({Key? key, required this.title, this.itemName = '', this.itemQuantity = 0, this.itemId = 0, this.itemExpirationDate, this.itemURL}) : super(key: key);
 
   final String title;
   final String itemName;
   final String? itemExpirationDate;
   final int itemId;
   final int itemQuantity;
+  final String? itemURL;
   final String? itemBrand = "Welch's Concord";
 
   @override
@@ -66,10 +67,26 @@ class _EditItemDialogState extends State<EditItemDialog> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Container(
-                      color: Colors.grey,
+                    width: 60,
+                    height: 60,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: widget.itemURL != null && widget.itemURL!.isNotEmpty
+                          ? Image.network(
+                              widget.itemURL!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                // Fallback if the URL fails to load
+                                return Container(
+                                  color: Colors.grey[300],
+                                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                                );
+                              },
+                            )
+                      : Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 5),
