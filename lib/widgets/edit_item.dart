@@ -76,9 +76,9 @@ class _EditItemDialogState extends State<EditItemDialog> {
                     height: 60,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: widget.itemURL != null && widget.itemURL!.isNotEmpty
+                      child: widget.item.Url != null && widget.item.Url!.isNotEmpty
                           ? Image.network(
-                              widget.itemURL!,
+                              widget.item.Url!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 // Fallback if the URL fails to load
