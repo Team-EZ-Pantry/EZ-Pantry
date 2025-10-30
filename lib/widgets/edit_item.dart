@@ -12,14 +12,6 @@ class EditItemDialog extends StatefulWidget{
     required this.item,
   }) : super(key: key);
 
-  /*
-  final String title;
-  final String itemName;
-  final String? itemExpirationDate;
-  final int itemId;
-  final int itemQuantity;
-  final String? itemBrand = "Welch's Concord";
-  */
   @override
   State<EditItemDialog> createState() => _EditItemDialogState();
 }
@@ -32,6 +24,13 @@ class _EditItemDialogState extends State<EditItemDialog> {
   bool _isSaving = false;
 
   @override
+  void initState() {
+    super.initState();
+    _quantityController.text = widget.item.quantity.toString();
+    _expirationDateController.text = widget.item.expirationDate ?? '';
+  }
+
+  @override
   void dispose() {
     _productIdController.dispose();
     _quantityController.dispose();
@@ -42,28 +41,29 @@ class _EditItemDialogState extends State<EditItemDialog> {
   Future<void> _onSave() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final productId = int.parse(_productIdController.text.trim());
-    final quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
-    final expirationDate = _expirationDateController.text.trim();
+    final quantity = int.tryParse(_quantityController.text.trim()) ?? widget.item.quantity;
+    final expirationDate = _expirationDateController.text.trim().isEmpty
+        ? null
+        : _expirationDateController.text.trim();
 
     setState(() => _isSaving = true);
 
-    // Send directly to the provider
-    await context.read<PantryProvider>().updateItem(widget.item.id, widget.item.quantity, widget.item.expirationDate); // example userId = 2
+    await context.read<PantryProvider>().updateItem(
+      widget.item.id,
+      quantity,
+      expirationDate,
+    );
 
     setState(() => _isSaving = false);
-
-    Navigator.of(context).pop(); // close dialog
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Container(
-        margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.fromLTRB(6, 5, 6, 6),
-        width: double.infinity,
-        height: double.infinity,
+        insetPadding: const EdgeInsets.all(50),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column( // Overall Column
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [ 
@@ -87,25 +87,26 @@ class _EditItemDialogState extends State<EditItemDialog> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Product name: ${widget.item.name}',
+                            '${widget.item.name}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            'Brand: ${'brand here'}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'Item brand: ${'brand here'}',
+                            'Expires: ${widget.item.expirationDate ?? 'none'}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'Expiration date: ${widget.item.expirationDate ?? 'none'}',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Item quantity: ${widget.item.quantity}',
+                            'Quantity: ${widget.item.quantity}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
@@ -117,6 +118,70 @@ class _EditItemDialogState extends State<EditItemDialog> {
               ),
             ),
             const Divider(height: 10, color: Colors.grey,),
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  const Text('Edit', style: TextStyle(fontSize: 18)),
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    controller: _quantityController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Quantity',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _expirationDateController,
+                    decoration: const InputDecoration(
+                      labelText: 'Expiration Date',
+                      hintText: 'YYYY-MM-DD',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Column(
+              children: [
+                SizedBox(height: 20),
+                Text('Nutrition Facts', style: TextStyle(fontSize: 18)),
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Calories'),
+                          Text('xx'),             // ATTENTION: waiting on other changes to fill in this data.
+                          SizedBox(height: 15),
+                          Text('Carbs'),
+                          Text('aa'), // and this
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Fat'),
+                          Text('yy'), // and this
+                          SizedBox(height: 15),
+                          Text('Protein'),
+                          Text('zz', textAlign: TextAlign.center), // and this
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
             const Spacer(),
             Padding(
               padding: const EdgeInsets.only(top: 24),
