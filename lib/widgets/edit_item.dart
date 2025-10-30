@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/pantry_item.dart';
 import '../providers/pantry_provider.dart';
 
 
 class EditItemDialog extends StatefulWidget{
+  final PantryItemModel item;
   
-  EditItemDialog({Key? key, required this.title, this.itemName = '', this.itemQuantity = 0, this.itemId = 0, this.itemExpirationDate}) : super(key: key);
+  EditItemDialog({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
 
+  /*
   final String title;
   final String itemName;
   final String? itemExpirationDate;
   final int itemId;
   final int itemQuantity;
   final String? itemBrand = "Welch's Concord";
-
+  */
   @override
   State<EditItemDialog> createState() => _EditItemDialogState();
 }
@@ -43,7 +49,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
     setState(() => _isSaving = true);
 
     // Send directly to the provider
-    await context.read<PantryProvider>().updateItem(productId, quantity, expirationDate); // example userId = 2
+    await context.read<PantryProvider>().updateItem(widget.item.id, widget.item.quantity, widget.item.expirationDate); // example userId = 2
 
     setState(() => _isSaving = false);
 
@@ -75,28 +81,31 @@ class _EditItemDialogState extends State<EditItemDialog> {
                   const SizedBox(width: 5),
                   Expanded(
                     child: DefaultTextStyle(
-                      style: const TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 16),
                       child: Column( // Text information column
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Product name: ${widget.itemName}',
+                            'Product name: ${widget.item.name}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
+                          const SizedBox(height: 5),
                           Text(
-                            'Item brand: ${widget.itemBrand}',
+                            'Item brand: ${'brand here'}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
+                          const SizedBox(height: 5),
                           Text(
-                            'Expiration date: ${widget.itemExpirationDate ?? 'none'}',
+                            'Expiration date: ${widget.item.expirationDate ?? 'none'}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
+                          const SizedBox(height: 5),
                           Text(
-                            'Item quantity: ${widget.itemQuantity}',
+                            'Item quantity: ${widget.item.quantity}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
