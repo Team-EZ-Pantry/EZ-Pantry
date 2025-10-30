@@ -17,19 +17,15 @@ import '../utilities/session_controller.dart';
 /// Variables
 int    searchLimit = 10; // number of results to return
 
-String baseUrl     = 'http://localhost:3000/api/searchResults/search?';
+String baseUrl     = 'http://localhost:3000/api/products/search?';
 
-Map<String, dynamic> decodedJson   = <String, dynamic>{};
-
-List<dynamic>        foundsearchResults = List<dynamic>.empty();
-
-Future<List<dynamic>> searchAllItems(String searchQuery) async {
+Future<dynamic> searchAllItems(String searchQuery) async {
     final Map<String, String> header = <String, String>{
       'Content-Type':  'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    debugPrint('Search Started');
+    debugPrint('Search Started, URL: ' + baseUrl + 'q=$searchQuery&limit=$searchLimit');
 
   final http.Response response = await http.get(
         Uri.parse(baseUrl + 'q=$searchQuery&limit=$searchLimit'),
@@ -40,17 +36,21 @@ Future<List<dynamic>> searchAllItems(String searchQuery) async {
       /// Request successful
       debugPrint('Response body: ${response.body}');
 
-      final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
-      final List<dynamic> searchResults = decoded['products'] as List<dynamic>;
+      final searchResults = jsonDecode(response.body);
+      debugPrint('==================');
 
-      return searchResults
-          .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>))
-          .toList();
+      print(searchResults.runtimeType);
 
+      return searchResults;    
+          
     } else {
       debugPrint('URL: ' + baseUrl + 'q=$searchQuery&limit=$searchLimit');
       debugPrint(response.body);
       debugPrint(header.entries.toString());
+      if (searchQuery.isEmpty)
+      {
+        return '';
+      }
       throw Exception('searchAllItems(): Failed to load items. Code: ${response.statusCode}');
     }
   }

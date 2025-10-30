@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import '../models/pantry_item.dart';
 import '../providers/pantry_provider.dart';
 import '../providers/search_provider.dart';
-import 'pantry_item.dart';
 
-        List<dynamic> searchResults = [];
+dynamic searchResults  = '';
+dynamic pendingResults = '';
 
 class AddItemDialog extends StatefulWidget{
   
@@ -34,7 +34,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
   bool  _isSaving                 = false;
 
-  final int debounceTime = 3000; // time(milliseconds) to wait before searching
+  final int debounceTime = 500; // time(milliseconds) to wait before searching
 
   @override
   void dispose() {
@@ -83,12 +83,25 @@ class _AddItemDialogState extends State<AddItemDialog> {
                     Timer (Duration(milliseconds: debounceTime), () async {
                       /// Get first search results
                       debugPrint('Search Query Set');
+                      
                       _productNameController.text.trim();
-                      setState(() {
-                        searchResults = searchAllItems(_productNameController.text) as List<PantryItemModel>;  
+                      
+                      // Hold changes to be set in new state
+                      pendingResults = await searchAllItems(_productNameController.text);  
+
+                      setState(() {  
+                        // Makes add item dialog show the changes from search results
+                        searchResults = pendingResults; 
                       },);
+
                       },  
                     );
+                  }
+                  else
+                  {
+                    setState(() {
+                      searchResults = '';  // Clear search boxes of previous data
+                    });
                   }
                 },
               ),
@@ -105,16 +118,12 @@ class _AddItemDialogState extends State<AddItemDialog> {
                 decoration: const InputDecoration(hintText: 'Expiration date (optional)'),
                 //validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter product expiration date' : null,
               ),
-              
-              
             ],
-            
           ),
-          
         ),
         
         // --- Overlay List for searchResults ---
-          if (searchResults.isNotEmpty)
+          if (searchResults != '') 
             Positioned(
               left: 0,
               right: 0,
@@ -126,12 +135,14 @@ class _AddItemDialogState extends State<AddItemDialog> {
                   constraints: const BoxConstraints(maxHeight: 150),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: searchResults.length,
+                    itemCount: searchResults['count'] as int,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(searchResults[index].name),
+                        title: Text(searchResults['products'][index]['product_name'] as String),
                         onTap: () {
-                          setState(() => searchResults.clear());
+                          setState(() {
+                            searchResults = '';
+                          });
                         },
                       );
                     },

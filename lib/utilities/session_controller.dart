@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -25,6 +26,11 @@ class SessionController {
   }
 
   Future<String?> getAuthToken() async {
+    if (kDebugMode)
+    {
+      debugPrint('Starting getAuthToken()');
+    }
+    
     if (_authToken != null && _authToken!.isNotEmpty) {
       debugPrint('authToken from memory: $_authToken');
       return _authToken;
