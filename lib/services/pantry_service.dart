@@ -7,7 +7,7 @@ import '../utilities/session_controller.dart';
 
 class PantryService {
   // for web
-  final String baseUrl = 'http://localhost:3000/api/pantry';
+  final String baseUrl = 'http://localhost:3000/api';
 
   // for android emulator
   //final String baseUrl = 'http://10.0.2.2:3000/api/pantry';
@@ -19,7 +19,7 @@ class PantryService {
     };
 
     final response = await http.get(
-      Uri.parse('$baseUrl/'),
+      Uri.parse('$baseUrl/pantry/'),
       headers: headers,
     );
 
@@ -52,7 +52,7 @@ class PantryService {
     print('Request headers: $header');
 
     final response = await http.get(
-        Uri.parse('$baseUrl/$pantryId'),
+        Uri.parse('$baseUrl/pantry/$pantryId'),
         headers: header,
     );
 
@@ -78,7 +78,7 @@ class PantryService {
     };
 
     final pantryId = await getPantryId(); // async returns a String
-    final url = Uri.parse('$baseUrl/$pantryId/products');
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/products');
 
     final response = await http.post(
       url,
@@ -104,7 +104,7 @@ class PantryService {
 
     final pantryId = await getPantryId(); // async returns a String
 
-    final url = Uri.parse('$baseUrl/$pantryId/products/$productId/quantity');
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
     final response = await http.put(
       url,
@@ -141,14 +141,13 @@ class PantryService {
     }
   }
 
-  // NEEDS TO BE FINISHED
   Future<PantryItemModel> getItemByBarcode(String barcode) async {
     final header = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final url = Uri.parse('http://localhost:3000/api/products/barcode/$barcode');
+    final url = Uri.parse('$baseUrl/products/barcode/$barcode');
 
     final response = await http.get(
       url,
@@ -173,6 +172,5 @@ class PantryService {
       throw Exception('Failed to load pantry items');
     }
   }
-
 
 }
