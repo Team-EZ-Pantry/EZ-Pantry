@@ -71,14 +71,14 @@ class _EditItemDialogState extends State<EditItemDialog> {
               child: Row( // Information Row
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  /*SizedBox(
+                  SizedBox(
                     width: 60,
                     height: 60,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: widget.item.Url != null && widget.item.Url!.isNotEmpty
+                      child: widget.item.imageUrl != null && widget.item.imageUrl!.isNotEmpty
                           ? Image.network(
-                              widget.item.Url!,
+                              widget.item.imageUrl!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 // Fallback if the URL fails to load
@@ -93,7 +93,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
                         child: const Icon(Icons.image_not_supported, color: Colors.grey),
                       ),
                     ),
-                  ),*/
+                  ),
                   const SizedBox(width: 5),
                   Expanded(
                     child: DefaultTextStyle(
@@ -103,16 +103,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${widget.item.name}',
+                            widget.item.name,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Brand: ${'brand here'}',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
                           ),
                           const SizedBox(height: 5),
                           Text(
@@ -162,22 +156,22 @@ class _EditItemDialogState extends State<EditItemDialog> {
                 ],
               ),
             ),
-            const Column(
+            Column(
               children: [
-                SizedBox(height: 20),
-                Text('Nutrition Facts', style: TextStyle(fontSize: 18)),
-                SizedBox(height: 15),
+                const SizedBox(height: 20),
+                const Text('Nutrition Facts', style: TextStyle(fontSize: 18)),
+                const SizedBox(height: 15),
                 Row(
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Calories'),
-                          Text('xx'),             // ATTENTION: waiting on other changes to fill in this data.
-                          SizedBox(height: 15),
-                          Text('Carbs'),
-                          Text('aa'), // and this
+                          const Text('Calories'),
+                          Text(widget.item.calories),
+                          const SizedBox(height: 15),
+                          const Text('Carbs'),
+                          Text(widget.item.carbs),
                         ],
                       ),
                     ),
@@ -185,11 +179,11 @@ class _EditItemDialogState extends State<EditItemDialog> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Fat'),
-                          Text('yy'), // and this
-                          SizedBox(height: 15),
-                          Text('Protein'),
-                          Text('zz', textAlign: TextAlign.center), // and this
+                          const Text('Fat'),
+                          Text(widget.item.fat),
+                          const SizedBox(height: 15),
+                          const Text('Protein'),
+                          Text(widget.item.protein, textAlign: TextAlign.center),
                         ],
                       ),
                     ),

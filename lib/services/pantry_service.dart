@@ -69,7 +69,7 @@ class PantryService {
     }
   }
 
-  Future<void> addItem(PantryItemModel item) async {
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
 
     final header = {
       'Content-Type': 'application/json',
@@ -83,9 +83,9 @@ class PantryService {
       url,
       headers: header,
       body: jsonEncode(<String, Object>{
-        'productId': item.id,
-        'quantity': item.quantity,
-        'expiration_date': ?item.expirationDate,
+        'productId': productId,
+        'quantity': quantity,
+        'expiration_date': expirationDate,
       }),
     );
 

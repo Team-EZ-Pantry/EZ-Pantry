@@ -38,23 +38,17 @@ class PantryProvider extends ChangeNotifier {
   }
 
 
-  Future<void> addItem(int productId, int quantity, String? expirationDate) async {
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
-      final PantryItemModel newItem = PantryItemModel(
-        id: productId,
-        quantity: quantity,
-        expirationDate: expirationDate,
-        name: ''
-      );
 
       // Save to backend
-      await _service.addItem(newItem);
+      await _service.addItem(productId, quantity, expirationDate);
       loadPantryItems();
       notifyListeners();
 
-      debugPrint('✅ Added item: ${newItem.name} (${newItem.quantity})');
+      print('✅ Added item: productID: $productId, quantity: $quantity');
     } catch (e) {
-      debugPrint('❌ Error adding pantry item: $e');
+      print('❌ Error adding pantry item: $e');
       rethrow; // optional: let UI handle error display
     }
   }
