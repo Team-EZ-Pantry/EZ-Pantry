@@ -11,6 +11,11 @@ class PantryService {
   // for android emulator
   //final String baseUrl = 'http://10.0.2.2:3000/api/pantry';
 
+  // run this when plugging an android phone into your pc for testing
+  // C:\Users\(user)\AppData\Local\Android\Sdk\platform-tools\adb reverse tcp:3000 tcp:3000
+  // or add adb to path then just run
+  // adb reverse tcp:3000 tcp:3000
+
   Future<int> getPantryId() async {
     final headers = {
       'Content-Type': 'application/json',
@@ -94,11 +99,7 @@ class PantryService {
     }
   }
 
-  Future<void> updateItem({
-    int? productId,
-    int? quantity,
-    String? expirationDate,
-  }) async {
+  Future<void> updateExpirationDate(int productId, String expirationDate) async {
     final header = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
@@ -106,21 +107,18 @@ class PantryService {
 
     final pantryId = await getPantryId(); // async returns a String
 
-    final url = Uri.parse('$baseUrl/$pantryId/products/$productId');
-
-    final Map<String, Object> body = {};
-
-    if (quantity != null) body['quantity'] = quantity;
-    if (expirationDate != null)  body['expirationDate'] = expirationDate;
+    final url = Uri.parse('$baseUrl/$pantryId/products/$productId/expiration');
 
     final response = await http.put(
       url,
       headers: header,
-      body: jsonEncode(body),
+      body: jsonEncode(<String, Object> {
+        'expiration_date': ?expirationDate,
+      }),
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Failed to change item details: ${response.body}');
+      throw Exception('Failed to change expiration date: ${response.body}');
     }
   }
 

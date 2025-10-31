@@ -48,11 +48,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
 
     setState(() => _isSaving = true);
 
-    await context.read<PantryProvider>().updateItem(
-      widget.item.id,
-      quantity,
-      expirationDate,
-    );
+    await context.read<PantryProvider>().updateQuantity(widget.item.id, quantity);
+    if(expirationDate != null) {
+      await context.read<PantryProvider>().updateExpirationDate(widget.item.id, expirationDate);
+    }
 
     setState(() => _isSaving = false);
     Navigator.of(context).pop();
