@@ -52,6 +52,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
     if(expirationDate != null) {
       await context.read<PantryProvider>().updateExpirationDate(widget.item.id, expirationDate);
     }
+    await context.read<PantryProvider>().loadPantryItems();
 
     setState(() => _isSaving = false);
     Navigator.of(context).pop();

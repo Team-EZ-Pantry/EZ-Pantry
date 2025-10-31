@@ -113,7 +113,7 @@ class PantryService {
       url,
       headers: header,
       body: jsonEncode(<String, Object> {
-        'expiration_date': ?expirationDate,
+        'expiration_date': expirationDate,
       }),
     );
 
@@ -129,7 +129,7 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final pantryId = await getPantryId(); // async returns a String
+    final pantryId = await getPantryId();
 
     final url = Uri.parse('$baseUrl/$pantryId/products/$productId/quantity');
 
