@@ -19,8 +19,9 @@ class SearchResultsOverlay extends StatelessWidget {
     }
 
     return Positioned(
-      left:  100,
-      right: 100,
+      ///(TODO): Make dimensions dynamic and automatic positioning
+      left:  150,
+      right: 150,
       top:   350,
       child: Material(
         elevation: 4,
