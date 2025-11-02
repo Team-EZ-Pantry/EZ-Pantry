@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/pantry_item.dart';
 import '../providers/pantry_provider.dart';
 import '../providers/search_provider.dart';
 import '../utilities/debouncer.dart';
@@ -146,6 +145,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
           searchResults: searchResults,
           onItemSelected: (String selectedItemID) {
             // Handle selected item
+            ///(TODO): Deliver ID number to appropriate place in add_item rework
             _productNameController.text = selectedItemID;
 
             // Clear search results

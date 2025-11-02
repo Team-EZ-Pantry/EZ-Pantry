@@ -2,7 +2,7 @@ class PantryItemModel {
   PantryItemModel({
     required this.id,
     required this.name,
-    required this.quantity,
+    this.quantity = 1,   // Made this not required to use the model in searching
     this.expirationDate, // now nullable
   });
 
