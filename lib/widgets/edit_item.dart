@@ -165,8 +165,8 @@ class _EditItemDialogState extends State<EditItemDialog> {
                   children: [
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        crossAxisAlignment: CrossAxisAlignment.start,        // in the future, let's add: energy-kcal, energy-kcal per serving,
+                        children: [                                          // nutrition score, salt, sodium, sugar, vitamins?, serving size
                           const Text('Calories'),
                           Text(widget.item.calories),
                           const SizedBox(height: 15),
@@ -203,7 +203,29 @@ class _EditItemDialogState extends State<EditItemDialog> {
                     child: const Text('Cancel'),
                   ),
                   ElevatedButton(
-                    onPressed: _isSaving ? null : _onSave,
+                    onPressed: () {
+                      if(!_isSaving){
+                        final value = int.tryParse(_quantityController.text);
+                        if (value != null && value >= 0) {
+                          _onSave();
+                        }
+                        else{
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Invalid Quantity'),
+                                content: const Text('Quantity must be 0 or more.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                          );
+                        }
+                      }
+                    },
                     child: _isSaving
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Text('Save')
