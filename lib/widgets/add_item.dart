@@ -99,7 +99,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                       Debouncer(delay: debounceDuration).run(() async {
                         /// Get new results
                         searchResults = await searchAllProducts(_productNameController.text);
-                        
+
                         // Show widget changes from search results
                         setState(() {});
                       });
@@ -142,19 +142,18 @@ class _AddItemDialogState extends State<AddItemDialog> {
           ],
         ),
         // --- Overlay List for searchResults ---
-        if (searchResults != '') 
-          SearchResultsOverlay(
-            searchResults: searchResults,
-            onItemSelected: (String selectedItemID) {
-              // Handle selected item
-              _productNameController.text = selectedItemID;
-              
-              setState(() {
-                searchResults = '';  
-              });
-            },
-          ),
-          
+        SearchResultsOverlay(
+          searchResults: searchResults,
+          onItemSelected: (String selectedItemID) {
+            // Handle selected item
+            _productNameController.text = selectedItemID;
+
+            // Clear search results
+            setState(() {
+              searchResults = '';
+            });
+          },
+        ),
       ],
     );
   }
