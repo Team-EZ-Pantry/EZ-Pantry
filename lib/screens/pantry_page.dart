@@ -77,7 +77,7 @@ class _PantryPageState extends State<PantryPage> {
   Future<void> _onAddItemButtonPressed() async {
     final String? result = await showDialog<String>(
       context: context,
-      builder: (BuildContext context) => AddItemDialog(title: 'Enter item', hintText: 'hintText'),
+      builder: (BuildContext context) => const AddItemDialog(title: 'Enter item', hintText: 'hintText'),
     );
     if (result == null) {
       return;

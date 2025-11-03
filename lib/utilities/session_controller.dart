@@ -9,7 +9,7 @@ class SessionController {
 
   String? _authToken;
 
-  final secureStorage = const FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
   Future<void> setSession(String token) async {
     _authToken = token;

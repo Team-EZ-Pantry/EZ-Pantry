@@ -17,6 +17,7 @@ void main() {
   runApp(
       ChangeNotifierProvider<PantryProvider>(
         create: (_) => PantryProvider(),
+      // ignore: prefer_const_constructors
       child: MyApp()
       )
   );
@@ -65,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _widgetOptions = <Widget>[
       const RecipesPage(),
+      // ignore: prefer_const_constructors
       PantryPage(), // non-const
       const ShoppingPage(),
     ];

@@ -13,14 +13,14 @@ dynamic searchResults = '';
 /// Intialize search
 
 class AddItemDialog extends StatefulWidget {
-  AddItemDialog({
-    Key? key,
+  const AddItemDialog({
+    super.key,
     required this.title,
     this.hintText = '',
     this.itemName = '',
     this.itemQuantity = 0,
     this.itemExpirationDate = '',
-  }) : super(key: key);
+  });
 
   final String title;
   final String hintText;
@@ -33,11 +33,11 @@ class AddItemDialog extends StatefulWidget {
 }
 
 class _AddItemDialogState extends State<AddItemDialog> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final _productNameController = TextEditingController();
-  final _quantityController = TextEditingController();
-  final _expirationDateController = TextEditingController();
+  final TextEditingController _productNameController    = TextEditingController();
+  final TextEditingController _quantityController       = TextEditingController();
+  final TextEditingController _expirationDateController = TextEditingController();
 
   bool _isSaving = false;
 
@@ -55,11 +55,13 @@ class _AddItemDialogState extends State<AddItemDialog> {
   }
 
   Future<void> _onSave() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
 
-    final productId = int.parse(_productNameController.text.trim());
-    final quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
-    final expirationDate = _expirationDateController.text.trim();
+    final int productId = int.parse(_productNameController.text.trim());
+    final int quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
+    final String expirationDate = _expirationDateController.text.trim();
 
     setState(() => _isSaving = true);
 
@@ -78,20 +80,20 @@ class _AddItemDialogState extends State<AddItemDialog> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
+      children: <Widget>[
         AlertDialog(
-          contentPadding: EdgeInsets.all(12),
+          contentPadding: const EdgeInsets.all(12),
           title: Text(widget.title),
           content: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: <Widget>[
                 TextFormField(
                   controller: _productNameController,
                   autofocus: true,
                   decoration: const InputDecoration(hintText: 'Product name'),
-                  validator: (v) =>
+                  validator: (String? v) =>
                       (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
                   onChanged: (String value) {
                     if (_productNameController.text.length > 1) {
@@ -110,7 +112,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                   controller: _quantityController,
                   autofocus: true,
                   decoration: const InputDecoration(hintText: 'Quantity'),
-                  validator: (v) =>
+                  validator: (String? v) =>
                       (v == null || v.trim().isEmpty) ? 'Please enter product quantity' : null,
                 ),
                 TextFormField(
@@ -123,7 +125,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
             ),
           ),
 
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
