@@ -53,10 +53,20 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateExpirationDate(int productId, String expirationDate) async {
+    try {
+      await _service.updateExpirationDate(productId, expirationDate);
+      notifyListeners();
+
+      print('Updated expiration of $productId to $expirationDate');
+    } catch(e) {
+      print('Error updating expiration: $e');
+    }
+  }
+
   Future<void> updateQuantity(int productId, int quantity) async {
     try {
       await _service.updateQuantity(productId, quantity);
-      //loadPantryItems();
       notifyListeners();
 
       print('Updated quantity of $productId to $quantity');
