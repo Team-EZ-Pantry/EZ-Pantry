@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:ez_pantry/screens/login_page.dart.';
 
-class RegistrationLoginTextField extends StatelessWidget {
+class CustomTextField extends StatelessWidget {
   final String label;
   final String? hintText;
   final TextEditingController? controller;
@@ -13,7 +13,7 @@ class RegistrationLoginTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final void Function(String)? onSubmitted; 
 
-  const RegistrationLoginTextField({
+  const CustomTextField({
     Key? key,
     required this.label,
     this.hintText,

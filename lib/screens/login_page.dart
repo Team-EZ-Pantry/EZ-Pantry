@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../main.dart'; // Correct relative path to import MyHomePage
 import '../providers/login_request.dart';
 import '../utilities/check_login.dart';
-import '../widgets/text_form_feld.dart';
+import '../widgets/custom_text_field.dart';
 import 'registration_page.dart'; // Import RegistrationPage class
 
 class LoginPage extends StatefulWidget {
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: elementSpacing + 20),
 
                 /// email field
-                RegistrationLoginTextField(
+                CustomTextField(
                   label: 'Email',
                   focusNode: _emailFocus,
                   hintText: 'Enter your email',
@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: elementSpacing),
 
                 /// Password field
-                RegistrationLoginTextField(
+                CustomTextField(
                   label: 'Password',
                   focusNode: _passwordFocus,
                   hintText: 'Enter your password',

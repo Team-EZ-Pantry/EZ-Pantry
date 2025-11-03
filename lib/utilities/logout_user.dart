@@ -1,4 +1,6 @@
-/// Clean up and log out the user
+/// Log out the user and do any data cleanup the SessionController does not do.
+/// - Redirects given context to login page
+library;
 
 import 'package:flutter/material.dart';
 

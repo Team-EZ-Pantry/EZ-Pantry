@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';                           // Make sure this imports MyHomePage
 import '../providers/registration_request.dart';
 import '../utilities/check_registration.dart';
-import '../widgets/text_form_feld.dart'; // Import the registration function
+import '../widgets/custom_text_field.dart'; // Import the registration function
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -150,7 +150,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing + 20),
               
               /// Email field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Email',
                 focusNode: _emailFocus,
                 hintText: 'Enter your email',
@@ -164,7 +164,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing),
 
               /// Username field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Username',
                 focusNode: _usernameFocus,
                 hintText: 'Enter your username',
@@ -177,7 +177,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing),
 
               /// Password field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Password',
                 focusNode: _passwordFocus,
                 hintText: 'Enter your password',
