@@ -1,7 +1,7 @@
 // services/pantry_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/pantry_item.dart';
+import '../models/pantry_item_model.dart';
 import '../utilities/session_controller.dart';
 
 class PantryService {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
-import '../models/pantry_item.dart';
+import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
 import '../widgets/edit_item.dart';
