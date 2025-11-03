@@ -77,7 +77,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     try {
       final int requestResponse = await registerUser(username: username, email: email, password: password);
       // On success, navigate to MyHomePage (home screen)
-      if (requestResponse == 0) {
+      if (requestResponse == 0 && mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -88,20 +88,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
       else {
         // Show error dialog on failure
         if (requestResponse == badRequestCode){
-                errorDialog = 'Bad Request: Please check your input.';
-              } else if (requestResponse == unauthorizedUserCode) {
-                errorDialog = 'Incorrect username or password.';
-              } else if (requestResponse == serverErrorCode) {
-                errorDialog = 'Server error. Please try again later.';
-              } else {
-                errorDialog = 'An unexpected error occurred. Please try again.';
-            }
+          errorDialog = 'Bad Request: Please check your input.';
+        } else if (requestResponse == unauthorizedUserCode) {
+          errorDialog = 'Incorrect username or password.';
+        } else if (requestResponse == serverErrorCode) {
+          errorDialog = 'Server error. Please try again later.';
+        } else {
+          errorDialog = 'An unexpected error occurred. Please try again.';
+        }
             
+        if (mounted) {
+          showDialog<ErrorDescription>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Registration Failed'),
+              content: Text(errorDialog),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Show error dialog on failure
+      if (mounted) {
         showDialog<ErrorDescription>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Registration Failed'),
-            content: Text(errorDialog),
+            content: Text('Error: $e'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -111,21 +130,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
         );
       }
-    } catch (e) {
-      // Show error dialog on failure
-      showDialog<ErrorDescription>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Registration Failed'),
-          content: Text('Error: $e'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
     }
   }
 

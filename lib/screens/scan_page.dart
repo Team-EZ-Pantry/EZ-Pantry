@@ -50,21 +50,25 @@ class _ScanPageState extends State<ScanPage> {
         return;
       }*/
       debugPrint('Scanning barcode: $barcode');
-      await _barcodeDialog(context, barcode, pantryItem!, pantryProvider);
+      if (mounted) {
+        await _barcodeDialog(context, barcode, pantryItem!, pantryProvider);
+      }
     } catch (e) {
-      await showDialog<void>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Error'),
-          content: Text('Failed to handle barcode: $e'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      if (mounted) {
+        await showDialog<void>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to handle barcode: $e'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
 
     _isDialogShowing = false;

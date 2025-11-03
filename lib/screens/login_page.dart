@@ -71,33 +71,38 @@ class _LoginPageState extends State<LoginPage> {
       
         // On success, navigate to MyHomePage (home screen)
         if (requestResponse == 0) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute<ActionDispatcher>(
-              builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
-            ),
-          );
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<ActionDispatcher>(
+                builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
+              ),
+            );
+          }
         } else {
           // Show error if credentials are incorrect
-          showDialog<ErrorDescription>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Login Failed'),
-              content: const Text('Incorrect email or password.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-      }
+          if (mounted) {
+            showDialog<ErrorDescription>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Login Failed'),
+                content: const Text('Incorrect email or password.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
       } catch (e) {
         debugPrint('Exception occurred: $e');
       }
     }
   } 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

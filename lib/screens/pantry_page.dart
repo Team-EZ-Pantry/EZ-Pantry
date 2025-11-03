@@ -38,14 +38,17 @@ class _PantryPageState extends State<PantryPage> {
         String? pantryName;
 
         // Keep showing the dialog until user enters a name
+        
         while (pantryName == null || pantryName.isEmpty) {
-          pantryName = await showDialog<String>(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) => const NewPantryPrompt(),
-          );
+          if (mounted) {
+            pantryName = await showDialog<String>(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) => const NewPantryPrompt(),
+            );
+          }
 
-          if (pantryName == null || pantryName.isEmpty) {
+          if (mounted && (pantryName == null || pantryName.isEmpty)) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('You must create a pantry to continue.')),
             );
@@ -66,9 +69,10 @@ class _PantryPageState extends State<PantryPage> {
     );
 
     if (result != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Scanned barcode: $result')),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Scanned barcode: $result')),
+        );
+      
       debugPrint('Scanned barcode: $result');
       ///(TODO): Call API or update pantry items with this barcode
     }
@@ -79,6 +83,7 @@ class _PantryPageState extends State<PantryPage> {
       context: context,
       builder: (BuildContext context) => const AddItemDialog(title: 'Enter item', hintText: 'hintText'),
     );
+
     if (result == null) {
       return;
     }
