@@ -23,7 +23,7 @@ class SearchResultsOverlay extends StatelessWidget {
       return Positioned(
         left:  150,
         right: 150,
-        top:   350,
+        top:   460,
         child: Material(
           elevation: 4,
           borderRadius: BorderRadius.circular(8),
@@ -42,7 +42,7 @@ class SearchResultsOverlay extends StatelessWidget {
       ///(TODO): Make dimensions dynamic and automatic positioning
       left:  150,
       right: 150,
-      top:   350,
+      top:   460,
       child: Material(
         elevation: 4,
         borderRadius: BorderRadius.circular(8),
