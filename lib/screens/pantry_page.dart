@@ -98,7 +98,7 @@ class _PantryPageState extends State<PantryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        children: [
+        children: <Widget>[
           Material(
             child: Consumer<PantryProvider>(
               builder: (BuildContext context, PantryProvider pantry, Widget? child) {

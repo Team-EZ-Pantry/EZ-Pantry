@@ -57,7 +57,7 @@ class _ScanPageState extends State<ScanPage> {
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Error'),
           content: Text('Failed to handle barcode: $e'),
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('OK'),

@@ -102,7 +102,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Registration Failed'),
             content: Text(errorDialog),
-            actions: [
+            actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('OK'),
@@ -118,7 +118,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Registration Failed'),
           content: Text('Error: $e'),
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('OK'),
@@ -141,7 +141,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: <Widget>[
               Image.asset(
                 '../../assets/logo/logo.png', // Ensure this path matches your asset structure
                 height: 300,

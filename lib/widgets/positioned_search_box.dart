@@ -31,7 +31,7 @@ class SearchResultsOverlay extends StatelessWidget {
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: searchResults['count'] as int,
-            itemBuilder: (context, index) {
+            itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 title: Text(searchResults['products'][index]['product_name'] as String),
                 onTap: () => onItemSelected(searchResults['products'][index]['product_id'].toString()),

@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
  
       initialRoute: SessionController.instance.checkAuthToken() ? '/home' : '/login',
 
-      routes: {
+      routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => const LoginPage(),
         '/home': (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
       },
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    _widgetOptions = [
+    _widgetOptions = <Widget>[
       const RecipesPage(),
       PantryPage(), // non-const
       const ShoppingPage(),
