@@ -2,14 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // needed for FilteringTextInputFormatter
 
 class PantryItemTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final int quantity;
-  final VoidCallback? onTap;
-  final VoidCallback? incrementQuantity;
-  final VoidCallback? decrementQuantity;
-  final ValueChanged<int>? changeQuantity;
-
   const PantryItemTile({
     super.key,
     required this.title,
@@ -20,6 +12,14 @@ class PantryItemTile extends StatelessWidget {
     this.decrementQuantity,
     this.changeQuantity,
   });
+
+  final String title;
+  final String subtitle;
+  final int quantity;
+  final VoidCallback? onTap;
+  final VoidCallback? incrementQuantity;
+  final VoidCallback? decrementQuantity;
+  final ValueChanged<int>? changeQuantity;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class PantryItemTile extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         title: Row(
-          children: [
+          children: <Widget>[
             // Item name
             SizedBox(
               width: 220,
@@ -72,15 +72,15 @@ class PantryItemTile extends StatelessWidget {
             // Editable quantity badge
             InkWell(
               onTap: () async {
-                final controller = TextEditingController(text: quantity.toString());
-                final newQuantity = await showDialog<int>(
+                final TextEditingController controller = TextEditingController(text: quantity.toString());
+                final int? newQuantity = await showDialog<int>(
                   context: context,
-                  builder: (context) => AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                     title: const Text('Edit Quantity'),
                     content: TextField(
                       controller: controller,
                       keyboardType: TextInputType.number,
-                      inputFormatters: [
+                      inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly,
                       ],
                       decoration: const InputDecoration(
@@ -88,14 +88,14 @@ class PantryItemTile extends StatelessWidget {
                         hintText: 'Enter a positive number',
                       ),
                     ),
-                    actions: [
+                    actions: <Widget>[
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         child: const Text('Cancel'),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          final value = int.tryParse(controller.text);
+                          final int? value = int.tryParse(controller.text);
                           if (value != null && value >= 0) {
                             Navigator.pop(context, value);
                           }
