@@ -1,6 +1,6 @@
 // providers/pantry_provider.dart
 import 'package:flutter/material.dart';
-import '../models/pantry_item.dart';
+import '../models/pantry_item_model.dart';
 import '../services/pantry_service.dart';
 
 class PantryProvider extends ChangeNotifier {
