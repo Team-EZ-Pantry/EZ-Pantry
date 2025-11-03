@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/pantry_item.dart';
+import '../models/pantry_item_model.dart';
 
 class PantryItemTile extends StatelessWidget {
   final PantryItemModel item;
