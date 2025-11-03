@@ -1,4 +1,5 @@
 /// Utility function to check registration input validity
+library;
 
 String checkRegistration(String email, String username, String password){
   String registrationResult; /// -1 is error, 0 is success

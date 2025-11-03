@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (BuildContext context) => AlertDialog(
               title: const Text('Login Failed'),
               content: const Text('Incorrect email or password.'),
-              actions: [
+              actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('OK'),

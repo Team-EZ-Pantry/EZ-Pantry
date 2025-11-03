@@ -1,6 +1,5 @@
-//*********************************//
-// Get search results from backend //
-//*********************************//
+/// Get search results from backend 
+library;
 
 /// Dart imports
 import 'dart:async';

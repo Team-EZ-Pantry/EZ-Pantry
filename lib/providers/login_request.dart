@@ -40,7 +40,7 @@ Future<int> loginUser({
       // Success — parse response if needed
       loginCode = 0;
       // ignore: always_specify_types
-      final data = jsonDecode(response.body);
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
 
       /// Save the token securely
       SessionController.instance.setSession(data['token'] as String);

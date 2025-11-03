@@ -19,11 +19,11 @@ Future<int> registerUser({
 }) async {
   final Uri requestUrl = Uri.parse('http://localhost:3000/api/auth/register');
 
-  final Map<String, String> headers = {
+  final Map<String, String> headers = <String, String>{
     'Content-Type': 'application/json',
   };
 
-  final String body = jsonEncode({
+  final String body = jsonEncode(<String, String>{
     'username': username,
     'email':    email,
     'password': password,
@@ -36,7 +36,7 @@ Future<int> registerUser({
     if (response.statusCode == successfulRegistrationCode) {
       // Success — parse response if needed
       registrationCode = 0;
-      final data = jsonDecode(response.body);
+      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
 
       /// Save the token securely
       SessionController.instance.setSession(data['token'] as String);

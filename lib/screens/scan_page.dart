@@ -86,7 +86,7 @@ class _ScanPageState extends State<ScanPage> {
         title: const Text('Barcode Found'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             Text('Code: $barcode'),
             Text('Product: ${pantryItem.name}'),
             const SizedBox(height: 10),
@@ -116,7 +116,7 @@ class _ScanPageState extends State<ScanPage> {
             ),
           ],
         ),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Cancel

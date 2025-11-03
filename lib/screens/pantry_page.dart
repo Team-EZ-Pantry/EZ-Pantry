@@ -42,7 +42,7 @@ class _PantryPageState extends State<PantryPage> {
           pantryName = await showDialog<String>(
             context: context,
             barrierDismissible: false,
-            builder: (context) => const NewPantryPrompt(),
+            builder: (BuildContext context) => const NewPantryPrompt(),
           );
 
           if (pantryName == null || pantryName.isEmpty) {
