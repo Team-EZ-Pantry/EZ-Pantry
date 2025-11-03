@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // needed for FilteringTextInputFormatter
+import 'package:flutter/services.dart';
+import '../models/pantry_item.dart';
 
 class PantryItemTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final int quantity;
+  final PantryItemModel item;
   final VoidCallback? onTap;
   final VoidCallback? incrementQuantity;
   final VoidCallback? decrementQuantity;
@@ -12,13 +11,11 @@ class PantryItemTile extends StatelessWidget {
 
   const PantryItemTile({
     super.key,
-    required this.title,
-    this.subtitle = '',
-    required this.quantity,
-    this.onTap,
-    this.incrementQuantity,
-    this.decrementQuantity,
-    this.changeQuantity,
+    required this.item,
+    required this.onTap,
+    required this.incrementQuantity,
+    required this.decrementQuantity,
+    required this.changeQuantity,
   });
 
   @override
@@ -27,27 +24,61 @@ class PantryItemTile extends StatelessWidget {
       height: 52,
       decoration: const BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: Colors.grey,
-            width: 0.9,
-          ),
+          bottom: BorderSide(color: Colors.grey, width: 0.9),
         ),
       ),
-      child: ListTile(
+      child: InkWell(
         onTap: onTap,
-        title: Row(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Item name
+            // Item image
             SizedBox(
-              width: 220,
-              child: Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.normal),
-                overflow: TextOverflow.ellipsis,
+              width: 48,
+              height: 48,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                  ? Image.network(
+                      item.imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.broken_image, color: Colors.grey),
+                        );
+                      },
+                    )
+                  : Container(
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                    ),
               ),
             ),
 
-            const SizedBox(width: 20),
+            const SizedBox(width: 12),
+
+            // Item name and brand
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    item.brand ?? 'None',
+                    style: const TextStyle(color: Colors.black54, fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 8),
 
             // Decrement button
             InkWell(
@@ -69,10 +100,10 @@ class PantryItemTile extends StatelessWidget {
 
             const SizedBox(width: 6),
 
-            // Editable quantity badge
+            // Quantity display (tappable)
             InkWell(
               onTap: () async {
-                final controller = TextEditingController(text: quantity.toString());
+                final controller = TextEditingController(text: item.quantity.toString());
                 final newQuantity = await showDialog<int>(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -80,9 +111,7 @@ class PantryItemTile extends StatelessWidget {
                     content: TextField(
                       controller: controller,
                       keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                         labelText: 'Quantity',
                         hintText: 'Enter a positive number',
@@ -95,7 +124,7 @@ class PantryItemTile extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          final value = int.tryParse(controller.text);
+                          final int? value = int.tryParse(controller.text);
                           if (value != null && value >= 0) {
                             Navigator.pop(context, value);
                           }
@@ -120,7 +149,7 @@ class PantryItemTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  '$quantity',
+                  '${item.quantity}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -148,9 +177,10 @@ class PantryItemTile extends StatelessWidget {
                 ),
               ),
             ),
+
+            const SizedBox(width: 6),
           ],
         ),
-        subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
       ),
     );
   }
