@@ -1,12 +1,13 @@
 // services/pantry_service.dart
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../models/pantry_item_model.dart';
 import '../utilities/session_controller.dart';
 
 class PantryService {
   // for web
-  final String baseUrl = 'http://localhost:3000/api/pantry';
+  final String baseUrl = 'http://localhost:3000/api';
 
   // for android emulator
   //final String baseUrl = 'http://10.0.2.2:3000/api/pantry';
@@ -23,7 +24,7 @@ class PantryService {
     };
 
     final response = await http.get(
-      Uri.parse('$baseUrl/'),
+      Uri.parse('$baseUrl/pantry/'),
       headers: headers,
     );
 
@@ -56,7 +57,7 @@ class PantryService {
     print('Request headers: $header');
 
     final response = await http.get(
-        Uri.parse('$baseUrl/$pantryId'),
+        Uri.parse('$baseUrl/pantry/$pantryId'),
         headers: header,
     );
 
@@ -82,7 +83,7 @@ class PantryService {
     };
 
     final pantryId = await getPantryId(); // async returns a String
-    final url = Uri.parse('$baseUrl/$pantryId/products');
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/products');
 
     final response = await http.post(
       url,
@@ -131,7 +132,7 @@ class PantryService {
 
     final pantryId = await getPantryId();
 
-    final url = Uri.parse('$baseUrl/$pantryId/products/$productId/quantity');
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
     final response = await http.put(
       url,
@@ -167,4 +168,37 @@ class PantryService {
       throw Exception('Failed to create pantry: ${response.body}');
     }
   }
+
+  Future<PantryItemModel> getItemByBarcode(String barcode) async {
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final url = Uri.parse('$baseUrl/products/barcode/$barcode');
+
+    final response = await http.get(
+      url,
+      headers: header,
+    );
+
+    if (response.statusCode == 200) {
+      print('Response body: ${response.body}');
+
+      // Decode JSON into a Map
+      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+
+      // Access the 'product' part of the JSON
+      final productJson = data['product'];
+
+      // Use your model's fromJson constructor
+      final PantryItemModel product = PantryItemModel.fromJson(productJson as Map<String, dynamic>);
+      debugPrint('Product: ${product.name}');
+      return product;
+    } else {
+      print('Response body: ${response.body}');
+      throw Exception('Failed to load pantry items');
+    }
+  }
+
 }
