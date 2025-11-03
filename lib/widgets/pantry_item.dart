@@ -150,7 +150,6 @@ class PantryItemTile extends StatelessWidget {
             ),
           ],
         ),
-
         subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
       ),
     );

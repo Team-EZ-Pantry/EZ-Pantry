@@ -24,9 +24,9 @@ class AddItemDialog extends StatefulWidget {
 
   final String title;
   final String hintText;
-  String itemName;
-  String itemExpirationDate;
-  int itemQuantity;
+  final String itemName;
+  final int itemQuantity;
+  final String itemExpirationDate;
 
   @override
   State<AddItemDialog> createState() => _AddItemDialogState();

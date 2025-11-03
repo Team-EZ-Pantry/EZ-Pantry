@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
+import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
+import '../widgets/edit_item.dart';
+import '../widgets/new_pantry_prompt.dart';
 import '../widgets/pantry_item.dart';
 import 'scan_page.dart';
 
@@ -19,14 +22,35 @@ class _PantryPageState extends State<PantryPage> {
   void initState() {
     super.initState();
 
-    
-
-    // Safe to call provider here
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final pantryProvider = context.read<PantryProvider>();
-      pantryProvider.loadPantryItems();
+
+      final loaded = await pantryProvider.loadPantryItems();
+
+      if (!loaded) {
+        String? pantryName;
+
+        // Keep showing the dialog until user enters a name
+        while (pantryName == null || pantryName.isEmpty) {
+          pantryName = await showDialog<String>(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const NewPantryPrompt(),
+          );
+
+          if (pantryName == null || pantryName.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('You must create a pantry to continue.')),
+            );
+          }
+        }
+
+        await pantryProvider.createPantry(pantryName);
+        await pantryProvider.loadPantryItems();
+      }
     });
   }
+
 
   Future<void> _onScanButtonPressed(BuildContext context) async {
     final result = await Navigator.push(
@@ -47,6 +71,14 @@ class _PantryPageState extends State<PantryPage> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AddItemDialog(title: 'Enter item', hintText: 'hintText'),
+    );
+    if (result == null) return;
+  }
+
+  Future<void> _onItemTapped(PantryItemModel item) async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => EditItemDialog(item: item),
     );
     if (result == null) return;
   }
@@ -73,6 +105,7 @@ class _PantryPageState extends State<PantryPage> {
                   itemBuilder: (BuildContext context, int index) {
                     final item = pantry.items[index];
                     return PantryItemTile(
+                      onTap: () => _onItemTapped(item),
                       title: item.name,
                       quantity: item.quantity,
                       incrementQuantity: () {
@@ -89,8 +122,8 @@ class _PantryPageState extends State<PantryPage> {
                         if(newQuantity >= 0) {
                           item.quantity = newQuantity;
                           pantry.updateQuantity(item.id, item.quantity);
-                          }
-                        },
+                        }
+                      },
                     );
                   },
                 );

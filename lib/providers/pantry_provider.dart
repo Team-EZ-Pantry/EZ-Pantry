@@ -18,48 +18,55 @@ class PantryProvider extends ChangeNotifier {
     Future.microtask(() => loadPantryItems());
   }
 
-  Future<void> loadPantryItems() async {
+  Future<bool> loadPantryItems() async {
     _loading = true;
     notifyListeners();
 
     try {
       final pantryId = await _service.getPantryId();
-      debugPrint('fetched pantry id: $pantryId in provider');
+      debugPrint('Fetched pantry id: $pantryId in provider');
       _items = await _service.fetchPantryItems(pantryId);
-      debugPrint('========================Fetched items: $_items');
+      debugPrint('Fetched items: $_items');
+      return true; // Pantry loaded successfully
     } catch (e) {
       debugPrint('Error fetching pantry items: $e');
+      return false; // Pantry not found or some other failure
     } finally {
       _loading = false;
       notifyListeners();
     }
   }
 
+
   Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
-      final PantryItemModel newItem = PantryItemModel(
-        id: productId,
-        quantity: quantity,
-        expirationDate: expirationDate,
-        name: ''
-      );
 
       // Save to backend
-      await _service.addItem(newItem);
+      await _service.addItem(productId, quantity, expirationDate);
       loadPantryItems();
       notifyListeners();
 
-      print('✅ Added item: ${newItem.name} (${newItem.quantity})');
+      print('✅ Added item: productID: $productId, quantity: $quantity');
     } catch (e) {
       print('❌ Error adding pantry item: $e');
       rethrow; // optional: let UI handle error display
     }
   }
 
+  Future<void> updateExpirationDate(int productId, String expirationDate) async {
+    try {
+      await _service.updateExpirationDate(productId, expirationDate);
+      notifyListeners();
+
+      print('Updated expiration of $productId to $expirationDate');
+    } catch(e) {
+      print('Error updating expiration: $e');
+    }
+  }
+
   Future<void> updateQuantity(int productId, int quantity) async {
     try {
       await _service.updateQuantity(productId, quantity);
-      //loadPantryItems();
       notifyListeners();
 
       print('Updated quantity of $productId to $quantity');
@@ -72,4 +79,25 @@ class PantryProvider extends ChangeNotifier {
       items.removeAt(index);
       notifyListeners();
     }
+
+  Future<void> createPantry(String pantryName) async {
+    try {
+      await _service.createPantry(pantryName);
+    } catch (e) {
+      debugPrint('Error creating pantry: $e');
+    }
   }
+
+  Future<PantryItemModel?> getItemByBarcode(String barcode) async {
+    try {
+      final product = await _service.getItemByBarcode(barcode);
+      return product;
+    } catch (e) {
+      debugPrint('Error getting item by barcode: $e');
+      return null;
+    }
+  }
+
+}
+
+

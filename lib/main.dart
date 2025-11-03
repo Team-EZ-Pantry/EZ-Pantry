@@ -85,16 +85,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-        actions: [
-          IconButton(
+        leading: IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
               logoutUser(context);
             }
-          )
-        ],
+        ),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+        centerTitle: true,
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
