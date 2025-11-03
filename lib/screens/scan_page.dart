@@ -35,20 +35,31 @@ class _ScanPageState extends State<ScanPage> {
 
     try {
       final PantryItemModel? pantryItem = await pantryProvider.getItemByBarcode(barcode);
-/*
+
       if (pantryItem == null) {
         // Item not found
-        await showDialog(
+        showDialog(
           context: context,
-          builder: (context) => const AlertDialog(
-            title: Text('Item Not Found'),
-            content: Text('No product found for this barcode.'),
+          builder: (BuildContext context) => AlertDialog(
+            title:   const Text('Item Not Found'),
+            content: const Text('No product found for this barcode.'),
+            actions: <Widget>[
+                /// Go to Custom item creation
+
+                /// Close Dialog
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+            ],
           ),
         );
+        
         _isDialogShowing = false;
         _controller.start();
         return;
-      }*/
+      }
+
       debugPrint('Scanning barcode: $barcode');
       await _barcodeDialog(context, barcode, pantryItem!, pantryProvider);
     } catch (e) {
@@ -130,7 +141,7 @@ class _ScanPageState extends State<ScanPage> {
 
               // Require quantity to get past
               if (quantityText.isEmpty) {
-                return; 
+                return;
               }
 
               final int quantity = int.tryParse(quantityText) ?? 1;

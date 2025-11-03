@@ -8,9 +8,8 @@ import '../providers/search_provider.dart';
 import '../utilities/debouncer.dart';
 import 'positioned_search_box.dart';
 
-dynamic searchResults = '';
-
 /// Intialize search
+dynamic searchResults = '';
 
 class AddItemDialog extends StatefulWidget {
   const AddItemDialog({
