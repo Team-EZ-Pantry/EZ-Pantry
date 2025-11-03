@@ -11,11 +11,12 @@ import 'package:http/http.dart' as http;
 
 /// Internal imports
 import '../utilities/session_controller.dart';
+import '../widgets/add_item.dart';
 
 /// Constants
 const int searchLimit           = 10;                          // Number of results returned
 const String baseUrl            = 'http://localhost:3000';     // Server URL
-const Duration debounceDuration = Duration(milliseconds: 600); // time to wait before searching
+const Duration debounceDuration = Duration(milliseconds: 600); // Time to wait before searching
 
 /// Variables
 Timer? _debounce;
@@ -67,11 +68,19 @@ Future<dynamic> searchAllProducts(String searchQuery) async {
 
   /// Handle Request
   if (response.statusCode == 200) {
-    /// Success
+    // Success
     debugPrint('Search Results: ${response.body}');
-    return jsonDecode(response.body);        
 
+    searchResults = jsonDecode(response.body);
+
+    /// Search returns 'EMPTY' if backend could not find any matching items 
+    if (searchResults['count'] == 0) {
+      searchResults = 'EMPTY';
+    }
+
+    return searchResults;
   } else {
+    // Something went wrong
     debugPrint(response.body);
     debugPrint(header.entries.toString());
     throw Exception('searchAllProducts(): Failed to load items. Code: ${response.statusCode}');

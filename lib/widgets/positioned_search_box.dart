@@ -13,11 +13,31 @@ class SearchResultsOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// Do not display visible items if no results
+    /// Do not display visible items until search creates changes
     if (searchResults == '') {
       return const SizedBox.shrink();
     }
 
+    /// Show box when no items were found by search
+    if (searchResults == 'EMPTY') {
+      return Positioned(
+        left:  150,
+        right: 150,
+        top:   350,
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(8),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 150),
+            child: const ListTile(
+              title: Text('No Results.'),
+            ),
+          ),
+        ),
+      );
+    }
+
+    /// Show found items
     return Positioned(
       ///(TODO): Make dimensions dynamic and automatic positioning
       left:  150,
