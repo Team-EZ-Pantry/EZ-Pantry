@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';                           // Make sure this imports MyHomePage
 import '../providers/registration_request.dart';
-import '../utilities/checkRegistration.dart';
-import '../widgets/login_registration_TextFormField.dart'; // Import the registration function
+import '../utilities/check_registration.dart';
+import '../widgets/custom_text_field.dart'; // Import the registration function
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -102,7 +102,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Registration Failed'),
             content: Text(errorDialog),
-            actions: [
+            actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('OK'),
@@ -118,7 +118,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Registration Failed'),
           content: Text('Error: $e'),
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('OK'),
@@ -141,7 +141,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: <Widget>[
               Image.asset(
                 '../../assets/logo/logo.png', // Ensure this path matches your asset structure
                 height: 300,
@@ -150,7 +150,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing + 20),
               
               /// Email field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Email',
                 focusNode: _emailFocus,
                 hintText: 'Enter your email',
@@ -164,7 +164,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing),
 
               /// Username field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Username',
                 focusNode: _usernameFocus,
                 hintText: 'Enter your username',
@@ -177,7 +177,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing),
 
               /// Password field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Password',
                 focusNode: _passwordFocus,
                 hintText: 'Enter your password',

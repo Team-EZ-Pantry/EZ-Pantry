@@ -18,17 +18,17 @@ class PantryService {
   // adb reverse tcp:3000 tcp:3000
 
   Future<int> getPantryId() async {
-    final headers = {
+    final Map<String, String> headers = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final response = await http.get(
+    final http.Response response = await http.get(
       Uri.parse('$baseUrl/pantry/'),
       headers: headers,
     );
 
-    print('Response body: ${response.body}');
+    debugPrint('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -40,7 +40,7 @@ class PantryService {
       }
 
       final int pantryId = pantries[0]['pantry_id'] as int;
-      print('Pantry ID: $pantryId ------------------------------------------------------');
+      debugPrint('Pantry ID: $pantryId ------------------------------------------------------');
       return pantryId;
     } else {
       throw Exception('Failed to fetch pantry ID: ${response.statusCode}');
@@ -49,20 +49,20 @@ class PantryService {
 
   Future<List<PantryItemModel>> fetchPantryItems(int pantryId) async {
 
-    final header = {
+    final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    print('Request headers: $header');
+    debugPrint('Request headers: $header');
 
-    final response = await http.get(
+    final http.Response response = await http.get(
         Uri.parse('$baseUrl/pantry/$pantryId'),
         headers: header,
     );
 
     if (response.statusCode == 200) {
-     print('Response body: ${response.body}');
+     debugPrint('Response body: ${response.body}');
 
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
       final List<dynamic> products = decoded['pantry']['products'] as List<dynamic>;
@@ -77,15 +77,15 @@ class PantryService {
 
   Future<void> addItem(int productId, int quantity, String expirationDate) async {
 
-    final header = {
+    final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final pantryId = await getPantryId(); // async returns a String
-    final url = Uri.parse('$baseUrl/pantry/$pantryId/products');
+    final int pantryId = await getPantryId(); // async returns a String
+    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products');
 
-    final response = await http.post(
+    final http.Response response = await http.post(
       url,
       headers: header,
       body: jsonEncode(<String, Object>{
@@ -101,16 +101,16 @@ class PantryService {
   }
 
   Future<void> updateExpirationDate(int productId, String expirationDate) async {
-    final header = {
+    final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final pantryId = await getPantryId(); // async returns a String
+    final int pantryId = await getPantryId(); // async returns a String
 
-    final url = Uri.parse('$baseUrl/$pantryId/products/$productId/expiration');
+    final Uri url = Uri.parse('$baseUrl/$pantryId/products/$productId/expiration');
 
-    final response = await http.put(
+    final http.Response response = await http.put(
       url,
       headers: header,
       body: jsonEncode(<String, Object> {
@@ -125,16 +125,16 @@ class PantryService {
 
   Future<void> updateQuantity(int productId, int quantity) async {
 
-    final header = {
+    final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final pantryId = await getPantryId();
+    final int pantryId = await getPantryId();
 
-    final url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
+    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
-    final response = await http.put(
+    final http.Response response = await http.put(
       url,
       headers: header,
       body: jsonEncode(<String, Object> {
@@ -149,14 +149,14 @@ class PantryService {
 
   Future<void> createPantry(String pantryName) async {
 
-    final header = {
+    final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final url = Uri.parse('$baseUrl/');
+    final Uri url = Uri.parse('$baseUrl/');
 
-    final response = await http.post(
+    final http.Response response = await http.post(
         url,
         headers: header,
         body: jsonEncode(<String, Object> {
@@ -170,33 +170,33 @@ class PantryService {
   }
 
   Future<PantryItemModel> getItemByBarcode(String barcode) async {
-    final header = {
+    final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final url = Uri.parse('$baseUrl/products/barcode/$barcode');
+    final Uri url = Uri.parse('$baseUrl/products/barcode/$barcode');
 
-    final response = await http.get(
+    final http.Response response = await http.get(
       url,
       headers: header,
     );
 
     if (response.statusCode == 200) {
-      print('Response body: ${response.body}');
+      debugPrint('Response body: ${response.body}');
 
       // Decode JSON into a Map
       final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
 
       // Access the 'product' part of the JSON
-      final productJson = data['product'];
+      final Map<String, dynamic> productJson = data['product'] as Map<String, dynamic>;
 
       // Use your model's fromJson constructor
-      final PantryItemModel product = PantryItemModel.fromJson(productJson as Map<String, dynamic>);
+      final PantryItemModel product = PantryItemModel.fromJson(productJson);
       debugPrint('Product: ${product.name}');
       return product;
     } else {
-      print('Response body: ${response.body}');
+      debugPrint('Response body: ${response.body}');
       throw Exception('Failed to load pantry items');
     }
   }

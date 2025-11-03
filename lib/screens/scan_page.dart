@@ -1,8 +1,16 @@
+/// Scan Items through visual input(camers)
+library;
+
+/// Core Packages
 import 'package:flutter/material.dart';
+
+/// Dependencies
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
+
+/// Internal Imports
 import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
-import 'package:provider/provider.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -16,10 +24,14 @@ class _ScanPageState extends State<ScanPage> {
   bool _isDialogShowing = false;
 
   Future<void> _handleBarcode(String barcode) async {
-    if (_isDialogShowing) return; // Prevent multiple dialogs
+    // Prevent multiple dialogs
+    if (_isDialogShowing) {
+      return; 
+    }
+
     _isDialogShowing = true;
 
-    final pantryProvider = context.read<PantryProvider>();
+    final PantryProvider pantryProvider = context.read<PantryProvider>();
 
     try {
       final PantryItemModel? pantryItem = await pantryProvider.getItemByBarcode(barcode);
@@ -40,12 +52,12 @@ class _ScanPageState extends State<ScanPage> {
       debugPrint('Scanning barcode: $barcode');
       await _barcodeDialog(context, barcode, pantryItem!, pantryProvider);
     } catch (e) {
-      await showDialog(
+      await showDialog<void>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
           title: const Text('Error'),
           content: Text('Failed to handle barcode: $e'),
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('OK'),
@@ -65,21 +77,21 @@ class _ScanPageState extends State<ScanPage> {
       PantryItemModel pantryItem,
       PantryProvider pantryProvider,
       ) async {
-    final quantityController = TextEditingController();
-    final expirationController = TextEditingController();
+    final TextEditingController quantityController   = TextEditingController();
+    final TextEditingController expirationController = TextEditingController();
 
-    await showDialog(
+    await showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: const Text('Barcode Found'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             Text('Code: $barcode'),
             Text('Product: ${pantryItem.name}'),
             const SizedBox(height: 10),
             Ink.image(
-              image: NetworkImage(
+              image: const NetworkImage(
                 'https://images.openfoodfacts.org/images/products/004/180/050/1694/front_en.11.400.jpg',
               ),
               width: 100,
@@ -104,7 +116,7 @@ class _ScanPageState extends State<ScanPage> {
             ),
           ],
         ),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Cancel
@@ -113,10 +125,14 @@ class _ScanPageState extends State<ScanPage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final quantityText = quantityController.text.trim();
-              final expirationDate = expirationController.text.trim();
+              final String quantityText = quantityController.text.trim();
+              final String expirationDate = expirationController.text.trim();
 
-              if (quantityText.isEmpty) return; // Require quantity
+              // Require quantity to get past
+              if (quantityText.isEmpty) {
+                return; 
+              }
+
               final int quantity = int.tryParse(quantityText) ?? 1;
               await pantryProvider.addItem(
                 pantryItem.id,
@@ -141,7 +157,7 @@ class _ScanPageState extends State<ScanPage> {
         controller: _controller,
         onDetect: (BarcodeCapture capture) {
           final List<Barcode> barcodes = capture.barcodes;
-          for (final barcode in barcodes) {
+          for (final Barcode barcode in barcodes) {
             final String? code = barcode.rawValue;
             if (code != null && !_isDialogShowing) {
               _controller.stop(); // Pause scanning
@@ -154,4 +170,3 @@ class _ScanPageState extends State<ScanPage> {
     );
   }
 }
-

@@ -1,20 +1,14 @@
-/// A reusable TextField widget for login and registration forms.
+/// Custom text field(s) for EZPantry
+library;
+
+/// Core Packages
 import 'package:flutter/material.dart';
-import 'package:ez_pantry/screens/login_page.dart.';
 
-class RegistrationLoginTextField extends StatelessWidget {
-  final String label;
-  final String? hintText;
-  final TextEditingController? controller;
-  final bool obscureText;
-  final TextInputType keyboardType;
-  final IconData? icon;
-  final FocusNode? focusNode;
-  final TextInputAction? textInputAction;
-  final void Function(String)? onSubmitted; 
+/// A reusable TextField widget for login and registration forms.
+class CustomTextField extends StatelessWidget { 
 
-  const RegistrationLoginTextField({
-    Key? key,
+  const CustomTextField({
+    super.key,
     required this.label,
     this.hintText,
     this.controller,
@@ -24,7 +18,17 @@ class RegistrationLoginTextField extends StatelessWidget {
     this.focusNode,
     this.textInputAction = TextInputAction.next,
     this.onSubmitted,
-  }) : super(key: key);
+  });
+  
+  final String label;
+  final String? hintText;
+  final TextEditingController? controller;
+  final bool obscureText;
+  final TextInputType keyboardType;
+  final IconData? icon;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onSubmitted;
 
   @override
   Widget build(BuildContext context) {

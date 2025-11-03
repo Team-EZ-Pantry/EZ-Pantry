@@ -1,4 +1,5 @@
 /// Validates login credentials.
+library;
 
 String checkLogin(String username, String password){
   String loginResult; //
