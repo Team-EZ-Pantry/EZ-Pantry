@@ -30,34 +30,35 @@ class PantryItemTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Item image
-            SizedBox(
-              width: 48,
-              height: 48,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                  ? Image.network(
-                      item.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.broken_image, color: Colors.grey),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.image_not_supported, color: Colors.grey),
-                    ),
+            Padding(
+              padding: const EdgeInsetsGeometry.all(2),
+              child: SizedBox( // Item image
+                width: 48,
+                height: 48,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                    ? Image.network(
+                        item.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                          );
+                        },
+                      )
+                    : Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                      ),
+                ),
               ),
             ),
-
+              
             const SizedBox(width: 12),
-
+          
             // Item name and brand
             Expanded(
               child: Column(
@@ -77,9 +78,9 @@ class PantryItemTile extends StatelessWidget {
                 ],
               ),
             ),
-
+          
             const SizedBox(width: 8),
-
+          
             // Decrement button
             InkWell(
               onTap: decrementQuantity,
@@ -97,9 +98,9 @@ class PantryItemTile extends StatelessWidget {
                 ),
               ),
             ),
-
+          
             const SizedBox(width: 6),
-
+          
             // Quantity display (tappable)
             InkWell(
               onTap: () async {
@@ -134,7 +135,7 @@ class PantryItemTile extends StatelessWidget {
                     ],
                   ),
                 );
-
+          
                 if (newQuantity != null) {
                   changeQuantity?.call(newQuantity);
                 }
@@ -157,9 +158,9 @@ class PantryItemTile extends StatelessWidget {
                 ),
               ),
             ),
-
+              
             const SizedBox(width: 6),
-
+          
             // Increment button
             InkWell(
               onTap: incrementQuantity,
@@ -177,7 +178,7 @@ class PantryItemTile extends StatelessWidget {
                 ),
               ),
             ),
-
+              
             const SizedBox(width: 6),
           ],
         ),
