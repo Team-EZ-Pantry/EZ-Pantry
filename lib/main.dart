@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'providers/pantry_provider.dart';
 import 'screens/login_page.dart';
@@ -88,13 +89,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              logoutUser(context);
-            }
+          icon: const Icon(Icons.account_circle),
+          onPressed: () {
+            logoutUser(context);
+          }
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: PopupMenuButton(
+          position: PopupMenuPosition.under,
+          shape: RoundedRectangleBorder(borderRadius:BorderRadiusGeometry.circular(25)),
+          itemBuilder: (BuildContext context) => [
+            const PopupMenuItem(child: Text('pantry1')),
+            const PopupMenuItem(child: Text('pantry2')),
+          ],
+          child: Text(
+            widget.title
+          ),
+        ),
         centerTitle: true,
       ),
       body: Center(
