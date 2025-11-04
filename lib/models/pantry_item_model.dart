@@ -2,6 +2,7 @@ class PantryItemModel {
   PantryItemModel({
     required this.id,
     required this.name,
+    this.brand = '',
     required this.quantity,
     this.expirationDate,
     this.imageUrl,
@@ -17,6 +18,7 @@ class PantryItemModel {
     return PantryItemModel(
       id: json['product_id'] as int,
       name: json['product_name'] as String,
+      brand: json['brand'] as String,
       quantity: json['quantity'] != null ? json['quantity'] as int : 0,
       expirationDate: json['expiration_date']?.toString(),
       imageUrl: json['image_url']?.toString(),
@@ -31,6 +33,7 @@ class PantryItemModel {
 
   final int id;
   final String name;
+  final String? brand;
   int quantity;
   final String? expirationDate;
   final String? imageUrl;
@@ -45,6 +48,7 @@ class PantryItemModel {
     return <String, dynamic>{
       'product_id': id,
       'product_name': name,
+      'brand': brand,
       'quantity': quantity,
       'expiration_date': expirationDate,
       'image_url': imageUrl,
@@ -62,6 +66,7 @@ class PantryItemModel {
     return 'PantryItemModel('
         'id: $id, '
         'name: $name, '
+        'brand: $brand, '
         'quantity: $quantity, '
         'expirationDate: $expirationDate, '
         'imageUrl: $imageUrl, '

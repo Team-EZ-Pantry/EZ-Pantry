@@ -116,14 +116,12 @@ class _PantryPageState extends State<PantryPage> {
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                   itemCount: pantry.items.length,
                   itemBuilder: (BuildContext context, int index) {
                     final PantryItemModel item = pantry.items[index];
                     return PantryItemTile(
                       onTap: () => _onItemTapped(item),
-                      title: item.name,
-                      quantity: item.quantity,
+                      item: item,
                       incrementQuantity: () {
                         item.quantity++;
                         pantry.updateQuantity(item.id, item.quantity);

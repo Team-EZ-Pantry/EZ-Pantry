@@ -85,9 +85,11 @@ class _EditItemDialogState extends State<EditItemDialog> {
                   SizedBox(
                     width: 60,
                     height: 60,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: widget.item.imageUrl != null && widget.item.imageUrl!.isNotEmpty
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: widget.item.imageUrl != null && widget.item.imageUrl!.isNotEmpty
                           ? Image.network(
                               widget.item.imageUrl!,
                               fit: BoxFit.cover,
@@ -99,9 +101,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
                                 );
                               },
                             )
-                      : Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                        : Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                        ),
                       ),
                     ),
                   ),
