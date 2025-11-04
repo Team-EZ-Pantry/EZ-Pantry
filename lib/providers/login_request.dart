@@ -22,11 +22,11 @@ Future<int> loginUser({
   // for android emulator
   //final Uri requestUrl = Uri.parse('http://10.0.2.2:3000/api/auth/login');
 
-  final Map<String, String> headers = {
+  final Map<String, String> headers = <String, String>{
     'Content-Type': 'application/json',
   };
 
-  final String body = jsonEncode({
+  final String body = jsonEncode(<String, String>{
     'email':    email,
     'password': password,
   });
@@ -39,12 +39,13 @@ Future<int> loginUser({
     if (response.statusCode == successfulLoginCode) {
       // Success — parse response if needed
       loginCode = 0;
-      final data = jsonDecode(response.body);
+      // ignore: always_specify_types
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
 
       /// Save the token securely
       SessionController.instance.setSession(data['token'] as String);
 
-      debugPrint('AuthToken: ' + data.toString());
+      debugPrint('AuthToken: $data');
       debugPrint('User Logged in: $data');
     } else {
       if (response.statusCode == badRequestCode && kDebugMode) {

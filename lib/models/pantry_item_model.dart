@@ -45,7 +45,7 @@ class PantryItemModel {
   final DateTime createdAt;
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'product_id': id,
       'product_name': name,
       'brand': brand,

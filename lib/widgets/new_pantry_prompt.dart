@@ -18,7 +18,7 @@ class _NewPantryPromptState extends State<NewPantryPrompt> {
   }
 
   void _save() {
-    final name = _controller.text.trim();
+    final String name = _controller.text.trim();
     if (name.isNotEmpty) {
       Navigator.pop(context, name);
     }
@@ -36,11 +36,11 @@ class _NewPantryPromptState extends State<NewPantryPrompt> {
           hintText: 'Enter pantry name',
           border: OutlineInputBorder(),
         ),
-        inputFormatters: [
+        inputFormatters: <TextInputFormatter>[
           LengthLimitingTextInputFormatter(50),
         ],
       ),
-      actions: [
+      actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),

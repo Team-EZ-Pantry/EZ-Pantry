@@ -1,26 +1,35 @@
+/// Editing dialog for pantry items
+library;
+
+/// Core Packages
 import 'package:flutter/material.dart';
+
+/// Dependencies
 import 'package:provider/provider.dart';
+
+/// Internal Imports
 import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
 
 
 class EditItemDialog extends StatefulWidget{
-  final PantryItemModel item;
   
-  EditItemDialog({
-    Key? key,
+  const EditItemDialog({
+    super.key,
     required this.item,
-  }) : super(key: key);
+  });
+
+  final PantryItemModel item;
 
   @override
   State<EditItemDialog> createState() => _EditItemDialogState();
 }
 
 class _EditItemDialogState extends State<EditItemDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _productIdController = TextEditingController();
-  final _quantityController = TextEditingController();
-  final _expirationDateController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _productIdController = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _expirationDateController = TextEditingController();
   bool _isSaving = false;
 
   @override
@@ -39,10 +48,12 @@ class _EditItemDialogState extends State<EditItemDialog> {
   }
 
   Future<void> _onSave() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
 
-    final quantity = int.tryParse(_quantityController.text.trim()) ?? widget.item.quantity;
-    final expirationDate = _expirationDateController.text.trim().isEmpty
+    final int quantity = int.tryParse(_quantityController.text.trim()) ?? widget.item.quantity;
+    final String? expirationDate = _expirationDateController.text.trim().isEmpty
         ? null
         : _expirationDateController.text.trim();
 
@@ -66,11 +77,11 @@ class _EditItemDialogState extends State<EditItemDialog> {
         padding: const EdgeInsets.all(20),
         child: Column( // Overall Column
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [ 
+          children: <Widget>[ 
             IntrinsicHeight(
               child: Row( // Information Row
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+                children: <Widget>[
                   SizedBox(
                     width: 60,
                     height: 60,
@@ -82,7 +93,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
                           ? Image.network(
                               widget.item.imageUrl!,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
+                              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
                                 // Fallback if the URL fails to load
                                 return Container(
                                   color: Colors.grey[300],
@@ -104,7 +115,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
                       child: Column( // Text information column
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           Text(
                             widget.item.name,
                             overflow: TextOverflow.ellipsis,
@@ -135,7 +146,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   const SizedBox(height: 20),
                   const Text('Edit', style: TextStyle(fontSize: 18)),
                   const SizedBox(height: 15),
@@ -160,16 +171,16 @@ class _EditItemDialogState extends State<EditItemDialog> {
               ),
             ),
             Column(
-              children: [
+              children: <Widget>[
                 const SizedBox(height: 20),
                 const Text('Nutrition Facts', style: TextStyle(fontSize: 18)),
                 const SizedBox(height: 15),
                 Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,        // in the future, let's add: energy-kcal, energy-kcal per serving,
-                        children: [                                          // nutrition score, salt, sodium, sugar, vitamins?, serving size
+                        children: <Widget>[                                          // nutrition score, salt, sodium, sugar, vitamins?, serving size
                           const Text('Calories'),
                           Text(widget.item.calories),
                           const SizedBox(height: 15),
@@ -181,7 +192,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           const Text('Fat'),
                           Text(widget.item.fat),
                           const SizedBox(height: 15),
@@ -200,7 +211,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
               padding: const EdgeInsets.only(top: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
+                children: <Widget>[
                   TextButton(
                     onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
                     child: const Text('Cancel'),
@@ -208,17 +219,17 @@ class _EditItemDialogState extends State<EditItemDialog> {
                   ElevatedButton(
                     onPressed: () {
                       if(!_isSaving){
-                        final value = int.tryParse(_quantityController.text);
+                        final int? value = int.tryParse(_quantityController.text);
                         if (value != null && value >= 0) {
                           _onSave();
                         }
                         else{
-                          showDialog(
+                          showDialog<void>(
                               context: context,
-                              builder: (context) => AlertDialog(
+                              builder: (BuildContext context) => AlertDialog(
                                 title: const Text('Invalid Quantity'),
                                 content: const Text('Quantity must be 0 or more.'),
-                                actions: [
+                                actions: <Widget>[
                                   TextButton(
                                     onPressed: () => Navigator.of(context).pop(),
                                     child: const Text('OK'),

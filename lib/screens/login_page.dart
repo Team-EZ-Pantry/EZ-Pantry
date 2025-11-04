@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 
 import '../main.dart'; // Correct relative path to import MyHomePage
 import '../providers/login_request.dart';
-import '../utilities/checkLogin.dart';
-import '../widgets/login_registration_TextFormField.dart';
+import '../utilities/check_login.dart';
+import '../widgets/custom_text_field.dart';
 import 'registration_page.dart'; // Import RegistrationPage class
 
 class LoginPage extends StatefulWidget {
@@ -71,33 +71,38 @@ class _LoginPageState extends State<LoginPage> {
       
         // On success, navigate to MyHomePage (home screen)
         if (requestResponse == 0) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute<ActionDispatcher>(
-              builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
-            ),
-          );
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<ActionDispatcher>(
+                builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
+              ),
+            );
+          }
         } else {
           // Show error if credentials are incorrect
-          showDialog<ErrorDescription>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Login Failed'),
-              content: const Text('Incorrect email or password.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-      }
+          if (mounted) {
+            showDialog<ErrorDescription>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Login Failed'),
+                content: const Text('Incorrect email or password.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
       } catch (e) {
         debugPrint('Exception occurred: $e');
       }
     }
   } 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: elementSpacing + 20),
 
                 /// email field
-                RegistrationLoginTextField(
+                CustomTextField(
                   label: 'Email',
                   focusNode: _emailFocus,
                   hintText: 'Enter your email',
@@ -129,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: elementSpacing),
 
                 /// Password field
-                RegistrationLoginTextField(
+                CustomTextField(
                   label: 'Password',
                   focusNode: _passwordFocus,
                   hintText: 'Enter your password',

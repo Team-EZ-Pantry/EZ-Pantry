@@ -23,7 +23,7 @@ class PantryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final pantryId = await _service.getPantryId();
+      final int pantryId = await _service.getPantryId();
       debugPrint('Fetched pantry id: $pantryId in provider');
       _items = await _service.fetchPantryItems(pantryId);
       debugPrint('Fetched items: $_items');
@@ -46,9 +46,9 @@ class PantryProvider extends ChangeNotifier {
       loadPantryItems();
       notifyListeners();
 
-      print('✅ Added item: productID: $productId, quantity: $quantity');
+      debugPrint('✅ Added item: productID: $productId, quantity: $quantity');
     } catch (e) {
-      print('❌ Error adding pantry item: $e');
+      debugPrint('❌ Error adding pantry item: $e');
       rethrow; // optional: let UI handle error display
     }
   }
@@ -58,9 +58,9 @@ class PantryProvider extends ChangeNotifier {
       await _service.updateExpirationDate(productId, expirationDate);
       notifyListeners();
 
-      print('Updated expiration of $productId to $expirationDate');
+      debugPrint('Updated expiration of $productId to $expirationDate');
     } catch(e) {
-      print('Error updating expiration: $e');
+      debugPrint('Error updating expiration: $e');
     }
   }
 
@@ -69,9 +69,9 @@ class PantryProvider extends ChangeNotifier {
       await _service.updateQuantity(productId, quantity);
       notifyListeners();
 
-      print('Updated quantity of $productId to $quantity');
+      debugPrint('Updated quantity of $productId to $quantity');
     } catch(e) {
-      print('Error updating quantity: $e');
+      debugPrint('Error updating quantity: $e');
       }
     }
 
@@ -90,14 +90,11 @@ class PantryProvider extends ChangeNotifier {
 
   Future<PantryItemModel?> getItemByBarcode(String barcode) async {
     try {
-      final product = await _service.getItemByBarcode(barcode);
+      final PantryItemModel product = await _service.getItemByBarcode(barcode);
       return product;
     } catch (e) {
       debugPrint('Error getting item by barcode: $e');
       return null;
     }
   }
-
 }
-
-

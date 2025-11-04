@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';                           // Make sure this imports MyHomePage
 import '../providers/registration_request.dart';
-import '../utilities/checkRegistration.dart';
-import '../widgets/login_registration_TextFormField.dart'; // Import the registration function
+import '../utilities/check_registration.dart';
+import '../widgets/custom_text_field.dart'; // Import the registration function
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -77,7 +77,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     try {
       final int requestResponse = await registerUser(username: username, email: email, password: password);
       // On success, navigate to MyHomePage (home screen)
-      if (requestResponse == 0) {
+      if (requestResponse == 0 && mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -88,21 +88,40 @@ class _RegistrationPageState extends State<RegistrationPage> {
       else {
         // Show error dialog on failure
         if (requestResponse == badRequestCode){
-                errorDialog = 'Bad Request: Please check your input.';
-              } else if (requestResponse == unauthorizedUserCode) {
-                errorDialog = 'Incorrect username or password.';
-              } else if (requestResponse == serverErrorCode) {
-                errorDialog = 'Server error. Please try again later.';
-              } else {
-                errorDialog = 'An unexpected error occurred. Please try again.';
-            }
+          errorDialog = 'Bad Request: Please check your input.';
+        } else if (requestResponse == unauthorizedUserCode) {
+          errorDialog = 'Incorrect username or password.';
+        } else if (requestResponse == serverErrorCode) {
+          errorDialog = 'Server error. Please try again later.';
+        } else {
+          errorDialog = 'An unexpected error occurred. Please try again.';
+        }
             
+        if (mounted) {
+          showDialog<ErrorDescription>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Registration Failed'),
+              content: Text(errorDialog),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Show error dialog on failure
+      if (mounted) {
         showDialog<ErrorDescription>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Registration Failed'),
-            content: Text(errorDialog),
-            actions: [
+            content: Text('Error: $e'),
+            actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('OK'),
@@ -111,21 +130,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
         );
       }
-    } catch (e) {
-      // Show error dialog on failure
-      showDialog<ErrorDescription>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Registration Failed'),
-          content: Text('Error: $e'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
     }
   }
 
@@ -141,7 +145,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: <Widget>[
               Image.asset(
                 '../../assets/logo/logo.png', // Ensure this path matches your asset structure
                 height: 300,
@@ -150,7 +154,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing + 20),
               
               /// Email field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Email',
                 focusNode: _emailFocus,
                 hintText: 'Enter your email',
@@ -164,7 +168,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing),
 
               /// Username field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Username',
                 focusNode: _usernameFocus,
                 hintText: 'Enter your username',
@@ -177,7 +181,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: elementSpacing),
 
               /// Password field
-              RegistrationLoginTextField(
+              CustomTextField(
                 label: 'Password',
                 focusNode: _passwordFocus,
                 hintText: 'Enter your password',

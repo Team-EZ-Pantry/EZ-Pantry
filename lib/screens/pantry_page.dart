@@ -1,7 +1,14 @@
+/// Screen where user pantry items are seen and edited
+library;
+
+/// Core Packages
 import 'package:flutter/material.dart';
+
+/// Dependencies
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
+/// Internal Imports
 import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
@@ -23,22 +30,25 @@ class _PantryPageState extends State<PantryPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final pantryProvider = context.read<PantryProvider>();
+      final PantryProvider pantryProvider = context.read<PantryProvider>();
 
-      final loaded = await pantryProvider.loadPantryItems();
+      final bool loaded = await pantryProvider.loadPantryItems();
 
       if (!loaded) {
         String? pantryName;
 
         // Keep showing the dialog until user enters a name
+        
         while (pantryName == null || pantryName.isEmpty) {
-          pantryName = await showDialog<String>(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const NewPantryPrompt(),
-          );
+          if (mounted) {
+            pantryName = await showDialog<String>(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) => const NewPantryPrompt(),
+            );
+          }
 
-          if (pantryName == null || pantryName.isEmpty) {
+          if (mounted && (pantryName == null || pantryName.isEmpty)) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('You must create a pantry to continue.')),
             );
@@ -59,38 +69,44 @@ class _PantryPageState extends State<PantryPage> {
     );
 
     if (result != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Scanned barcode: $result')),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Scanned barcode: $result')),
+        );
+      
       debugPrint('Scanned barcode: $result');
-      // TODO: Call API or update pantry items with this barcode
+      ///(TODO): Call API or update pantry items with this barcode
     }
   }
 
   Future<void> _onAddItemButtonPressed() async {
-    final result = await showDialog<String>(
+    final String? result = await showDialog<String>(
       context: context,
-      builder: (context) => AddItemDialog(title: 'Enter item', hintText: 'hintText'),
+      builder: (BuildContext context) => const AddItemDialog(title: 'Enter item', hintText: 'hintText'),
     );
-    if (result == null) return;
+
+    if (result == null) {
+      return;
+    }
   }
 
   Future<void> _onItemTapped(PantryItemModel item) async {
-    final result = await showDialog<String>(
+    final String? result = await showDialog<String>(
       context: context,
-      builder: (context) => EditItemDialog(item: item),
+      builder: (BuildContext context) => EditItemDialog(item: item),
     );
-    if (result == null) return;
+    if (result == null) {
+      return;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        children: [
+        children: <Widget>[
           Material(
             child: Consumer<PantryProvider>(
-              builder: (BuildContext context, pantry, child) {
+              builder: (BuildContext context, PantryProvider pantry, Widget? child) {
                 if (pantry.loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -102,7 +118,7 @@ class _PantryPageState extends State<PantryPage> {
                 return ListView.builder(
                   itemCount: pantry.items.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final item = pantry.items[index];
+                    final PantryItemModel item = pantry.items[index];
                     return PantryItemTile(
                       onTap: () => _onItemTapped(item),
                       item: item,
@@ -134,7 +150,7 @@ class _PantryPageState extends State<PantryPage> {
         icon: Icons.add,
         activeIcon: Icons.close,
         backgroundColor: Colors.blue,
-        children: [
+        children: <SpeedDialChild>[
           SpeedDialChild(
             child: const Icon(Icons.qr_code_scanner),
             label: 'Scan Item',
