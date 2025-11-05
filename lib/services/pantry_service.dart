@@ -99,6 +99,28 @@ class PantryService {
     }
   }
 
+  Future<void> addCustomItem(PantryItemModel customItem) async {
+    ///(TODO): Create headers dynamically
+    debugPrint('addCustomItem Started');
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse('$baseUrl/products/custom'), // URL
+      headers: header,
+      body: jsonEncode(<String, Object>{
+        'quantity': '',
+        'expiration_date': '',
+      }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to add custom item: ${response.body}');
+    }
+  }
+
   Future<void> updateExpirationDate(int productId, String expirationDate) async {
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',

@@ -53,6 +53,22 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> addCustomItem(PantryItemModel customItem) async {
+      try {
+
+        // Save to backend
+        await _service.addCustomItem(customItem);
+        loadPantryItems();
+        notifyListeners();
+
+        debugPrint('✅ Added Custom Item: $customItem');
+      } catch (e) {
+        debugPrint('❌ Error adding pantry item: $e');
+        rethrow; // optional: let UI handle error display
+      }
+  }
+
+
   Future<void> updateExpirationDate(int productId, String expirationDate) async {
     try {
       await _service.updateExpirationDate(productId, expirationDate);

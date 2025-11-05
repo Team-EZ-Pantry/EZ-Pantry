@@ -70,7 +70,7 @@ class _PantryPageState extends State<PantryPage> {
         SnackBar(content: Text('Scanned barcode: $result')),
       );
       debugPrint('Scanned barcode: $result');
-      ///(TODO): Call API or update pantry items with this barcode
+      ///(TODO): Call API or update pantry items with this barcode    
     }
   }
 
@@ -79,6 +79,17 @@ class _PantryPageState extends State<PantryPage> {
       context: context,
       builder: (BuildContext context) => const AddItemDialog(title: 'Enter item', hintText: 'hintText'),
     );
+    if (result == null) {
+      return;
+    }
+  }
+
+  Future<void> _onCustomItemButtonPressed() async {
+    final String? result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => const AddItemDialog(title: '', hintText: ' '),
+    );
+
     if (result == null) {
       return;
     }
@@ -157,6 +168,11 @@ class _PantryPageState extends State<PantryPage> {
             child: const Icon(Icons.menu),
             label: 'Add Item',
             onTap: () => _onAddItemButtonPressed(),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.new_label),
+            label: 'Add Custom Item',
+            onTap: () => _onCustomItemButtonPressed(),
           ),
         ],
       ),
