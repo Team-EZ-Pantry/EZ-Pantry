@@ -1,0 +1,73 @@
+name: Flutter Release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build, Tag & Release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Needed for creating tags & releases
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Analyze code
+      - name: Analyze code
+        run: flutter analyze
+
+      # 5. Run tests
+      - name: Run tests
+        run: flutter test --no-pub --coverage
+
+      # 6. Extract Flutter version number
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          version=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+          echo "version=$version" >> $GITHUB_ENV
+          echo "App version: $version"
+
+      # 7. Build release APK
+      - name: Build release APK
+        run: flutter build apk --release
+
+      # 8. Create a new Git tag (if not already tagged)
+      - name: Create Git tag
+        id: create_tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          if ! git rev-parse "v${{ env.version }}" >/dev/null 2>&1; then
+            git tag "v${{ env.version }}"
+            git push origin "v${{ env.version }}"
+          else
+            echo "Tag already exists, skipping tag creation."
+          fi
+
+      # 9. Create GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.version }}
+          name: "Release v${{ env.version }}"
+          files: build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
