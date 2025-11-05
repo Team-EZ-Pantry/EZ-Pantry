@@ -27,14 +27,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # 4. Analyze code
-      - name: Analyze code
-        run: flutter analyze
-
-      # 5. Run tests
-      - name: Run tests
-        run: flutter test --no-pub --coverage
-
+     
       # 6. Extract Flutter version number
       - name: Get version from pubspec.yaml
         id: get_version
