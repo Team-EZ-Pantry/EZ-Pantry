@@ -104,7 +104,7 @@ class PantryItemTile extends StatelessWidget {
             // Quantity display (tappable)
             InkWell(
               onTap: () async {
-                final TextEditingController controller = TextEditingController(text: quantity.toString());
+                final TextEditingController controller = TextEditingController(text: item.quantity.toString());
                 final int? newQuantity = await showDialog<int>(
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
