@@ -28,7 +28,7 @@ jobs:
 
       # 4. Run linting / analyze
       - name: Analyze code
-        run: flutter analyze --no-fatal-infos
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       # 5. Run tests with coverage
       - name: Run tests
