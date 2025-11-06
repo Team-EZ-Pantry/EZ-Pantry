@@ -83,13 +83,12 @@ class PantryService {
     };
 
     final int pantryId = await getPantryId(); // async returns a String
-    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products');
+    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId');
 
     final http.Response response = await http.post(
       url,
       headers: header,
       body: jsonEncode(<String, Object>{
-        'productId': productId,
         'quantity': quantity,
         'expiration_date': expirationDate,
       }),
@@ -134,7 +133,7 @@ class PantryService {
 
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
-    final http.Response response = await http.put(
+    final http.Response response = await http.patch(
       url,
       headers: header,
       body: jsonEncode(<String, Object> {

@@ -150,6 +150,8 @@ class _PantryPageState extends State<PantryPage> {
         icon: Icons.add,
         activeIcon: Icons.close,
         backgroundColor: Colors.blue,
+        buttonSize: const Size(70, 70),
+        childrenButtonSize: const Size (70, 70),
         children: <SpeedDialChild>[
           SpeedDialChild(
             child: const Icon(Icons.qr_code_scanner),

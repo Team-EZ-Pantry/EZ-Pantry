@@ -16,9 +16,9 @@ class PantryItemModel {
 
   factory PantryItemModel.fromJson(Map<String, dynamic> json) {
     return PantryItemModel(
-      id: json['product_id'] as int,
+      id: json['id'] as int,
       name: json['product_name'] as String,
-      brand: json['brand'] as String,
+      brand: json['brand'] as String?,
       quantity: json['quantity'] != null ? json['quantity'] as int : 0,
       expirationDate: json['expiration_date']?.toString(),
       imageUrl: json['image_url']?.toString(),
