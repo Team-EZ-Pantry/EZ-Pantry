@@ -28,7 +28,7 @@ class PantryItemTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(
-            color: Colors.black12,
+            color: Colors.black38,
             blurRadius: 2,
             offset: Offset(0, 1),
           )
