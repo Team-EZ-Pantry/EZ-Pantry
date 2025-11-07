@@ -27,6 +27,29 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # 5. Increment build number in pubspec.yaml
+      - name: Increment build number
+        run: |
+          version_line=$(grep '^version:' pubspec.yaml)
+          version_number=$(echo "$version_line" | cut -d '+' -f1 | cut -d ':' -f2 | tr -d ' ')
+          build_number=$(echo "$version_line" | cut -d '+' -f2)
+          if [ -z "$build_number" ]; then
+            build_number=0
+          fi
+          new_build_number=$((build_number + 1))
+          new_version="${version_number}+${new_build_number}"
+      
+          sed -i "s/^version:.*/version: ${new_version}/" pubspec.yaml
+          echo "Bumped version to ${new_version}"
+      
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add pubspec.yaml
+          git commit -m "chore: bump version to ${new_version} [skip ci]"
+          git push
+
+
+
      
       # 6. Extract Flutter version number
       - name: Get version from pubspec.yaml
@@ -40,18 +63,21 @@ jobs:
       - name: Build release APK
         run: flutter build apk --release
 
-      # 8. Create a new Git tag (if not already tagged)
+      # 8. Create Git tag
       - name: Create Git tag
         id: create_tag
         run: |
+          git fetch --tags
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          if ! git rev-parse "v${{ env.version }}" >/dev/null 2>&1; then
+          if git rev-parse "v${{ env.version }}" >/dev/null 2>&1; then
+            echo "Tag v${{ env.version}} already exists. Skipping."
+          else
             git tag "v${{ env.version }}"
             git push origin "v${{ env.version }}"
-          else
-            echo "Tag already exists, skipping tag creation."
+            echo "Created tag v${{ env.version }}"
           fi
+
 
       # 9. Create GitHub Release
       - name: Create GitHub Release
