@@ -110,10 +110,7 @@ class PantryService {
     final http.Response response = await http.post(
       Uri.parse('$baseUrl/products/custom'), // URL
       headers: header,
-      body: jsonEncode(<String, Object>{
-        'quantity': '',
-        'expiration_date': '',
-      }),
+      body: customItem.toJson() /// Get all attributes of the item
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
@@ -175,7 +172,7 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final Uri url = Uri.parse('$baseUrl/');
+    final Uri url = Uri.parse('$baseUrl/pantry/');
 
     final http.Response response = await http.post(
         url,
@@ -221,5 +218,4 @@ class PantryService {
       throw Exception('Failed to load pantry items');
     }
   }
-
 }
