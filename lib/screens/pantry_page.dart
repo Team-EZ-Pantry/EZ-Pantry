@@ -3,7 +3,6 @@ library;
 
 /// Core Packages
 import 'package:flutter/material.dart';
-
 /// Dependencies
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +10,7 @@ import 'package:provider/provider.dart';
 /// Internal Imports
 import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
+import '../widgets/add_custom_item.dart';
 import '../widgets/add_item.dart';
 import '../widgets/edit_item.dart';
 import '../widgets/new_pantry_prompt.dart';
@@ -87,7 +87,7 @@ class _PantryPageState extends State<PantryPage> {
   Future<void> _onCustomItemButtonPressed() async {
     final String? result = await showDialog<String>(
       context: context,
-      builder: (BuildContext context) => const AddItemDialog(title: '', hintText: ' '),
+      builder: (BuildContext context) => const AddCustomItemDialog(),
     );
 
     if (result == null) {
@@ -171,7 +171,7 @@ class _PantryPageState extends State<PantryPage> {
           ),
           SpeedDialChild(
             child: const Icon(Icons.new_label),
-            label: 'Add Custom Item',
+            label: 'Custom Item',
             onTap: () => _onCustomItemButtonPressed(),
           ),
         ],
