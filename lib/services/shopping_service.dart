@@ -33,21 +33,21 @@ class ShoppingService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
 
-      final List<dynamic> shopping_lists = data['shopping_lists'] as List<dynamic>;
-      if (shopping_lists.isEmpty) {
+      final List<dynamic> shoppingLists = data['shoppingLists'] as List<dynamic>;
+      if (shoppingLists.isEmpty) {
         throw Exception('No shopping lists found for this user.');
 
       }
 
-      final int shoppingListId = shopping_lists[0]['shopping_list_id'] as int;
-      debugPrint('Shopping List ID: $shoppingListId ------------------------------------------------------');
-      return shoppingListId;
+      final int listId = shoppingLists[0]['shopping_list_id'] as int;
+      debugPrint('Shopping List ID: $listId ------------------------------------------------------');
+      return listId;
     } else {
       throw Exception('Failed to fetch shopping list ID: ${response.statusCode}');
     }
   }
 
-  Future<List<PantryItemModel>> fetchShoppingListItems(int shoppingListId) async {
+  Future<List<PantryItemModel>> fetchShoppingListItems(int listId) async {
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ class ShoppingService {
     debugPrint('Request headers: $header');
 
     final http.Response response = await http.get(
-        Uri.parse('$baseUrl/shoppingList/$shoppingListId'),
+        Uri.parse('$baseUrl/shoppingList/$listId'),
         headers: header,
     );
 
@@ -82,8 +82,8 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int shoppingListId = await getShoppingListId(); // async returns a String
-    final Uri url = Uri.parse('$baseUrl/shoppingList/$shoppingListId/products');
+    final int listId = await getShoppingListId(); // async returns a String
+    final Uri url = Uri.parse('$baseUrl/shoppingList/$listId/products');
 
     final http.Response response = await http.post(
       url,
@@ -99,6 +99,7 @@ class ShoppingService {
     }
   }
 
+  /*
   Future<void> updateQuantity(int productId, int quantity) async {
 
     final Map<String, String> header = <String, String>{
@@ -106,9 +107,9 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int shoppingListId = await getShoppingListId();
+    final int listId = await getShoppingListId();
 
-    final Uri url = Uri.parse('$baseUrl/shoppingList/$shoppingListId/products/$productId/quantity');
+    final Uri url = Uri.parse('$baseUrl/shoppingList/$listId/products/$productId/quantity');
 
     final http.Response response = await http.put(
       url,
@@ -122,6 +123,7 @@ class ShoppingService {
       throw Exception('Failed to change quantity: ${response.body}');
     }
   }
+  */
 
   Future<void> createShoppingList(String shoppingListName) async {
 

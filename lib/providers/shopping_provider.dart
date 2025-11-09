@@ -23,9 +23,9 @@ class ShoppingProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final int shoppingListId = await _service.getShoppingListId();
-      debugPrint('Fetched shopping list id: $shoppingListId in provider');
-      _items = await _service.fetchShoppingListItems(shoppingListId);
+      final int listId = await _service.getShoppingListId();
+      debugPrint('Fetched shopping list id: $listId in provider');
+      _items = await _service.fetchShoppingListItems(listId);
       debugPrint('Fetched items: $_items');
       return true; // Pantry loaded successfully
     } catch (e) {
@@ -48,11 +48,12 @@ class ShoppingProvider extends ChangeNotifier {
 
       debugPrint('✅ Added item: productID: $productId, quantity: $quantity');
     } catch (e) {
-      debugPrint('❌ Error adding shopping list item: $e');
+      debugPrint('❌ Error adding item to shopping list: $e');
       rethrow; // optional: let UI handle error display
     }
   }
 
+  /*
   Future<void> updateQuantity(int productId, int quantity) async {
     try {
       await _service.updateQuantity(productId, quantity);
@@ -68,6 +69,7 @@ class ShoppingProvider extends ChangeNotifier {
       items.removeAt(index);
       notifyListeners();
     }
+    */
 
   Future<void> createShoppingList(String shoppingListName) async {
     try {
