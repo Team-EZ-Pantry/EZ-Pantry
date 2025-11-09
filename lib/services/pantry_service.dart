@@ -99,22 +99,25 @@ class PantryService {
     }
   }
 
-  Future<void> addCustomItem(PantryItemModel customItem) async {
+  Future<void> defineCustomItem(Map<String, dynamic> customItem) async {
     ///(TODO): Create headers dynamically
-    debugPrint('addCustomItem Started');
+    debugPrint('defineCustomItem Started');
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
+    final String requestBody = jsonEncode(customItem); // Get all attributes of the item
+
     final http.Response response = await http.post(
+      
       Uri.parse('$baseUrl/products/custom'), // URL
       headers: header,
-      body: customItem.toJson() /// Get all attributes of the item
+      body: requestBody 
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Failed to add custom item: ${response.body}');
+      throw Exception('Failed to define custom item: ${response.body}');
     }
   }
 
