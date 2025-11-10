@@ -60,16 +60,18 @@ class PantryService {
         Uri.parse('$baseUrl/pantry/$pantryId'),
         headers: header,
     );
-
+    
     if (response.statusCode == 200) {
      debugPrint('Response body: ${response.body}');
 
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
+
       final List<dynamic> products = decoded['pantry']['products'] as List<dynamic>;
 
-      return products
-          .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>))
-          .toList();
+      var newProducts = products
+          .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>));
+
+      return newProducts.toList();
     } else {
       throw Exception('Failed to load pantry items');
     }
@@ -107,13 +109,17 @@ class PantryService {
 
     final int pantryId = await getPantryId(); // async returns a String
 
-    final Uri url = Uri.parse('$baseUrl/$pantryId/products/$productId/expiration');
+    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/expiration');
 
-    final http.Response response = await http.put(
+      debugPrint(expirationDate);
+      debugPrint(jsonEncode(<String, String> {
+        'expirationDate': expirationDate,
+      }));
+    final http.Response response = await http.patch(
       url,
       headers: header,
-      body: jsonEncode(<String, Object> {
-        'expiration_date': expirationDate,
+      body: jsonEncode(<String, String> {
+        'expirationDate': expirationDate,
       }),
     );
 
@@ -133,12 +139,14 @@ class PantryService {
 
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
-    final http.Response response = await http.put(
+    final String requestBody = jsonEncode(<String, Object> {
+        'quantity' : '$quantity',
+      });
+
+    final http.Response response = await http.patch(
       url,
       headers: header,
-      body: jsonEncode(<String, Object> {
-        'quantity': quantity,
-      }),
+      body: requestBody
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
@@ -153,7 +161,7 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final Uri url = Uri.parse('$baseUrl/');
+    final Uri url = Uri.parse('$baseUrl/pantry/');
 
     final http.Response response = await http.post(
         url,

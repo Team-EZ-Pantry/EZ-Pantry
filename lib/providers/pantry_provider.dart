@@ -30,6 +30,7 @@ class PantryProvider extends ChangeNotifier {
       return true; // Pantry loaded successfully
     } catch (e) {
       debugPrint('Error fetching pantry items: $e');
+  
       return false; // Pantry not found or some other failure
     } finally {
       _loading = false;
