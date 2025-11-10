@@ -66,20 +66,10 @@ class PantryService {
 
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
 
-      debugPrint('TEST0' + decoded.toString());
-      debugPrint('TEST0.5' + decoded['pantry'].toString());
-      debugPrint('TEST0.6' + decoded['pantry']['products'].toString());
-
       final List<dynamic> products = decoded['pantry']['products'] as List<dynamic>;
-
-      debugPrint('TEST1' + products.toString());
-
-      
 
       var newProducts = products
           .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>));
-
-      debugPrint('TEST2' + newProducts.toString());
 
       return newProducts.toList();
     } else {
@@ -119,13 +109,17 @@ class PantryService {
 
     final int pantryId = await getPantryId(); // async returns a String
 
-    final Uri url = Uri.parse('$baseUrl/$pantryId/products/$productId/expiration');
+    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/expiration');
 
-    final http.Response response = await http.put(
+      debugPrint(expirationDate);
+      debugPrint(jsonEncode(<String, String> {
+        'expirationDate': expirationDate,
+      }));
+    final http.Response response = await http.patch(
       url,
       headers: header,
-      body: jsonEncode(<String, Object> {
-        'expiration_date': expirationDate,
+      body: jsonEncode(<String, String> {
+        'expirationDate': expirationDate,
       }),
     );
 
@@ -145,7 +139,7 @@ class PantryService {
 
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
-    final http.Response response = await http.put(
+    final http.Response response = await http.patch(
       url,
       headers: header,
       body: jsonEncode(<String, Object> {
@@ -165,7 +159,7 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final Uri url = Uri.parse('$baseUrl/pantry');
+    final Uri url = Uri.parse('$baseUrl/pantry/');
 
     final http.Response response = await http.post(
         url,
