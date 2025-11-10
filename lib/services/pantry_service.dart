@@ -65,21 +65,10 @@ class PantryService {
      debugPrint('Response body: ${response.body}');
 
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
-
-      debugPrint('TEST0' + decoded.toString());
-      debugPrint('TEST0.5' + decoded['pantry'].toString());
-      debugPrint('TEST0.6' + decoded['pantry']['products'].toString());
-
-      final List<dynamic> products = decoded['pantry']['products'] as List<dynamic>;
-
-      debugPrint('TEST1' + products.toString());
-
-      
+      final List<dynamic> products       = decoded['pantry']['products'] as List<dynamic>;
 
       var newProducts = products
           .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>));
-
-      debugPrint('TEST2' + newProducts.toString());
 
       return newProducts.toList();
     } else {
@@ -145,12 +134,14 @@ class PantryService {
 
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
-    final http.Response response = await http.put(
+    final String requestBody = jsonEncode(<String, Object> {
+        'quantity' : '$quantity',
+      });
+
+    final http.Response response = await http.patch(
       url,
       headers: header,
-      body: jsonEncode(<String, Object> {
-        'quantity': quantity,
-      }),
+      body: requestBody
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
@@ -165,7 +156,7 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final Uri url = Uri.parse('$baseUrl/pantry');
+    final Uri url = Uri.parse('$baseUrl/pantry/');
 
     final http.Response response = await http.post(
         url,
