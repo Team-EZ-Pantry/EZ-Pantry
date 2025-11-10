@@ -139,12 +139,14 @@ class PantryService {
 
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
+    final String requestBody = jsonEncode(<String, Object> {
+        'quantity' : '$quantity',
+      });
+
     final http.Response response = await http.patch(
       url,
       headers: header,
-      body: jsonEncode(<String, Object> {
-        'quantity': quantity,
-      }),
+      body: requestBody
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
