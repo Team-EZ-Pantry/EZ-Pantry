@@ -60,16 +60,28 @@ class PantryService {
         Uri.parse('$baseUrl/pantry/$pantryId'),
         headers: header,
     );
-
+    
     if (response.statusCode == 200) {
      debugPrint('Response body: ${response.body}');
 
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
+
+      debugPrint('TEST0' + decoded.toString());
+      debugPrint('TEST0.5' + decoded['pantry'].toString());
+      debugPrint('TEST0.6' + decoded['pantry']['products'].toString());
+
       final List<dynamic> products = decoded['pantry']['products'] as List<dynamic>;
 
-      return products
-          .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>))
-          .toList();
+      debugPrint('TEST1' + products.toString());
+
+      
+
+      var newProducts = products
+          .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>));
+
+      debugPrint('TEST2' + newProducts.toString());
+
+      return newProducts.toList();
     } else {
       throw Exception('Failed to load pantry items');
     }
@@ -153,7 +165,7 @@ class PantryService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final Uri url = Uri.parse('$baseUrl/');
+    final Uri url = Uri.parse('$baseUrl/pantry');
 
     final http.Response response = await http.post(
         url,
