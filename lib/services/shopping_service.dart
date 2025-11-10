@@ -24,7 +24,7 @@ class ShoppingService {
     };
 
     final http.Response response = await http.get(
-      Uri.parse('$baseUrl/shoppingList/'),
+      Uri.parse('$baseUrl/shopping-list/'),
       headers: headers,
     );
 
@@ -57,7 +57,7 @@ class ShoppingService {
     debugPrint('Request headers: $header');
 
     final http.Response response = await http.get(
-        Uri.parse('$baseUrl/shoppingList/$listId'),
+        Uri.parse('$baseUrl/shopping-list/$listId'),
         headers: header,
     );
 
@@ -75,7 +75,7 @@ class ShoppingService {
     }
   }
 
-  Future<void> addItem(int productId, int quantity) async {
+  Future<void> addItem(int productId, int customProductId, String itemText, int quantity) async {
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
@@ -83,19 +83,69 @@ class ShoppingService {
     };
 
     final int listId = await getShoppingListId(); // async returns a String
-    final Uri url = Uri.parse('$baseUrl/shoppingList/$listId/products');
+    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/products/$productId');
 
     final http.Response response = await http.post(
       url,
       headers: header,
       body: jsonEncode(<String, Object>{
         'productId': productId,
+        'customProductId': customProductId,
+        'text': itemText,
         'quantity': quantity,
       }),
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
       throw Exception('Failed to add item: ${response.body}');
+    }
+  }
+
+  Future<void> toggleItem(int productId, bool isChecked) async{
+
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final int listId = await getShoppingListId();
+    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId/toggle');
+
+    final http.Response response = await http.patch(
+      url,
+      headers: header,
+      body: jsonEncode(<String, bool> {
+        'is_checked': isChecked,
+      }),
+
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to toggle item: ${response.body}');
+    }
+  }
+
+  Future<void> deleteItem(int productId, bool isChecked) async{
+
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final int listId = await getShoppingListId();
+    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId/toggle');
+
+    final http.Response response = await http.patch(
+      url,
+      headers: header,
+      body: jsonEncode(<String, bool> {
+        'is_checked': isChecked,
+      }),
+
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to toggle item: ${response.body}');
     }
   }
 
@@ -132,7 +182,7 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final Uri url = Uri.parse('$baseUrl/');
+    final Uri url = Uri.parse('$baseUrl/shopping-list/');
 
     final http.Response response = await http.post(
         url,
