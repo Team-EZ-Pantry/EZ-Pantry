@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/pantry_provider.dart';
+import 'screens/account_page.dart';
 import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
@@ -90,7 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
         leading: IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              logoutUser(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AccountPage()),
+              );
             }
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
