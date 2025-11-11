@@ -17,7 +17,7 @@ class ShoppingService {
   // or add adb to path then just run
   // adb reverse tcp:3000 tcp:3000
 
-  Future<int> getShoppingListId() async {
+  Future<int> getShoppingList() async {
     final Map<String, String> headers = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
@@ -75,25 +75,49 @@ class ShoppingService {
     }
   }
 
-  Future<void> addItem(int? productId, int? customProduct, String? itemText, int quantity) async {
+  Future<void> addItem(int productId, int quantity, [String? itemText]) async {
 
-    if (productId == null){
-      itemText = '';
-    }
+    itemText ??= '';
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingListId(); // async returns a String
-    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/products/$productId');
+    final int listId = await getShoppingList(); // async returns a String
+    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/');
 
     final http.Response response = await http.post(
       url,
       headers: header,
       body: jsonEncode(<String, Object>{
         'productId': productId,
+        'text': itemText,
+        'quantity': quantity,
+      }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to add item: ${response.body}');
+    }
+  }
+
+  Future<void> addCustomItem(int customProductId, int quantity, [String? itemText]) async {
+
+    itemText ??= '';
+
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final int listId = await getShoppingList(); // async returns a String
+    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/');
+
+    final http.Response response = await http.post(
+      url,
+      headers: header,
+      body: jsonEncode(<String, Object>{
         'customProductId': customProductId,
         'text': itemText,
         'quantity': quantity,
@@ -105,23 +129,19 @@ class ShoppingService {
     }
   }
 
-  Future<void> toggleItem(int productId, bool isChecked) async{
+  Future<void> toggleItem(int productId) async{
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingListId();
+    final int listId = await getShoppingList();
     final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId/toggle');
 
     final http.Response response = await http.patch(
       url,
-      headers: header,
-      body: jsonEncode(<String, bool> {
-        'is_checked': isChecked,
-      }),
-
+      headers: header
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {
@@ -136,16 +156,12 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingListId();
+    final int listId = await getShoppingList();
     final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId');
 
     final http.Response response = await http.delete(
       url,
-      headers: header,
-      body: jsonEncode(<String, int> {
-        'productId': productId,
-      }),
-
+      headers: header
     );
 
     if(response.statusCode != 200 && response.statusCode != 201) {

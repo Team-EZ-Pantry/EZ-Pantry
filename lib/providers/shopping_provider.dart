@@ -23,7 +23,7 @@ class ShoppingProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final int listId = await _service.getShoppingListId();
+      final int listId = await _service.getShoppingList();
       debugPrint('Fetched shopping list id: $listId in provider');
       _items = await _service.fetchShoppingListItems(listId);
       debugPrint('Fetched items: $_items');
