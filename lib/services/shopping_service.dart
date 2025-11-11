@@ -75,7 +75,11 @@ class ShoppingService {
     }
   }
 
-  Future<void> addItem(int productId, int customProductId, String itemText, int quantity) async {
+  Future<void> addItem(int? productId, int? customProduct, String? itemText, int quantity) async {
+
+    if (productId == null){
+      itemText = '';
+    }
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
@@ -125,7 +129,7 @@ class ShoppingService {
     }
   }
 
-  Future<void> deleteItem(int productId, bool isChecked) async{
+  Future<void> deleteItem(int productId) async{
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
@@ -133,13 +137,13 @@ class ShoppingService {
     };
 
     final int listId = await getShoppingListId();
-    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId/toggle');
+    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId');
 
-    final http.Response response = await http.patch(
+    final http.Response response = await http.delete(
       url,
       headers: header,
-      body: jsonEncode(<String, bool> {
-        'is_checked': isChecked,
+      body: jsonEncode(<String, int> {
+        'productId': productId,
       }),
 
     );
@@ -148,32 +152,6 @@ class ShoppingService {
       throw Exception('Failed to toggle item: ${response.body}');
     }
   }
-
-  /*
-  Future<void> updateQuantity(int productId, int quantity) async {
-
-    final Map<String, String> header = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
-    };
-
-    final int listId = await getShoppingListId();
-
-    final Uri url = Uri.parse('$baseUrl/shoppingList/$listId/products/$productId/quantity');
-
-    final http.Response response = await http.put(
-      url,
-      headers: header,
-      body: jsonEncode(<String, Object> {
-        'quantity': quantity,
-      }),
-    );
-
-    if(response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Failed to change quantity: ${response.body}');
-    }
-  }
-  */
 
   Future<void> createShoppingList(String shoppingListName) async {
 
