@@ -105,6 +105,7 @@ class _PantryPageState extends State<PantryPage> {
       body: Stack(
         children: <Widget>[
           Material(
+            color: Colors.grey[300],
             child: Consumer<PantryProvider>(
               builder: (BuildContext context, PantryProvider pantry, Widget? child) {
                 if (pantry.loading) {
@@ -116,6 +117,7 @@ class _PantryPageState extends State<PantryPage> {
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 100),
                   itemCount: pantry.items.length,
                   itemBuilder: (BuildContext context, int index) {
                     final PantryItemModel item = pantry.items[index];
@@ -150,6 +152,8 @@ class _PantryPageState extends State<PantryPage> {
         icon: Icons.add,
         activeIcon: Icons.close,
         backgroundColor: Colors.blue,
+        buttonSize: const Size(70, 70),
+        childrenButtonSize: const Size (70, 70),
         children: <SpeedDialChild>[
           SpeedDialChild(
             child: const Icon(Icons.qr_code_scanner),
