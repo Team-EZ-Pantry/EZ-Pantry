@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 class PantryItemModel {
   PantryItemModel({
     required this.id,
+    required this.productType,
     required this.name,
+    this.brand = '',
     required this.quantity,
     this.expirationDate,
     this.imageUrl,
@@ -14,13 +18,16 @@ class PantryItemModel {
   });
 
   factory PantryItemModel.fromJson(Map<String, dynamic> json) {
+    debugPrint('.fromJson Started');
     return PantryItemModel(
-      id: json['product_id'] as int,
+      id: json['id'] as int,
+      productType: json['product_type'] as String,
       name: json['product_name'] as String,
+      brand: json['brand'] as String,
       quantity: json['quantity'] != null ? json['quantity'] as int : 0,
       expirationDate: json['expiration_date']?.toString(),
       imageUrl: json['image_url']?.toString(),
-      calories: json['calories_per_100g']?.toString() ?? '',
+      calories: json['calories_per_100g'] != null ? json['calories_per_100g'].toString() : '',
       protein: json['protein_per_100g']?.toString() ?? '',
       carbs: json['carbs_per_100g']?.toString() ?? '',
       fat: json['fat_per_100g']?.toString() ?? '',
@@ -30,7 +37,9 @@ class PantryItemModel {
   }
 
   final int id;
+  final String productType;
   final String name;
+  final String? brand;
   int quantity;
   final String? expirationDate;
   final String? imageUrl;
@@ -43,8 +52,10 @@ class PantryItemModel {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'product_id': id,
+      'id': id,
+      'product_type': productType,
       'product_name': name,
+      'brand': brand,
       'quantity': quantity,
       'expiration_date': expirationDate,
       'image_url': imageUrl,
@@ -61,7 +72,9 @@ class PantryItemModel {
   String toString() {
     return 'PantryItemModel('
         'id: $id, '
+        'productType: $productType'
         'name: $name, '
+        'brand: $brand, '
         'quantity: $quantity, '
         'expirationDate: $expirationDate, '
         'imageUrl: $imageUrl, '

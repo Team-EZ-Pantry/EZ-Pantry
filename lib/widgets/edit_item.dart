@@ -85,9 +85,11 @@ class _EditItemDialogState extends State<EditItemDialog> {
                   SizedBox(
                     width: 60,
                     height: 60,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: widget.item.imageUrl != null && widget.item.imageUrl!.isNotEmpty
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: widget.item.imageUrl != null && widget.item.imageUrl!.isNotEmpty
                           ? Image.network(
                               widget.item.imageUrl!,
                               fit: BoxFit.cover,
@@ -99,9 +101,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
                                 );
                               },
                             )
-                      : Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                        : Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                        ),
                       ),
                     ),
                   ),
@@ -176,13 +179,16 @@ class _EditItemDialogState extends State<EditItemDialog> {
                   children: <Widget>[
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,        // in the future, let's add: energy-kcal, energy-kcal per serving,
+                        crossAxisAlignment: CrossAxisAlignment.center,        // in the future, let's add: energy-kcal, energy-kcal per serving,
                         children: <Widget>[                                          // nutrition score, salt, sodium, sugar, vitamins?, serving size
                           const Text('Calories'),
                           Text(widget.item.calories),
                           const SizedBox(height: 15),
                           const Text('Carbs'),
                           Text(widget.item.carbs),
+                          const SizedBox(height: 15),
+                          const Text('Sodium'),
+                          //Text(widget.item.)
                         ],
                       ),
                     ),
@@ -195,6 +201,9 @@ class _EditItemDialogState extends State<EditItemDialog> {
                           const SizedBox(height: 15),
                           const Text('Protein'),
                           Text(widget.item.protein, textAlign: TextAlign.center),
+                          const SizedBox(height: 15),
+                          const Text('Fiber'),
+                          //Text(widget.item.)
                         ],
                       ),
                     ),

@@ -35,7 +35,6 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       focusNode: focusNode,
       textInputAction: textInputAction,
-      maxLines: 1,
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
