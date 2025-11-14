@@ -21,15 +21,13 @@ class AddCustomItemDialog extends StatefulWidget{
 }
 
 class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _nameController      = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
   /// A list containing 
   /// 1. Field Text title 
   /// 2. corresponding key it stores values in.
   final Map<String, String> _formFields = <String, String>{
-    'Product Name':      'product_name',
+    'Product Name':       'product_name',
     'Quantity':           'quantity',
     'Expiration Date':    'expiration_date',
     'Image URL':          'image_url',
@@ -70,6 +68,8 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
 
     /// Send data to create new item
     await context.read<PantryProvider>().defineCustomItem(_customItem);
+
+    
     
     /// Reload pantry view
     if (mounted) {
@@ -98,18 +98,40 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
               Center( 
                 child: Column(
                   children: <Widget>[
-                    /// Product Name field
-                    TextFormField(
-                          maxLength: 20,
+                    Wrap( 
+                      children: <Widget>[
+                      SizedBox(
+                        width: 230,
+                        /// Product Name field
+                        child: TextFormField(
+                          maxLength: 30,
                           controller: _nameController,
-                          decoration: InputDecoration(labelText: _formFields.keys.first),
+                          decoration: InputDecoration(labelText: _formFields.entries.elementAt(0).key),
                           onChanged: (String value) {
                             // Update _customItem values with a key specified by the values of _formFields 
-                            _customItem[_formFields.keys.first] = value;
+                            _customItem[_formFields.entries.elementAt(2).value] = value;
                           }
-                    ),
+                        ),
+                      ),
 
-                    
+                      const SizedBox(width:70),
+
+                      /// 
+                      SizedBox( 
+                        width: 80,
+                        /// Quantity field
+                        child: TextFormField(
+                          decoration: InputDecoration(labelText: _formFields.entries.elementAt(1).key),
+                          onChanged: (String value) {
+                            if (value as int > 0) {
+                              _customItem[_formFields.entries.elementAt(1).value] = value;
+                            } else {
+                              _customItem[_formFields.entries.elementAt(1).value] = 0;
+                            }
+                          }
+                        ),)
+                    ]
+                  ),
 
                     Wrap( 
                       children: _formFields.entries.skip(2).take(3).map<Widget>((MapEntry<String, String> entry) {
@@ -129,7 +151,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                     Wrap( 
                       children: _formFields.entries.skip(5).take(4).map<Widget>((MapEntry<String, String> entry) {
                         return SizedBox(
-                          width: 190,
+                          width: 150,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
@@ -169,8 +191,8 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                           } else {
                             if (!nameIsValid) {
                               AlertDialog(
-                                  title:   const Text('Invalid Name'),
-                                  content: const Text('Name is not valid.'),
+                                  title:   const Text('Missing Name'),
+                                  content: const Text('Please enter a name.'),
                                   actions: <Widget>[
                                       TextButton(
                                         onPressed: () => Navigator.of(context).pop(),
@@ -179,19 +201,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                                     ],
                               );
                             } else {
-                              showDialog<void>(
-                                  context: context,
-                                  builder: (BuildContext context) => AlertDialog(
-                                    title: const Text('Invalid Quantity'),
-                                    content: const Text('Quantity must be 0 or more.'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  ),
-                              );
+                              
                             }
                           }
                         }
