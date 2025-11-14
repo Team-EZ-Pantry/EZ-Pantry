@@ -21,14 +21,14 @@ class AddCustomItemDialog extends StatefulWidget{
 }
 
 class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController     = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController();
 
   /// A list containing 
   /// 1. Field Text title 
   /// 2. corresponding key it stores values in.
+  /// * This will not include name and quantity
   final Map<String, String> _formFields = <String, String>{
-    'Product Name':       'product_name',
-    'Quantity':           'quantity',
     'Expiration Date':    'expiration_date',
     'Image URL':          'image_url',
     'Calories(per 100g)': 'calories_per_100g',
@@ -44,7 +44,8 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
 
   @override
   void initState() {
-    _nameController.text = '';
+    _nameController.text     = '';
+    _quantityController.text = '0';
 
     super.initState();
   }
@@ -58,6 +59,9 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
 
   /// Checks input and saves item if all forms are valid
   Future<void> _onSave() async {
+    int? newProductID;
+    final int quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
+
     /// Check inputs
     // if (!(_formKey.currentState?.validate() ?? false)) {
     //   debugPrint('Form validation failed.');
@@ -67,9 +71,11 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
     setState(() => _isSaving = true);
 
     /// Send data to create new item
-    await context.read<PantryProvider>().defineCustomItem(_customItem);
+    newProductID = await context.read<PantryProvider>().defineCustomItem(_customItem);
 
-    
+    if (quantity > 0 && newProductID != -1 && mounted) {
+      await context.read<PantryProvider>().addCustomItem(newProductID, quantity, _customItem['expirationDate'] as String);
+    }
     
     /// Reload pantry view
     if (mounted) {
@@ -106,66 +112,57 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                         child: TextFormField(
                           maxLength: 30,
                           controller: _nameController,
-                          decoration: InputDecoration(labelText: _formFields.entries.elementAt(0).key),
+                          decoration: const InputDecoration(labelText: 'Product Name'),
                           onChanged: (String value) {
                             // Update _customItem values with a key specified by the values of _formFields 
-                            _customItem[_formFields.entries.elementAt(2).value] = value;
+                            _customItem['product_name'] = value;
                           }
                         ),
                       ),
 
-                      const SizedBox(width:70),
+                      const SizedBox(width:30),
 
-                      /// 
-                      SizedBox( 
+                      SizedBox(
                         width: 80,
                         /// Quantity field
                         child: TextFormField(
-                          decoration: InputDecoration(labelText: _formFields.entries.elementAt(1).key),
-                          onChanged: (String value) {
-                            if (value as int > 0) {
-                              _customItem[_formFields.entries.elementAt(1).value] = value;
-                            } else {
-                              _customItem[_formFields.entries.elementAt(1).value] = 0;
-                            }
-                          }
-                        ),)
+                          keyboardType: TextInputType.number,
+                          controller: _quantityController,
+                          decoration:   const InputDecoration(labelText: 'Quantity'),
+                        ),
+                      ),
                     ]
                   ),
 
-                    Wrap( 
-                      children: _formFields.entries.skip(2).take(3).map<Widget>((MapEntry<String, String> entry) {
-                        return TextFormField(
-                          maxLength: 20,
-                          decoration: InputDecoration(labelText: entry.key),
-                          onChanged: (String value) {
-                            // Update _customItem values with a key specified by the values of _formFields 
-                            _customItem[entry.value] = value;
-                          },
-                        );
-                      }).toList(),
-                    ),
+                  Wrap( 
+                    children: _formFields.entries.skip(2).take(3).map<Widget>((MapEntry<String, String> entry) {
+                      return TextFormField(
+                        maxLength: 20,
+                        decoration: InputDecoration(labelText: entry.key),
+                      );
+                    }).toList(),
+                  ),
 
-                    const Text('Nutrition Facts', style: TextStyle(fontSize: 18)),
-                    // Generate all possible fields from pantry model
-                    Wrap( 
-                      children: _formFields.entries.skip(5).take(4).map<Widget>((MapEntry<String, String> entry) {
-                        return SizedBox(
-                          width: 150,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              maxLength: 20,
-                              decoration: InputDecoration(labelText: entry.key),
-                              onChanged: (String value) {
-                                // Update the _customItem with the new value
-                                _customItem[entry.value] = value;
-                              },
-                            ),
-                          )
-                        );
-                      }).toList(),
-                    ),
+                  const Text('Nutrition Facts', style: TextStyle(fontSize: 18)),
+                  // Generate all possible fields from pantry model
+                  Wrap( 
+                    children: _formFields.entries.skip(5).take(4).map<Widget>((MapEntry<String, String> entry) {
+                      return SizedBox(
+                        width: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            maxLength: 20,
+                            decoration: InputDecoration(labelText: entry.key),
+                            onChanged: (String value) {
+                              // Update the _customItem with the new value
+                              _customItem[entry.value] = value;
+                            },
+                          ),
+                        )
+                      );
+                    }).toList(),
+                  ),
                   ],
                 ),
               ),

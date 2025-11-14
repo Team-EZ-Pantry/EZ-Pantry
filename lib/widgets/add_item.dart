@@ -72,8 +72,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
     ); // example userId = 2
 
     setState(() => _isSaving = false);
-
-    Navigator.of(context).pop(); // close dialog
+    if (mounted) {
+      Navigator.of(context).pop(); // close dialog
+    }
   }
 
   @override
@@ -102,7 +103,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
                         // Show widget changes from search results
                         setState(() {});
-                      });
+                      },);
                     }
                   },
                 ),

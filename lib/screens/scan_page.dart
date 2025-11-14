@@ -83,11 +83,11 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   Future<void> _barcodeDialog(
-      BuildContext context,
-      String barcode,
-      PantryItemModel pantryItem,
-      PantryProvider pantryProvider,
-      ) async {
+    BuildContext context,
+    String barcode,
+    PantryItemModel pantryItem,
+    PantryProvider pantryProvider,
+    ) async {
     final TextEditingController quantityController   = TextEditingController();
     final TextEditingController expirationController = TextEditingController();
 
@@ -170,11 +170,12 @@ class _ScanPageState extends State<ScanPage> {
           final List<Barcode> barcodes = capture.barcodes;
           for (final Barcode barcode in barcodes) {
             final String? code = barcode.rawValue;
-            if (code != null && !_isDialogShowing) {
+            bool isValidBarcode = code != null;
+            if (isValidBarcode && !_isDialogShowing) {
               _controller.stop(); // Pause scanning
               _handleBarcode(code);
               debugPrint('Barcode found: $code');
-            }
+            } 
           }
         },
       ),
