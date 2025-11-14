@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 /// Internal Imports
 import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
+import '../widgets/add_custom_item.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -44,13 +45,22 @@ class _ScanPageState extends State<ScanPage> {
             title:   const Text('Item Not Found'),
             content: const Text('No product found for this barcode.'),
             actions: <Widget>[
-                /// Go to Custom item creation
-
-                /// Close Dialog
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                ),
+            /// Offer to add custom item instead
+            TextButton(
+              child: const Text('Add Custom Item'),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) => const AddCustomItemDialog()),
+                );
+              },
+            ),
+            
+            /// Close Dialog
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
             ],
           ),
         );
