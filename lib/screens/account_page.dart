@@ -1,4 +1,4 @@
-import 'package:ez_pantry/widgets/logout_check.dart';
+import 'package:ez_pantry/widgets/logout_check_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/logout_check_dialog.dart';
