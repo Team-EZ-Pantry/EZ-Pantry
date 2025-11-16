@@ -219,9 +219,8 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: TextFormField(
                                       keyboardType: _extraFormFields[index][2] == 'int'
-                                          ? TextInputType
-                                                .number // if True
-                                          : TextInputType.text, // if False
+                                          ? TextInputType.number // if True
+                                          : TextInputType.text,  // if False
                                       decoration: InputDecoration(
                                         labelText: _extraFormFields[index][0],
                                       ),
