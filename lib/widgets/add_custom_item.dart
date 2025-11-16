@@ -1,4 +1,5 @@
 /// Adds custom items to pantry
+/// * Also called by barcode scanner service
 library;
 
 /// Core Packages
@@ -10,41 +11,49 @@ import 'package:provider/provider.dart';
 /// Internal Imports
 import '../providers/pantry_provider.dart';
 
-class AddCustomItemDialog extends StatefulWidget{
+class AddCustomItemDialog extends StatefulWidget {
   /// Constructor
-  const AddCustomItemDialog({    
-    super.key,
-  });
+  const AddCustomItemDialog({super.key});
 
   @override
   State<AddCustomItemDialog> createState() => _AddCustomItemDialogState();
 }
 
 class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
-  final TextEditingController _nameController     = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
-  /// A list containing 
-  /// 1. Field Text title 
-  /// 2. corresponding key it stores values in.
-  /// * This will not include name and quantity
-  final Map<String, String> _formFields = <String, String>{
-    'Expiration Date':    'expiration_date',
-    'Image URL':          'image_url',
-    'Calories(per 100g)': 'calories_per_100g',
-    'Protien(per 100g)':  'protein_per_100g',
-    'Carbs(per 100g)':    'carbs_per_100g',
-    'Fat(per 100g)':      'fat_per_100g',
-    'Nutrition Facts':    'nutrition',
-  };
-
+  // Initialize Json Array
+  // Will be body of final request
   final Map<String, dynamic> _customItem = <String, dynamic>{};
+
+  /// A list of optional fields that will dynamically render, this list contains:
+  /// 1. Field Text title
+  /// 2. corresponding key it stores values in.
+  /// 3. The kind of type input should be(String, int)
+  /// Does not yet properly handle token lists such as Nutrition Facts
+  final List<List<String>> _extraFormFields = <List<String>>[
+    <String>['Expiration Date', 'expiration_date', 'int'],
+    <String>['Image URL', 'image_url', 'String'],
+    <String>['Calories(per 100g)', 'calories_per_100g', 'int'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+    <String>['Carbs(per 100g)', 'carbs_per_100g', 'int'],
+    <String>['Fat(per 100g)', 'fat_per_100g', 'int'],
+    <String>['Nutrition Facts', 'nutrition', 'Map<String, dynamic>'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
+  ];
 
   bool _isSaving = false;
 
   @override
   void initState() {
-    _nameController.text     = '';
+    _nameController.text = '';
     _quantityController.text = '0';
 
     super.initState();
@@ -74,14 +83,18 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
     newProductID = await context.read<PantryProvider>().defineCustomItem(_customItem);
 
     if (quantity > 0 && newProductID != -1 && mounted) {
-      await context.read<PantryProvider>().addCustomItem(newProductID, quantity, _customItem['expirationDate'] as String);
+      await context.read<PantryProvider>().addCustomItem(
+        newProductID,
+        quantity,
+        _customItem['expirationDate'] as String,
+      );
     }
-    
+
     /// Reload pantry view
     if (mounted) {
       await context.read<PantryProvider>().loadPantryItems();
     }
-    
+
     setState(() => _isSaving = false);
 
     /// Close Dialog
@@ -93,81 +106,158 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.all(50),
+      insetPadding: const EdgeInsets.all(30),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(15),
         child: Center(
-          child: Column( // Overall Column
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[ 
+            children: <Widget>[
               const Text('Add Custom Item', style: TextStyle(fontSize: 18)),
-              Center( 
+              
+              const SizedBox(height: 10,),
+
+              Center(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Wrap( 
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: 400, /// Near where character limit is at
+                      ),
+                      child: TextFormField(
+                        maxLength: 30,
+                        controller: _nameController,
+                        decoration: const InputDecoration(labelText: 'Product Name*'),
+                        onChanged: (String value) {
+                          _customItem['product_name'] = value;
+                        },
+                      ),
+                    ),
+
+                    /// Quantity field
+                    SizedBox(
+                      width: 80,
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: _quantityController,
+
+                        /// Input is parsed at onSave(), used to determine if item should added after being defined
+                        decoration: const InputDecoration(labelText: 'Quantity'),
+                      ),
+                    ),
+              
+
+                    /// Create first few form fields
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                      SizedBox(
-                        width: 230,
-                        /// Product Name field
-                        child: TextFormField(
-                          maxLength: 30,
-                          controller: _nameController,
-                          decoration: const InputDecoration(labelText: 'Product Name'),
-                          onChanged: (String value) {
-                            // Update _customItem values with a key specified by the values of _formFields 
-                            _customItem['product_name'] = value;
-                          }
+                        Wrap(
+                          // Displays first 3 items
+                          children: List.generate(2, (int index) {
+                            return ConstrainedBox(
+                              constraints: const BoxConstraints(minWidth: 150, maxWidth: 300),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  keyboardType: _extraFormFields[index][2] == 'int'
+                                      ? TextInputType.number
+                                      : TextInputType.text,
+                                  decoration: InputDecoration(
+                                    labelText: _extraFormFields[index][0],
+                                  ),
+                                  onChanged: (String value) {
+                                    /// Handle input based on type indicated in list
+                                    if (_extraFormFields[index][2] == 'int') {
+                                      /// Parse as integer
+                                      _customItem[_extraFormFields[index][1]] =
+                                          int.tryParse(value) ?? 0;
+                                    } else if (_extraFormFields[index][2] == 'String') {
+                                      /// Parse as String
+                                      _customItem[_extraFormFields[index][1]] = value;
+                                    } else if (_extraFormFields[index][2] ==
+                                        'Map<String, dynamic>') {
+                                      /// Parse as String
+                                      _customItem[_extraFormFields[index][1]] =
+                                          value as Map<String, dynamic>;
+                                    } else {
+                                      /// Type may be incorrect
+                                      debugPrint('_extraFormField[$index]: handling unkown type');
+                                      _customItem[_extraFormFields[index][1]] = value;
+                                    }
+                                  },
+                                ),
+                              ),
+                            );
+                          }),
                         ),
-                      ),
 
-                      const SizedBox(width:30),
-
-                      SizedBox(
-                        width: 80,
-                        /// Quantity field
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          controller: _quantityController,
-                          decoration:   const InputDecoration(labelText: 'Quantity'),
+                        const Padding(
+                          padding: EdgeInsetsGeometry.symmetric(horizontal: 5, vertical: 15),
+                          child: Text('Extra Nutrition Facts', style: TextStyle(fontSize: 18)),
                         ),
-                      ),
-                    ]
-                  ),
 
-                  Wrap( 
-                    children: _formFields.entries.skip(2).take(3).map<Widget>((MapEntry<String, String> entry) {
-                      return TextFormField(
-                        maxLength: 20,
-                        decoration: InputDecoration(labelText: entry.key),
-                      );
-                    }).toList(),
-                  ),
-
-                  const Text('Nutrition Facts', style: TextStyle(fontSize: 18)),
-                  // Generate all possible fields from pantry model
-                  Wrap( 
-                    children: _formFields.entries.skip(5).take(4).map<Widget>((MapEntry<String, String> entry) {
-                      return SizedBox(
-                        width: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            maxLength: 20,
-                            decoration: InputDecoration(labelText: entry.key),
-                            onChanged: (String value) {
-                              // Update the _customItem with the new value
-                              _customItem[entry.value] = value;
-                            },
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxHeight: 250,
+                            minHeight: 50,
+                            maxWidth:  300,
+                            minWidth:  100),  /// Height of scrolling box
+                          child: SingleChildScrollView(
+                            // Generate the rest of extra form fields
+                            child: Column(
+                              // Note that length is subtracted by any index offset
+                              children: List.generate(_extraFormFields.length - 2, (int index) {
+                                index += 2; // Skip first 3 fields, start at index[0 + offset]
+                                return ConstrainedBox(
+                                  constraints: const BoxConstraints(minWidth: 150, maxWidth: 250),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: TextFormField(
+                                      keyboardType: _extraFormFields[index][2] == 'int'
+                                          ? TextInputType
+                                                .number // if True
+                                          : TextInputType.text, // if False
+                                      decoration: InputDecoration(
+                                        labelText: _extraFormFields[index][0],
+                                      ),
+                                      onChanged: (String value) {
+                                        /// Handle input based on type indicated in list
+                                        if (_extraFormFields[index][2] == 'int') {
+                                          /// Parse as integer
+                                          _customItem[_extraFormFields[index][1]] =
+                                              int.tryParse(value) ?? 0;
+                                        } else if (_extraFormFields[index][2] == 'String') {
+                                          /// Parse as String
+                                          _customItem[_extraFormFields[index][1]] = value;
+                                        } else if (_extraFormFields[index][2] ==
+                                            'Map<String, dynamic>') {
+                                          /// Parse as String
+                                          _customItem[_extraFormFields[index][1]] =
+                                              value as Map<String, dynamic>;
+                                        } else {
+                                          /// Type may be incorrect
+                                          debugPrint(
+                                            '_extraFormField[$index]: handling unkown type',
+                                          );
+                                          _customItem[_extraFormFields[index][1]] = value;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
                           ),
-                        )
-                      );
-                    }).toList(),
-                  ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
 
               const Spacer(),
+
               Padding(
                 padding: const EdgeInsets.only(top: 24),
                 child: Row(
@@ -179,38 +269,40 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        final bool nameIsValid = _customItem['product_name'] != '' 
-                                              && _customItem['product_name'] != null;
-                        if(!_isSaving) {
+                        final bool nameIsValid =
+                            _customItem['product_name'] != '' &&
+                            _customItem['product_name'] != null;
+                        if (!_isSaving) {
                           if (nameIsValid) {
-                            debugPrint('SAVING STARTED');
                             _onSave();
                           } else {
                             if (!nameIsValid) {
                               AlertDialog(
-                                  title:   const Text('Missing Name'),
-                                  content: const Text('Please enter a name.'),
-                                  actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
+                                title: const Text('Missing Name'),
+                                content: const Text('Please enter a name.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
                               );
-                            } else {
-                              
                             }
                           }
                         }
                       },
                       child: _isSaving
-                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Text('Save')
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Save'),
                     ),
                   ],
                 ),
-              )
-            ]
+              ),
+            ],
           ),
         ),
       ),
