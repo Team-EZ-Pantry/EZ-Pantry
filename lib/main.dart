@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
  
-      Home: SessionController.instance.checkAuthToken() ? const MyHomePage(title: 'EZ Pantry') // True
+      home: SessionController.instance.checkAuthToken() ? const MyHomePage(title: 'EZ Pantry') // True
                                                         : const LoginPage(),  // False,
 
       routes: <String, WidgetBuilder>{
