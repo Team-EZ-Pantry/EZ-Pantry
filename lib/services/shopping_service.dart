@@ -17,7 +17,7 @@ class ShoppingService {
   // or add adb to path then just run
   // adb reverse tcp:3000 tcp:3000
 
-  Future<int> getShoppingList() async {
+  Future<List<int>> getShoppingList() async {
     final Map<String, String> headers = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
@@ -33,15 +33,16 @@ class ShoppingService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
 
-      final List<dynamic> shoppingLists = data['shoppingLists'] as List<dynamic>;
+      final List<int> shoppingLists = data['shoppingLists'] as List<int>;
       if (shoppingLists.isEmpty) {
         throw Exception('No shopping lists found for this user.');
 
       }
+      final List<int> listIds = shoppingLists.map<int>((int item) => data['shoppingLists']['shopping_list_id'] as int)
+      .toList();
 
-      final int listId = shoppingLists[0]['shopping_list_id'] as int;
-      debugPrint('Shopping List ID: $listId ------------------------------------------------------');
-      return listId;
+      debugPrint('Shopping List ID: $listIds ------------------------------------------------------');
+      return listIds;
     } else {
       throw Exception('Failed to fetch shopping list ID: ${response.statusCode}');
     }
