@@ -62,7 +62,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
   @override
   void dispose() {
     _nameController.dispose();
-
+    _quantityController.dispose();
     super.dispose();
   }
 
@@ -71,11 +71,10 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
     int? newProductID;
     final int quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
 
-    /// Check inputs
-    // if (!(_formKey.currentState?.validate() ?? false)) {
-    //   debugPrint('Form validation failed.');
-    //   return;
-    // }
+    /// Check input
+    if (_nameController.text == '') {
+      return;
+    }
 
     setState(() => _isSaving = true);
 
@@ -114,8 +113,8 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Text('Add Custom Item', style: TextStyle(fontSize: 18)),
-              
-              const SizedBox(height: 10,),
+
+              const SizedBox(height: 10),
 
               Center(
                 child: Column(
@@ -123,7 +122,9 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                   children: <Widget>[
                     ConstrainedBox(
                       constraints: const BoxConstraints(
-                        maxWidth: 400, /// Near where character limit is at
+                        maxWidth: 400,
+
+                        /// Near where character limit is at
                       ),
                       child: TextFormField(
                         maxLength: 30,
@@ -146,7 +147,6 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                         decoration: const InputDecoration(labelText: 'Quantity'),
                       ),
                     ),
-              
 
                     /// Create first few form fields
                     Column(
@@ -201,11 +201,15 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                           constraints: const BoxConstraints(
                             maxHeight: 250,
                             minHeight: 50,
-                            maxWidth:  300,
-                            minWidth:  100),  /// Height of scrolling box
+                            maxWidth: 300,
+                            minWidth: 100,
+                          ),
+
+                          /// Height of scrolling box
                           child: SingleChildScrollView(
                             // Generate the rest of extra form fields
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               // Note that length is subtracted by any index offset
                               children: List.generate(_extraFormFields.length - 2, (int index) {
                                 index += 2; // Skip first 3 fields, start at index[0 + offset]
@@ -269,26 +273,22 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        final bool nameIsValid =
-                            _customItem['product_name'] != '' &&
-                            _customItem['product_name'] != null;
-                        if (!_isSaving) {
-                          if (nameIsValid) {
-                            _onSave();
-                          } else {
-                            if (!nameIsValid) {
-                              AlertDialog(
-                                title: const Text('Missing Name'),
-                                content: const Text('Please enter a name.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              );
-                            }
-                          }
+                        if (_nameController.text != '') {
+                          _onSave();
+                        } else {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Name Empty'),
+                              content: const Text('Please enter a name.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
                         }
                       },
                       child: _isSaving
