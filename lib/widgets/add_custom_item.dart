@@ -23,7 +23,7 @@ class AddCustomItemDialog extends StatefulWidget {
 class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  Map<int, String?> errors = <int, String?>{};
+  Map<int, String?> errors = <int, String?>{}; // store error messages for each index(auto generated field)
 
   // Initialize Json Array
   // Will be body of final request
