@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 /// Internal Imports
 import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
+import '../widgets/add_custom_item.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -35,20 +36,40 @@ class _ScanPageState extends State<ScanPage> {
 
     try {
       final PantryItemModel? pantryItem = await pantryProvider.getItemByBarcode(barcode);
-/*
+
       if (pantryItem == null) {
         // Item not found
-        await showDialog(
+        showDialog(
           context: context,
-          builder: (context) => const AlertDialog(
-            title: Text('Item Not Found'),
-            content: Text('No product found for this barcode.'),
+          builder: (BuildContext context) => AlertDialog(
+            title:   const Text('Item Not Found'),
+            content: const Text('No product found for this barcode.'),
+            actions: <Widget>[
+            /// Offer to add custom item instead
+            TextButton(
+              child: const Text('Add Custom Item'),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) => const AddCustomItemDialog()),
+                );
+              },
+            ),
+            
+            /// Close Dialog
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+            ],
           ),
         );
+        
         _isDialogShowing = false;
         _controller.start();
         return;
-      }*/
+      }
+
       debugPrint('Scanning barcode: $barcode');
       if (mounted) {
         await _barcodeDialog(context, barcode, pantryItem!, pantryProvider);
@@ -76,11 +97,11 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   Future<void> _barcodeDialog(
-      BuildContext context,
-      String barcode,
-      PantryItemModel pantryItem,
-      PantryProvider pantryProvider,
-      ) async {
+    BuildContext context,
+    String barcode,
+    PantryItemModel pantryItem,
+    PantryProvider pantryProvider,
+    ) async {
     final TextEditingController quantityController   = TextEditingController();
     final TextEditingController expirationController = TextEditingController();
 
@@ -134,7 +155,7 @@ class _ScanPageState extends State<ScanPage> {
 
               // Require quantity to get past
               if (quantityText.isEmpty) {
-                return; 
+                return;
               }
 
               final int quantity = int.tryParse(quantityText) ?? 1;
@@ -163,11 +184,12 @@ class _ScanPageState extends State<ScanPage> {
           final List<Barcode> barcodes = capture.barcodes;
           for (final Barcode barcode in barcodes) {
             final String? code = barcode.rawValue;
-            if (code != null && !_isDialogShowing) {
+            bool isValidBarcode = code != null;
+            if (isValidBarcode && !_isDialogShowing) {
               _controller.stop(); // Pause scanning
               _handleBarcode(code);
               debugPrint('Barcode found: $code');
-            }
+            } 
           }
         },
       ),
