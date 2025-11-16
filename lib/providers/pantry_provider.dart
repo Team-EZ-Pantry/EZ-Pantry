@@ -38,7 +38,6 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-
   Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
 
@@ -52,6 +51,40 @@ class PantryProvider extends ChangeNotifier {
       debugPrint('❌ Error adding pantry item: $e');
       rethrow; // optional: let UI handle error display
     }
+  }
+
+  /// Add a cutom product
+  Future<void> addCustomItem(int productId, int quantity, String expirationDate) async {
+    try {
+
+      // Save to backend
+      await _service.addCustomItem(productId, quantity, expirationDate);
+      loadPantryItems();
+      notifyListeners();
+
+      debugPrint('Added custom item: productID: $productId, quantity: $quantity');
+    } catch (e) {
+      debugPrint('addCustomItem() Error: $e');
+      rethrow; // optional: let UI handle error display
+    }
+  }
+
+  /// Send details of a user's custom product
+  /// * Returns custom_product_id or -1
+  Future<int> defineCustomItem(Map<String, dynamic> customItem) async {
+    int newProductID = -1;
+    try {
+      newProductID = await _service.defineCustomItem(customItem);
+
+      loadPantryItems();
+      notifyListeners();
+
+      debugPrint('Defined Custom Item: $customItem');
+    } catch (e) {
+      debugPrint('defineCustomItem() Error: $e');
+      rethrow; // optional: let UI handle error display
+    }
+    return newProductID;
   }
 
   Future<void> updateExpirationDate(int productId, String expirationDate) async {

@@ -48,6 +48,7 @@ class SessionController {
     debugPrint('authToken cleared');
   }
 
+  /// Returns true if token is not NULL 
   bool checkAuthToken() {
 
     debugPrint('Valid authToken: ${_authToken != null && _authToken != ''}');
