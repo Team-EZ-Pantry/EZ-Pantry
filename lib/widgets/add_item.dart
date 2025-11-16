@@ -8,8 +8,9 @@ import '../providers/search_provider.dart';
 import '../utilities/debouncer.dart';
 import 'positioned_search_box.dart';
 
-/// Intialize search
+/// Intialize
 dynamic searchResults = '';
+int     selectedProductID = -1;
 
 class AddItemDialog extends StatefulWidget {
   const AddItemDialog({
@@ -58,7 +59,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
       return;
     }
 
-    final int productId = int.parse(_productNameController.text.trim());
+    final int selectedProductId = selectedProductID;
     final int quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
     final String expirationDate = _expirationDateController.text.trim();
 
@@ -66,7 +67,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
     // Send directly to the provider
     await context.read<PantryProvider>().addItem(
-      productId,
+      selectedProductId,
       quantity,
       expirationDate,
     ); // example userId = 2
@@ -145,10 +146,11 @@ class _AddItemDialogState extends State<AddItemDialog> {
         // --- Overlay List for searchResults ---
         SearchResultsOverlay(
           searchResults: searchResults,
-          onItemSelected: (String selectedItemID) {
+          onItemSelected: (dynamic selectedItem) {
             // Handle selected item
             ///(TODO): Deliver ID number to appropriate place in add_item rework
-            _productNameController.text = selectedItemID;
+            selectedProductID           = selectedItem['product_id'] as int;
+            _productNameController.text = selectedItem['product_name'].toString();
 
             // Clear search results
             setState(() {

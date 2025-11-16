@@ -9,7 +9,7 @@ class SearchResultsOverlay extends StatelessWidget {
   });
 
   final dynamic searchResults;
-  final Function(String) onItemSelected;
+  final Function(dynamic) onItemSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class SearchResultsOverlay extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 title: Text(searchResults['products'][index]['product_name'] as String),
-                onTap: () => onItemSelected(searchResults['products'][index]['product_id'].toString()),
+                onTap: () => onItemSelected(searchResults['products'][index]),
                 ///(TODO): Create new model for search items to avoid dynamic calls.
               );
             },
