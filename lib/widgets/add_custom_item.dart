@@ -1,4 +1,5 @@
 /// Adds custom items to pantry
+/// * Has its own speed dial button
 /// * Also called by barcode scanner service
 library;
 
@@ -22,6 +23,7 @@ class AddCustomItemDialog extends StatefulWidget {
 class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  Map<int, String?> errors = <int, String?>{};
 
   // Initialize Json Array
   // Will be body of final request
@@ -39,12 +41,8 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
     <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
     <String>['Carbs(per 100g)', 'carbs_per_100g', 'int'],
     <String>['Fat(per 100g)', 'fat_per_100g', 'int'],
+    // Nutrition facts not be handled completely
     <String>['Nutrition Facts', 'nutrition', 'Map<String, dynamic>'],
-    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
-    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
-    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
-    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
-    <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
     <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
     <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
   ];
@@ -66,7 +64,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
     super.dispose();
   }
 
-  /// Checks input and saves item if all forms are valid
+  /// Checks input, defines custom item, and creates number of items if specified
   Future<void> _onSave() async {
     int? newProductID;
     final int quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
@@ -81,6 +79,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
     /// Send data to create new item
     newProductID = await context.read<PantryProvider>().defineCustomItem(_customItem);
 
+    // Create new item if quantity specified
     if (quantity > 0 && newProductID != -1 && mounted) {
       await context.read<PantryProvider>().addCustomItem(
         newProductID,
@@ -102,6 +101,66 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
     }
   }
 
+  /// Generate fields of a length starting at the index offset
+  /// * Generates fields based on external variable _extraFormFields
+  /// * Provides error messages back to errors[]
+  List<Widget> generateFields(int length, int indexOffset) {
+    // Note that length is subtracted by any index offset
+    return List.generate(length - indexOffset, (int index) {
+      index += indexOffset; // Skip fields before offset, start at index[0 + offset]
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 150, maxWidth: 300),
+        child: Padding(
+          padding: const EdgeInsetsGeometry.only(right: 10, top: 10),
+          child: TextFormField(
+            keyboardType: _extraFormFields[index][2] == 'int'
+                ? TextInputType.number
+                : TextInputType.text,
+            decoration: InputDecoration(
+              labelText: _extraFormFields[index][0],
+              errorText: errors[index],
+            ), // error shows below field),
+            onChanged: (String value) {
+              setState(() {/// Allows error messages to be displayed
+                /// Handle input based on type indicated in list
+                final String fieldType = _extraFormFields[index][2];
+              
+                if (fieldType == 'int') {
+                  /// Parse as integer
+                  final int? parsedInt = int.tryParse(value);
+                  if (parsedInt != null) {
+                    _customItem[_extraFormFields[index][1]] = parsedInt; 
+                    errors[index] = null; 
+                  } else {
+                    if (value != ''){
+                      errors[index] = 'Please enter a valid number.';
+                    } else {
+                      errors[index] = null;
+                    }
+                    _customItem[_extraFormFields[index][1]] = 0;
+                  }
+                } else if (fieldType == 'String') {
+                  /// Parse as String
+                  _customItem[_extraFormFields[index][1]] = value;
+                  errors[index] = null;
+                } else if (fieldType == 'Map<String, dynamic>') {
+                  /// Parse as String
+                  _customItem[_extraFormFields[index][1]] = value as Map<String, dynamic>;
+                  errors[index] = null;
+                } else {
+                  /// Type may be incorrect
+                  debugPrint('_extraFormField[$index]: handling unkown type');
+                  errors[index] = null;
+                  _customItem[_extraFormFields[index][1]] = value;
+                }
+              });
+            },
+          ),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -120,11 +179,12 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    /// Product Name field
                     ConstrainedBox(
                       constraints: const BoxConstraints(
                         maxWidth: 400,
 
-                        /// Near where character limit is at
+                        /// Near maxLength width
                       ),
                       child: TextFormField(
                         maxLength: 30,
@@ -149,111 +209,29 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
                     ),
 
                     /// Create first few form fields
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Wrap(
-                          // Displays first 3 items
-                          children: List.generate(2, (int index) {
-                            return ConstrainedBox(
-                              constraints: const BoxConstraints(minWidth: 150, maxWidth: 300),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  keyboardType: _extraFormFields[index][2] == 'int'
-                                      ? TextInputType.number
-                                      : TextInputType.text,
-                                  decoration: InputDecoration(
-                                    labelText: _extraFormFields[index][0],
-                                  ),
-                                  onChanged: (String value) {
-                                    /// Handle input based on type indicated in list
-                                    if (_extraFormFields[index][2] == 'int') {
-                                      /// Parse as integer
-                                      _customItem[_extraFormFields[index][1]] =
-                                          int.tryParse(value) ?? 0;
-                                    } else if (_extraFormFields[index][2] == 'String') {
-                                      /// Parse as String
-                                      _customItem[_extraFormFields[index][1]] = value;
-                                    } else if (_extraFormFields[index][2] ==
-                                        'Map<String, dynamic>') {
-                                      /// Parse as String
-                                      _customItem[_extraFormFields[index][1]] =
-                                          value as Map<String, dynamic>;
-                                    } else {
-                                      /// Type may be incorrect
-                                      debugPrint('_extraFormField[$index]: handling unkown type');
-                                      _customItem[_extraFormFields[index][1]] = value;
-                                    }
-                                  },
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
+                    Wrap(
+                      // Displays first 2 items
+                      // Starts at index 0
+                      children: generateFields(2, 0),
+                    ),
 
-                        const Padding(
-                          padding: EdgeInsetsGeometry.symmetric(horizontal: 5, vertical: 15),
-                          child: Text('Extra Nutrition Facts', style: TextStyle(fontSize: 18)),
-                        ),
+                    const Padding(
+                      padding: EdgeInsetsGeometry.symmetric(horizontal: 5, vertical: 15),
+                      child: Text('Extra Nutrition Facts', style: TextStyle(fontSize: 18)),
+                    ),
 
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxHeight: 250,
-                            minHeight: 50,
-                            maxWidth: 300,
-                            minWidth: 100,
-                          ),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 250,
+                        minHeight: 50,
+                        minWidth: 100,
+                      ),
 
-                          /// Height of scrolling box
-                          child: SingleChildScrollView(
-                            // Generate the rest of extra form fields
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              // Note that length is subtracted by any index offset
-                              children: List.generate(_extraFormFields.length - 2, (int index) {
-                                index += 2; // Skip first 3 fields, start at index[0 + offset]
-                                return ConstrainedBox(
-                                  constraints: const BoxConstraints(minWidth: 150, maxWidth: 250),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      keyboardType: _extraFormFields[index][2] == 'int'
-                                          ? TextInputType.number // if True
-                                          : TextInputType.text,  // if False
-                                      decoration: InputDecoration(
-                                        labelText: _extraFormFields[index][0],
-                                      ),
-                                      onChanged: (String value) {
-                                        /// Handle input based on type indicated in list
-                                        if (_extraFormFields[index][2] == 'int') {
-                                          /// Parse as integer
-                                          _customItem[_extraFormFields[index][1]] =
-                                              int.tryParse(value) ?? 0;
-                                        } else if (_extraFormFields[index][2] == 'String') {
-                                          /// Parse as String
-                                          _customItem[_extraFormFields[index][1]] = value;
-                                        } else if (_extraFormFields[index][2] ==
-                                            'Map<String, dynamic>') {
-                                          /// Parse as String
-                                          _customItem[_extraFormFields[index][1]] =
-                                              value as Map<String, dynamic>;
-                                        } else {
-                                          /// Type may be incorrect
-                                          debugPrint(
-                                            '_extraFormField[$index]: handling unkown type',
-                                          );
-                                          _customItem[_extraFormFields[index][1]] = value;
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-                        ),
-                      ],
+                      /// Height of scrolling box
+                      child: SingleChildScrollView(
+                        // Generate the rest of extra form fields
+                        child: Wrap(children: generateFields(_extraFormFields.length, 3)),
+                      ),
                     ),
                   ],
                 ),
