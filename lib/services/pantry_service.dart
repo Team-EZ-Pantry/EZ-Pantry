@@ -7,10 +7,10 @@ import '../utilities/session_controller.dart';
 
 class PantryService {
   // for web
-  final String baseUrl = 'http://localhost:3000/api';
+  //final String baseUrl = 'http://localhost:3000/api';
 
   // for android emulator
-  //final String baseUrl = 'http://10.0.2.2:3000/api/pantry';
+  final String baseUrl = 'http://10.0.2.2:3000/api/pantry';
 
   // run this when plugging an android phone into your pc for testing
   // C:\Users\(user)\AppData\Local\Android\Sdk\platform-tools\adb reverse tcp:3000 tcp:3000
