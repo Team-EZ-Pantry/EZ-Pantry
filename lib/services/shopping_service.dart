@@ -76,6 +76,25 @@ class ShoppingService {
     }
   }
 
+  Future<void> deleteShoppingList(int listId) async{
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final int listId = await getShoppingList();
+    final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/');
+
+    final http.Response response = await http.delete(
+      url,
+      headers: header,
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to delete shopping list: ${response.body}');
+    }
+  }
+
   Future<void> addItem(int productId, int quantity, [String? itemText]) async {
 
     itemText ??= '';
