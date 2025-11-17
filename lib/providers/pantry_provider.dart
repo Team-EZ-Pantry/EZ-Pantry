@@ -69,6 +69,20 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
+  // Delete a product
+  Future<void> deleteItem(int productId) async {
+    try {
+      await _service.deleteItem(productId);
+      loadPantryItems();
+      notifyListeners();
+
+      debugPrint('✅ Deleted item: productID: $productId');
+    } catch (e) {
+      debugPrint('❌ Error deleting pantry item: $e');
+      rethrow; // optional: let UI handle error display
+    }
+  }
+
   /// Send details of a user's custom product
   /// * Returns custom_product_id or -1
   Future<int> defineCustomItem(Map<String, dynamic> customItem) async {

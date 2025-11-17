@@ -75,6 +75,26 @@ class _EditItemDialogState extends State<EditItemDialog> {
     }
   }
 
+  Future<void> _onDelete() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    await context.read<PantryProvider>().deleteItem(widget.item.id);
+    
+    if (mounted) {
+      await context.read<PantryProvider>().loadPantryItems();
+    }
+
+    setState(() => _isSaving = false);
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -225,9 +245,17 @@ class _EditItemDialogState extends State<EditItemDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   TextButton(
+                    onPressed: () => _onDelete(),
+                    child: const Text(
+                      style: TextStyle(color: Colors.red),
+                      'Delete')
+                  ),
+                  // Cancel button
+                  TextButton(
                     onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
                     child: const Text('Cancel'),
                   ),
+                  // Save button
                   ElevatedButton(
                     onPressed: () {
                       if(!_isSaving){
