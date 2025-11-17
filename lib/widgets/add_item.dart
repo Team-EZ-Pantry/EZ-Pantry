@@ -39,6 +39,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
   final TextEditingController _quantityController       = TextEditingController();
   final TextEditingController _expirationDateController = TextEditingController();
 
+  // Link product name field and search overlay
+  final LayerLink productName = LayerLink(); 
+
   bool _isSaving = false;
 
   final Duration debounceDuration = const Duration(
@@ -51,6 +54,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
     _productNameController.dispose();
     _quantityController.dispose();
     _expirationDateController.dispose();
+    searchResults = ''; 
     super.dispose();
   }
 
@@ -80,6 +84,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Stack(
       children: <Widget>[
         AlertDialog(
@@ -90,25 +95,28 @@ class _AddItemDialogState extends State<AddItemDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                TextFormField(
-                  controller: _productNameController,
-                  autofocus: true,
-                  decoration: const InputDecoration(hintText: 'Product name'),
-                  validator: (String? v) =>
-                      (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
-                  onChanged: (String value) {
-                    if (_productNameController.text.length > 1) {
-                      Debouncer(delay: debounceDuration).run(() async {
-                        /// Get new results
-                        searchResults = await searchAllProducts(_productNameController.text);
+                CompositedTransformTarget(
+                  link: productName,
+                  child: TextFormField(
+                    controller: _productNameController,
+                    autofocus: true,
+                    decoration: const InputDecoration(hintText: 'Product name'),
+                    validator: (String? value) =>
+                        (value == null || value.trim().isEmpty) ? 'Please enter a product name' : null,
+                    onChanged: (String value) {
+                      if (_productNameController.text.length > 1) {
+                        Debouncer(delay: debounceDuration).run(() async {
+                          /// Get new results
+                          searchResults = await searchAllProducts(_productNameController.text);
 
-                        // Show widget changes from search results
-                        setState(() {});
-                      },);
-                    }
-                  },
+                          // Show widget changes from search results
+                          setState(() {});
+                        },);
+                      }
+                    },
+                  ),
                 ),
-
+                
                 TextFormField(
                   controller: _quantityController,
                   autofocus: true,
@@ -143,13 +151,14 @@ class _AddItemDialogState extends State<AddItemDialog> {
             ),
           ],
         ),
-        // --- Overlay List for searchResults ---
+
+        /// Show search
         SearchResultsOverlay(
-          searchResults: searchResults,
+          layerLink:      productName,
+          searchResults:  searchResults,
           onItemSelected: (dynamic selectedItem) {
             // Handle selected item
-            ///(TODO): Deliver ID number to appropriate place in add_item rework
-            selectedProductID           = selectedItem['product_id'] as int;
+            selectedProductID           = selectedItem['id'] as int;
             _productNameController.text = selectedItem['product_name'].toString();
 
             // Clear search results

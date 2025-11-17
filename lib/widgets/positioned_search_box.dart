@@ -1,65 +1,77 @@
 import 'package:flutter/material.dart';
 
-/// Positioned Search Result Box
+/// Positioned Search Result Box 
+/// * appears below a CompositedTransformTarget widget that has same Link
+/// * Cannot scroll if it escapes bounds of screen/widget
+/// * Width and Height can be manually specifed 
+/// * if searchResults == 'EMPTY', then no results box is seen
+/// * if searchResults == '', then nothing will render
 class SearchResultsOverlay extends StatelessWidget {
   const SearchResultsOverlay({
     super.key,
+    required this.layerLink,
     required this.searchResults,
     required this.onItemSelected,
+    
+    this.searchHeight = 300, // default
+    this.searchWidth  = 300, // default
   });
 
   final dynamic searchResults;
-  final Function(dynamic) onItemSelected;
+  final dynamic Function(dynamic) onItemSelected;
+
+  // Postition search overlay to provided link
+  final LayerLink layerLink;
+
+  // Control size of all boxes
+  final double searchWidth; 
+  final double searchHeight;
+  
+  /// Generate search results
+  SizedBox buildSearchItems(dynamic items) {
+    return SizedBox(
+      height: searchHeight,
+      width:  searchWidth,
+      child:  ListView.builder(
+        shrinkWrap: true,
+        itemCount: searchResults['count'] as int,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Text(searchResults['products'][index]['product_name'] as String),
+            onTap: () => onItemSelected(searchResults['products'][index]),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    /// Do not display visible items until search creates changes
+    /// Do not display until search creates changes
     if (searchResults == '') {
-      return const SizedBox.shrink();
+      return const SizedBox();
     }
 
-    /// Show box when no items were found by search
+    
+    Widget shownResults; // Results to be displayed
     if (searchResults == 'EMPTY') {
-      return Positioned(
-        left:  150,
-        right: 150,
-        top:   460,
-        child: Material(
-          elevation: 4,
-          borderRadius: BorderRadius.circular(8),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 150),
-            child: const ListTile(
-              title: Text('No Results.'),
-            ),
-          ),
-        ),
+      /// Show no items were found
+      shownResults =  const ListTile(
+        title: Text('No Results')
       );
+    } else {
+      /// Show found items
+      shownResults = buildSearchItems(searchResults);
     }
 
     /// Show found items
-    return Positioned(
-      ///(TODO): Make dimensions dynamic and automatic positioning
-      left:  150,
-      right: 150,
-      top:   460,
+    return CompositedTransformFollower(
+      link: layerLink,
+      targetAnchor: Alignment.bottomCenter,
+      followerAnchor: Alignment.topCenter,
       child: Material(
-        elevation: 4,
         borderRadius: BorderRadius.circular(8),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 150),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: searchResults['count'] as int,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(searchResults['products'][index]['product_name'] as String),
-                onTap: () => onItemSelected(searchResults['products'][index]),
-                ///(TODO): Create new model for search items to avoid dynamic calls.
-              );
-            },
-          ),
-        ),
+        child: shownResults,
       ),
     );
   }
