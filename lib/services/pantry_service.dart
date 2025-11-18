@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../models/pantry_item_model.dart';
-import '../models/pantry_model.dart';
 import '../utilities/session_controller.dart';
 
 class PantryService {
@@ -18,7 +17,6 @@ class PantryService {
   // or add adb to path then just run
   // adb reverse tcp:3000 tcp:3000
 
-/*
   Future<int> getPantryId() async {
     final Map<String, String> headers = <String, String>{
       'Content-Type': 'application/json',
@@ -47,6 +45,7 @@ class PantryService {
     } else {
       throw Exception('Failed to fetch pantry ID: ${response.statusCode}');
     }
+<<<<<<< HEAD
   }*/
 
   Future<List<PantryModel>> getShoppingLists() async {
@@ -77,6 +76,8 @@ class PantryService {
     } else {
       throw Exception('Failed to fetch pantry IDs: ${response.statusCode}');
     }
+=======
+>>>>>>> parent of 26f3e89 (Function restructuring)
   }
 
   Future<List<PantryItemModel>> fetchPantryItems(int pantryId) async {
@@ -109,13 +110,14 @@ class PantryService {
     }
   }
 
-  Future<void> addItem(int pantryId, int productId, int quantity, String expirationDate) async {
+  Future<void> addItem(int productId, int quantity, String expirationDate) async {
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
+    final int pantryId = await getPantryId(); // async returns a String
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId');
 
     final http.Response response = await http.post(
@@ -132,11 +134,13 @@ class PantryService {
     }
   }
 
-  Future<void> updateExpirationDate(int pantryId, int productId, String expirationDate) async {
+  Future<void> updateExpirationDate(int productId, String expirationDate) async {
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
+
+    final int pantryId = await getPantryId(); // async returns a String
 
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/expiration');
 
@@ -157,12 +161,14 @@ class PantryService {
     }
   }
 
-  Future<void> updateQuantity(int pantryId, int productId, int quantity) async {
+  Future<void> updateQuantity(int productId, int quantity) async {
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
+
+    final int pantryId = await getPantryId();
 
     final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId/quantity');
 
