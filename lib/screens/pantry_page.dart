@@ -10,8 +10,6 @@ import 'package:provider/provider.dart';
 
 /// Internal Imports
 import '../models/pantry_item_model.dart';
-import '../models/pantry_model.dart';
-import '../models/shopping_list_model.dart ';
 import '../providers/pantry_provider.dart';
 import '../widgets/add_item.dart';
 import '../widgets/edit_item.dart';
@@ -33,11 +31,10 @@ class _PantryPageState extends State<PantryPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final PantryProvider pantryProvider = context.read<PantryProvider>();
-      // Placeholder 0 for pantry ID until multi-pantry support is added
-      final bool pantriesLoaded = await pantryProvider.loadPantries();
-      final bool pantryItemsLoaded = await pantryProvider.loadPantryItems(pantryProvider.pantries[0].pantryId);
 
-      if (!pantryItemsLoaded) {
+      final bool loaded = await pantryProvider.loadPantryItems();
+
+      if (!loaded) {
         String? pantryName;
 
         // Keep showing the dialog until user enters a name
@@ -59,9 +56,7 @@ class _PantryPageState extends State<PantryPage> {
         }
 
         await pantryProvider.createPantry(pantryName);
-        await pantryProvider.loadPantries();
-        // Placeholder 0 for pantry ID until multi-pantry support is added
-        await pantryProvider.loadPantryItems(pantryProvider.pantries[0].pantryId);
+        await pantryProvider.loadPantryItems();
       }
     });
   }
@@ -106,8 +101,6 @@ class _PantryPageState extends State<PantryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final PantryProvider pantryProvider = Provider.of<PantryProvider>(context);
-    final List<PantryModel> pantries = pantryProvider.pantries;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -131,18 +124,18 @@ class _PantryPageState extends State<PantryPage> {
                       item: item,
                       incrementQuantity: () {
                         item.quantity++;
-                        pantry.updateQuantity(pantries[0].pantryId, item.id, item.quantity);
+                        pantry.updateQuantity(item.id, item.quantity);
                       },
                       decrementQuantity: () {
                         if(item.quantity > 0) {
                           item.quantity--;
-                          pantry.updateQuantity(pantries[0].pantryId, item.id, item.quantity);
+                          pantry.updateQuantity(item.id, item.quantity);
                         }
                       },
                       changeQuantity: (int newQuantity) {
                         if(newQuantity >= 0) {
                           item.quantity = newQuantity;
-                          pantry.updateQuantity(pantries[0].pantryId, item.id, item.quantity);
+                          pantry.updateQuantity(item.id, item.quantity);
                         }
                       },
                     );
