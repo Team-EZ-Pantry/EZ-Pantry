@@ -1,8 +1,9 @@
-// services/pantry_service.dart
+// services/shopping_service.dart
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import '../models/pantry_item_model.dart';
+import '../models/shopping_list_item_model.dart';
+import '../models/shopping_list_model.dart';
 import '../utilities/session_controller.dart';
 
 class ShoppingService {
@@ -39,7 +40,7 @@ class ShoppingService {
     }
   }
 
-  Future<List<int>> getShoppingList() async {
+  Future<List<ShoppingListModel>> getShoppingLists() async {
     final Map<String, String> headers = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
@@ -55,22 +56,21 @@ class ShoppingService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
 
-      final List<int> shoppingLists = data['shoppingLists'] as List<int>;
+      final List<ShoppingListModel> shoppingLists = data['shoppingLists'] as List<ShoppingListModel>;
       if (shoppingLists.isEmpty) {
         throw Exception('No shopping lists found for this user.');
 
       }
-      final List<int> listIds = shoppingLists.map<int>((int item) => data['shoppingLists']['shopping_list_id'] as int)
-      .toList();
+      final List<int> listIds = shoppingLists.map<int>((ShoppingListModel item) => item.listId).toList();
 
-      debugPrint('Shopping List ID: $listIds ------------------------------------------------------');
-      return listIds;
+      debugPrint('Shopping List IDs: $listIds ------------------------------------------------------');
+      return shoppingLists;
     } else {
-      throw Exception('Failed to fetch shopping list ID: ${response.statusCode}');
+      throw Exception('Failed to fetch shopping list IDs: ${response.statusCode}');
     }
   }
 
-  Future<List<PantryItemModel>> fetchShoppingListItems(int listId) async {
+  Future<List<ShoppingListItemModel>> fetchShoppingListItems(int listId) async {
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ class ShoppingService {
       final List<dynamic> products = decoded['shoppingList']['products'] as List<dynamic>;
 
       return products
-          .map((dynamic item) => PantryItemModel.fromJson(item as Map<String, dynamic>))
+          .map((dynamic item) => ShoppingListItemModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       throw Exception('Failed to load shopping list items');
@@ -104,7 +104,6 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingList();
     final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/');
 
     final http.Response response = await http.delete(
@@ -117,7 +116,7 @@ class ShoppingService {
     }
   }
 
-  Future<void> addItem(int productId, int quantity, [String? itemText]) async {
+  Future<void> addItem(int listId, int productId, int quantity, [String? itemText]) async {
 
     itemText ??= '';
 
@@ -126,7 +125,6 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingList(); // async returns a String
     final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/');
 
     final http.Response response = await http.post(
@@ -144,7 +142,7 @@ class ShoppingService {
     }
   }
 
-  Future<void> addCustomItem(int customProductId, int quantity, [String? itemText]) async {
+  Future<void> addCustomItem(int listId,int customProductId, int quantity, [String? itemText]) async {
 
     itemText ??= '';
 
@@ -153,7 +151,6 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingList(); // async returns a String
     final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/');
 
     final http.Response response = await http.post(
@@ -171,14 +168,13 @@ class ShoppingService {
     }
   }
 
-  Future<void> toggleItem(int productId) async{
+  Future<void> toggleItem(int listId, int productId) async{
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingList();
     final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId/toggle');
 
     final http.Response response = await http.patch(
@@ -191,14 +187,13 @@ class ShoppingService {
     }
   }
 
-  Future<void> deleteItem(int productId) async{
+  Future<void> deleteItem(int listId, int productId) async{
 
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final int listId = await getShoppingList();
     final Uri url = Uri.parse('$baseUrl/shopping-list/$listId/items/$productId');
 
     final http.Response response = await http.delete(

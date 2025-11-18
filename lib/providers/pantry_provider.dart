@@ -1,10 +1,14 @@
 // providers/pantry_provider.dart
 import 'package:flutter/material.dart';
 import '../models/pantry_item_model.dart';
+import '../models/pantry_model.dart';
 import '../services/pantry_service.dart';
 
 class PantryProvider extends ChangeNotifier {
   final PantryService _service = PantryService();
+
+  List<PantryModel> _pantries = <PantryModel>[];
+  List<PantryModel> get pantries => _pantries;
 
   List<PantryItemModel> _items = <PantryItemModel>[];
   List<PantryItemModel> get items => _items;
@@ -15,15 +19,32 @@ class PantryProvider extends ChangeNotifier {
 
   void init() {
     // schedule after first frame to avoid calling notifyListeners during build
-    Future.microtask(() => loadPantryItems());
+    // By default loads the most recently created pantry
+    Future.microtask(() => loadPantryItems(pantries[0].pantryId));
   }
 
-  Future<bool> loadPantryItems() async {
+  Future<bool> loadPantries() async {
     _loading = true;
     notifyListeners();
 
     try {
-      final int pantryId = await _service.getPantryId();
+      _pantries = await _service.getShoppingLists();
+      debugPrint('Fetched pantry: $_pantries');
+      return true; // pantries loaded successfully
+    } catch (e) {
+      debugPrint('Error fetching pantry: $e');
+      return false; // pantries not found or some other failure
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> loadPantryItems(int pantryId) async {
+    _loading = true;
+    notifyListeners();
+
+    try {
       debugPrint('Fetched pantry id: $pantryId in provider');
       _items = await _service.fetchPantryItems(pantryId);
       debugPrint('Fetched items: $_items');
@@ -39,12 +60,12 @@ class PantryProvider extends ChangeNotifier {
   }
 
 
-  Future<void> addItem(int productId, int quantity, String expirationDate) async {
+  Future<void> addItem(int pantryId, int productId, int quantity, String expirationDate) async {
     try {
 
       // Save to backend
-      await _service.addItem(productId, quantity, expirationDate);
-      loadPantryItems();
+      await _service.addItem(pantryId, productId, quantity, expirationDate);
+      loadPantryItems(pantryId);
       notifyListeners();
 
       debugPrint('✅ Added item: productID: $productId, quantity: $quantity');
@@ -54,9 +75,9 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateExpirationDate(int productId, String expirationDate) async {
+  Future<void> updateExpirationDate(int pantryId, int productId, String expirationDate) async {
     try {
-      await _service.updateExpirationDate(productId, expirationDate);
+      await _service.updateExpirationDate(pantryId, productId, expirationDate);
       notifyListeners();
 
       debugPrint('Updated expiration of $productId to $expirationDate');
@@ -65,9 +86,9 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateQuantity(int productId, int quantity) async {
+  Future<void> updateQuantity(int pantryId, int productId, int quantity) async {
     try {
-      await _service.updateQuantity(productId, quantity);
+      await _service.updateQuantity(pantryId, productId, quantity);
       notifyListeners();
 
       debugPrint('Updated quantity of $productId to $quantity');
