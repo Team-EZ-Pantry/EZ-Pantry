@@ -72,7 +72,7 @@ class PantryService {
       }
       final List<int> listIds = pantries.map<int>((PantryModel item) => item.pantryId).toList();
 
-      debugPrint('Pantry ID: $listIds ------------------------------------------------------');
+      debugPrint('Pantry ID: $listIds');
       return pantries;
     } else {
       throw Exception('Failed to fetch pantry IDs: ${response.statusCode}');

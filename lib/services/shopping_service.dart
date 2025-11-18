@@ -63,7 +63,7 @@ class ShoppingService {
       }
       final List<int> listIds = shoppingLists.map<int>((ShoppingListModel item) => item.listId).toList();
 
-      debugPrint('Shopping List IDs: $listIds ------------------------------------------------------');
+      debugPrint('Shopping List IDs: $listIds');
       return shoppingLists;
     } else {
       throw Exception('Failed to fetch shopping list IDs: ${response.statusCode}');
@@ -88,7 +88,7 @@ class ShoppingService {
      debugPrint('Response body: ${response.body}');
 
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
-      final List<dynamic> products = decoded['shoppingList']['products'] as List<dynamic>;
+      final List<dynamic> products = decoded['shoppingList']['items'] as List<dynamic>;
 
       return products
           .map((dynamic item) => ShoppingListItemModel.fromJson(item as Map<String, dynamic>))
