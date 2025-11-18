@@ -106,6 +106,7 @@ void main() {
         quantity: 1,
         nutritionFacts: <String, dynamic>{},
         createdAt: DateTime.now(),
+        productType: 'Fruit'
       ),
     ];
 
