@@ -59,7 +59,6 @@ class ShoppingService {
       final List<ShoppingListModel> shoppingLists = data['shoppingLists'] as List<ShoppingListModel>;
       if (shoppingLists.isEmpty) {
         throw Exception('No shopping lists found for this user.');
-
       }
       final List<int> listIds = shoppingLists.map<int>((ShoppingListModel item) => item.listId).toList();
 
@@ -88,10 +87,10 @@ class ShoppingService {
      debugPrint('Response body: ${response.body}');
 
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
-      final List<dynamic> products = decoded['shoppingList']['items'] as List<dynamic>;
+      final List<ShoppingListItemModel> products = decoded['shoppingList']['items'] as List<ShoppingListItemModel>;
 
       return products
-          .map((dynamic item) => ShoppingListItemModel.fromJson(item as Map<String, dynamic>))
+          .map((ShoppingListItemModel item) => ShoppingListItemModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       throw Exception('Failed to load shopping list items');
