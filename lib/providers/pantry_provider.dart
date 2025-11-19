@@ -40,7 +40,6 @@ class PantryProvider extends ChangeNotifier {
 
   Future<void> addItem(int productId, int quantity, String expirationDate) async {
     try {
-
       // Save to backend
       await _service.addItem(productId, quantity, expirationDate);
       loadPantryItems();
@@ -56,7 +55,6 @@ class PantryProvider extends ChangeNotifier {
   /// Add a cutom product
   Future<void> addCustomItem(int productId, int quantity, String expirationDate) async {
     try {
-
       // Save to backend
       await _service.addCustomItem(productId, quantity, expirationDate);
       loadPantryItems();

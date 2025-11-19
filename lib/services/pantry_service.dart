@@ -166,7 +166,7 @@ class PantryService {
 
       debugPrint(expirationDate);
       debugPrint(jsonEncode(<String, String> {
-        'expirationDate': expirationDate,
+        'expirationDate': '$expirationDate',
       }));
     final http.Response response = await http.patch(
       url,

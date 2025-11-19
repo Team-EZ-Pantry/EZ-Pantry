@@ -9,8 +9,12 @@ import '../utilities/debouncer.dart';
 import 'positioned_search_box.dart';
 
 /// Intialize
-dynamic searchResults = '';
-int     selectedProductID = -1;
+dynamic searchResults      = '';
+int     selectedProductID  = -1;
+String selectedProductType = '';
+
+/// Constants
+const String customProductKey = 'custom_product';
 
 class AddItemDialog extends StatefulWidget {
   const AddItemDialog({
@@ -69,13 +73,20 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
     setState(() => _isSaving = true);
 
-    // Send directly to the provider
-    await context.read<PantryProvider>().addItem(
-      selectedProductId,
-      quantity,
-      expirationDate,
-    ); // example userId = 2
-
+    // Add custom item if type matches, regular item if it does not
+    if (selectedProductType == customProductKey) {
+      await context.read<PantryProvider>().addCustomItem(
+        selectedProductId,
+        quantity,
+        expirationDate,
+      ); // example userId = 2
+    } else {
+      await context.read<PantryProvider>().addItem(
+        selectedProductId,
+        quantity,
+        expirationDate,
+      ); // example userId = 2
+    }
     setState(() => _isSaving = false);
     if (mounted) {
       Navigator.of(context).pop(); // close dialog
@@ -84,7 +95,6 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Stack(
       children: <Widget>[
         AlertDialog(
@@ -160,6 +170,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
             // Handle selected item
             selectedProductID           = selectedItem['id'] as int;
             _productNameController.text = selectedItem['product_name'].toString();
+            selectedProductType         = selectedItem['product_type'].toString();
 
             // Clear search results
             setState(() {
