@@ -53,7 +53,7 @@ class PantryProvider extends ChangeNotifier {
   }
 
   /// Add a cutom product
-  Future<void> addCustomItem(int productId, int quantity, String expirationDate) async {
+  Future<void> addCustomItem(int productId, int quantity, String? expirationDate) async {
     try {
       // Save to backend
       await _service.addCustomItem(productId, quantity, expirationDate);
@@ -70,7 +70,7 @@ class PantryProvider extends ChangeNotifier {
   /// Send details of a user's custom product
   /// * Returns custom_product_id or -1
   Future<int> defineCustomItem(Map<String, dynamic> customItem) async {
-    int newProductID = -1;
+    int newProductID;
     try {
       newProductID = await _service.defineCustomItem(customItem);
 
