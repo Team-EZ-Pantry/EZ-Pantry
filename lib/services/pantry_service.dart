@@ -116,7 +116,7 @@ class PantryService {
       // Request URL
       url,
       headers: header,
-      body: jsonEncode(<String, Object>{
+      body: jsonEncode(<String, dynamic>{
         'quantity': quantity,
         'expirationDate': expirationDate,
       }),

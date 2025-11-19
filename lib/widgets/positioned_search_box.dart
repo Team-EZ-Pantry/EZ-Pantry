@@ -13,8 +13,8 @@ class SearchResultsOverlay extends StatelessWidget {
     required this.searchResults,
     required this.onItemSelected,
     
-    this.searchHeight = 300, // default
-    this.searchWidth  = 300, // default
+    this.height = 300, // default
+    this.width  = 300, // default
   });
 
   final dynamic searchResults;
@@ -24,19 +24,26 @@ class SearchResultsOverlay extends StatelessWidget {
   final LayerLink layerLink;
 
   // Control size of all boxes
-  final double searchWidth; 
-  final double searchHeight;
-  
+  final double height;
+  final double width; 
+ 
   /// Generate search results
   SizedBox buildSearchItems(dynamic items) {
     return SizedBox(
-      height: searchHeight,
-      width:  searchWidth,
-      child:  ListView.builder(
+      height: height,
+      width:  width,
+      child:  ListView.separated(
+        separatorBuilder: (BuildContext context, int index) => Divider(
+          color: Colors.grey[300],
+          indent: width * .025,
+          endIndent: width * .025,
+          thickness: 1,
+        ),
         shrinkWrap: true,
         itemCount: searchResults['count'] as int,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
+            hoverColor: Theme.of(context).hoverColor,
             title: Text(searchResults['products'][index]['product_name'] as String),
             onTap: () => onItemSelected(searchResults['products'][index]),
           );

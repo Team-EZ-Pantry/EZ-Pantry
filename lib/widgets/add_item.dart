@@ -73,19 +73,19 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
     setState(() => _isSaving = true);
 
-    // Add custom item if type matches, regular item if it does not
+    // Add custom item if type matches key constant, add regular item if it does not
     if (selectedProductType == customProductKey) {
       await context.read<PantryProvider>().addCustomItem(
         selectedProductId,
         quantity,
         expirationDate,
-      ); // example userId = 2
+      );
     } else {
       await context.read<PantryProvider>().addItem(
         selectedProductId,
         quantity,
         expirationDate,
-      ); // example userId = 2
+      );
     }
     setState(() => _isSaving = false);
     if (mounted) {
@@ -166,6 +166,8 @@ class _AddItemDialogState extends State<AddItemDialog> {
         SearchResultsOverlay(
           layerLink:      productName,
           searchResults:  searchResults,
+          height: MediaQuery.sizeOf(context).height * 0.5, /// Make half length of screnn  
+          width:  MediaQuery.sizeOf(context).width  * 0.9, /// Make width half of screen
           onItemSelected: (dynamic selectedItem) {
             // Handle selected item
             selectedProductID           = selectedItem['id'] as int;
