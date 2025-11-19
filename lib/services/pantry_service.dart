@@ -129,6 +129,24 @@ class PantryService {
 
   }
 
+  Future<void> deleteItem(int productId) async {
+    final int pantryId = await getPantryId();
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId');
+    final header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final http.Response response = await http.delete(
+      url,
+      headers: header,
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to delete item: ${response.body}');
+    } 
+  }
+
   Future<int> defineCustomItem(Map<String, dynamic> customItem) async {
     int newProductID = -1; // ID given upon failure
 
