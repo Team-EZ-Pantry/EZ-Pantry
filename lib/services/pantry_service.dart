@@ -45,39 +45,6 @@ class PantryService {
     } else {
       throw Exception('Failed to fetch pantry ID: ${response.statusCode}');
     }
-<<<<<<< HEAD
-  }*/
-
-  Future<List<PantryModel>> getShoppingLists() async {
-    final Map<String, String> headers = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
-    };
-
-    final http.Response response = await http.get(
-      Uri.parse('$baseUrl/shopping-list/'),
-      headers: headers,
-    );
-
-    debugPrint('Response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final List<PantryModel> pantries = data['pantries'] as List<PantryModel>;
-      if (pantries.isEmpty) {
-        throw Exception('No pantries found for this user.');
-
-      }
-      final List<int> listIds = pantries.map<int>((PantryModel item) => item.pantryId).toList();
-
-      debugPrint('Pantry ID: $listIds');
-      return pantries;
-    } else {
-      throw Exception('Failed to fetch pantry IDs: ${response.statusCode}');
-    }
-=======
->>>>>>> parent of 26f3e89 (Function restructuring)
   }
 
   Future<List<PantryItemModel>> fetchPantryItems(int pantryId) async {
