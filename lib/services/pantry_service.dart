@@ -104,9 +104,10 @@ class PantryService {
   /// Add custom item to pantry
   /// * Returns ID if successful
   /// * Returns -1 if request is not sucessful
-  Future<void> addCustomItem(int customProductId, int quantity, String expirationDate) async {
+  Future<void> addCustomItem(int customProductId, int quantity, String? expirationDate) async {
     final int pantryId = await getPantryId(); // async returns a String
     final url = Uri.parse('$baseUrl/pantry/$pantryId/custom-products/$customProductId');
+
     final header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
@@ -116,7 +117,7 @@ class PantryService {
       // Request URL
       url,
       headers: header,
-      body: jsonEncode(<String, Object>{
+      body: jsonEncode(<String, dynamic>{
         'quantity': quantity,
         'expirationDate': expirationDate,
       }),
@@ -125,6 +126,7 @@ class PantryService {
     if(response.statusCode != 200 && response.statusCode != 201) {
       throw Exception('Failed to add item: ${response.body}');
     } 
+
   }
 
   Future<void> deleteItem(int productId) async {
@@ -147,6 +149,8 @@ class PantryService {
 
   Future<int> defineCustomItem(Map<String, dynamic> customItem) async {
     int newProductID = -1; // ID given upon failure
+
+    debugPrint('DEFINE custom item==================');
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
@@ -164,8 +168,13 @@ class PantryService {
     } else {
       final Map<String, dynamic>decoded = jsonDecode(response.body) as Map<String, dynamic>;
       
-      if (decoded['product']?['custom_product_id'] != null) {
-        newProductID = decoded['product']['custom_product_id'] as int;
+      // Json property that contains new id
+      final int? productIdFromJson = decoded['customProduct']?['custom_product_id'] as int;
+
+      if (productIdFromJson != null) {
+        newProductID = productIdFromJson;
+      } else {
+        debugPrint('Failed to get new custom_product_id, returning -1');
       }
     }
 
@@ -184,7 +193,7 @@ class PantryService {
 
       debugPrint(expirationDate);
       debugPrint(jsonEncode(<String, String> {
-        'expirationDate': expirationDate,
+        'expirationDate': '$expirationDate',
       }));
     final http.Response response = await http.patch(
       url,

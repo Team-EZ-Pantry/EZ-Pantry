@@ -27,7 +27,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
 
   // Initialize Json Array
   // Will be body of final request
-  final Map<String, dynamic> _customItem = <String, dynamic>{};
+  Map<String, dynamic> _customItem = <String, dynamic>{};
 
   /// A list of optional fields that will dynamically render, this list contains:
   /// 1. Field Text title
@@ -35,7 +35,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
   /// 3. The kind of type input should be(String, int)
   /// Does not yet properly handle token lists such as Nutrition Facts
   final List<List<String>> _extraFormFields = <List<String>>[
-    <String>['Expiration Date', 'expiration_date', 'int'],
+    <String>['Expiration Date', 'expirationDate', 'int'],
     <String>['Image URL', 'image_url', 'String'],
     <String>['Calories(per 100g)', 'calories_per_100g', 'int'],
     <String>['Protein(per 100g)', 'protein_per_100g', 'int'],
@@ -51,16 +51,18 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
 
   @override
   void initState() {
-    _nameController.text = '';
+    _nameController.text     = '';
     _quantityController.text = '0';
-
     super.initState();
   }
 
   @override
+  /// Reset variables on widget close
   void dispose() {
     _nameController.dispose();
     _quantityController.dispose();
+    _customItem = <String, dynamic>{};  
+
     super.dispose();
   }
 
@@ -68,6 +70,7 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
   Future<void> _onSave() async {
     int? newProductID;
     final int quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
+    final String? expirationDate = _customItem['expirationDate'] as String?;
 
     /// Check input
     if (_nameController.text == '') {
@@ -84,9 +87,9 @@ class _AddCustomItemDialogState extends State<AddCustomItemDialog> {
       await context.read<PantryProvider>().addCustomItem(
         newProductID,
         quantity,
-        _customItem['expirationDate'] as String,
+        expirationDate,
       );
-    }
+    } 
 
     /// Reload pantry view
     if (mounted) {
