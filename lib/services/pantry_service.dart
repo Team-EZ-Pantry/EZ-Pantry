@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../models/pantry_item_model.dart';
+import '../models/pantry_model.dart';
 import '../utilities/session_controller.dart';
 
 class PantryService {
@@ -16,6 +17,35 @@ class PantryService {
   // C:\Users\(user)\AppData\Local\Android\Sdk\platform-tools\adb reverse tcp:3000 tcp:3000
   // or add adb to path then just run
   // adb reverse tcp:3000 tcp:3000
+
+   Future<List<PantryModel>> getAllPantries() async {
+    final Map<String, String> headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final http.Response response = await http.get(
+      Uri.parse('$baseUrl/pantry/'),
+      headers: headers,
+    );
+
+    debugPrint('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+
+      final List<PantryModel> pantries = data['pantries'] as List<PantryModel>;
+      if (pantries.isEmpty) {
+        throw Exception('No pantries found for this user.');
+      }
+
+      final int pantryIds = pantries[0].pantryId;
+      debugPrint('Pantry IDs: $pantryIds');
+      return pantries;
+    } else {
+      throw Exception('Failed to fetch pantry ID: ${response.statusCode}');
+    }
+  }
 
   Future<int> getPantryId() async {
     final Map<String, String> headers = <String, String>{
