@@ -59,17 +59,34 @@ class _RecipesPageState extends State<RecipesPage> {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8.0),
-              itemCount: filteredRecipes.length,
+              itemCount: filteredRecipes.length + 1,
               itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      leading: const Icon(Icons.add_circle, color: Colors.green),
+                      title: const Text('Add New Recipe'),
+                      subtitle: const Text('Create a custom recipe'),
+                      //trailing: const Icon(Icons.arrow_forward),
+                      onTap: () {
+                        // TODO: Navigate to add recipe page
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Add recipe functionality coming soon!')),
+                        );
+                      },
+                    ),
+                  );
+                }
                 return RecipeTile(
-                  recipeIndex: int.parse(filteredRecipes[index].split(' ')[1]),
+                  recipeIndex: int.parse(filteredRecipes[index - 1].split(' ')[1]),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => RecipeDetailPage(
                             recipeIndex:
-                                int.parse(filteredRecipes[index].split(' ')[1])),
+                                int.parse(filteredRecipes[index - 1].split(' ')[1])),
                       ),
                     );
                   },
