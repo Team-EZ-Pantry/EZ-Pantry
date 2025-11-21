@@ -105,12 +105,13 @@ class _AddItemDialogState extends State<AddItemDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                SizedBox(width: MediaQuery.sizeOf(context).width * .9),
                 CompositedTransformTarget(
                   link: productName,
                   child: TextFormField(
                     controller: _productNameController,
                     autofocus: true,
-                    decoration: const InputDecoration(hintText: 'Product name'),
+                    decoration: const InputDecoration(hintText: 'Product Name'),
                     validator: (String? value) =>
                         (value == null || value.trim().isEmpty) ? 'Please enter a product name' : null,
                     onChanged: (String value) {
@@ -164,10 +165,10 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
         /// Show search
         SearchResultsOverlay(
-          layerLink:      productName,
-          searchResults:  searchResults,
-          height: MediaQuery.sizeOf(context).height * 0.5, /// Make half length of screnn  
-          width:  MediaQuery.sizeOf(context).width  * 0.9, /// Make width half of screen
+          layerLink: productName,
+          height: MediaQuery.sizeOf(context).height * 0.5, /// Make % length of screnn  
+          width:  MediaQuery.sizeOf(context).width  * .9,   /// Make % width of screen
+          searchResults: searchResults,
           onItemSelected: (dynamic selectedItem) {
             // Handle selected item
             selectedProductID           = selectedItem['id'] as int;
