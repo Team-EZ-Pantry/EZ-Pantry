@@ -19,16 +19,10 @@ class ShoppingProvider extends ChangeNotifier {
 
   void init() {
     // schedule after first frame to avoid calling notifyListeners during build
-    // By default loads the most recently created shopping list
-    Future.microtask(() => loadShoppingListItems(0));
-  }
-
-  Future<void> createShoppingList(String shoppingListName) async {
-    try {
-      await _service.createShoppingList(shoppingListName);
-    } catch (e) {
-      debugPrint('Error creating shopping list: $e');
-    }
+    // Load all shopping lists initially
+    Future.microtask(() => loadShoppingLists());
+    // By default loads the most recently created shopping list (or the list at index 0)
+    Future.microtask(() => loadShoppingListItems(_lists[0].listId));
   }
 
   Future<bool> loadShoppingLists() async {
@@ -66,6 +60,27 @@ class ShoppingProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> createShoppingList(String shoppingListName) async {
+    try {
+      await _service.createShoppingList(shoppingListName);
+    } catch (e) {
+      debugPrint('Error creating shopping list: $e');
+    }
+  }
+
+  Future<void> deleteShoppingList(int listId) async {
+    try {
+      await _service.deleteShoppingList(listId);
+      loadShoppingLists();
+      notifyListeners();
+
+      debugPrint('✅ Deleted shopping list: listID: $listId');
+    } catch (e) {
+      debugPrint('❌ Error deleting shopping list: $e');
+      rethrow; // optional: let UI handle error display
+    }
+  }
+
   Future<void> addItem(int listId, int productId, int quantity, [String? itemText]) async {
     try {
 
@@ -77,6 +92,46 @@ class ShoppingProvider extends ChangeNotifier {
       debugPrint('✅ Added item: productID: $productId, quantity: $quantity');
     } catch (e) {
       debugPrint('❌ Error adding item to shopping list: $e');
+      rethrow; // optional: let UI handle error display
+    }
+  }
+
+  Future<void> addCustomItem(int listId, int customProductId, int quantity, [String? itemText]) async {
+    try {
+
+      // Save to backend
+      await _service.addCustomItem(listId, customProductId, quantity, itemText);
+      loadShoppingListItems(listId);
+      notifyListeners();
+
+      debugPrint('✅ Added custom item: $itemText');
+    } catch (e) {
+      debugPrint('❌ Error adding custom item to shopping list: $e');
+      rethrow; // optional: let UI handle error display
+    }
+  }
+
+  Future<void> toggleItem(int listId, int productId) async {
+    try {
+      await _service.toggleItem(listId, productId);
+      loadShoppingListItems(listId);
+      notifyListeners();
+
+      debugPrint('Toggled item: productID: $productId');
+    } catch (e) {
+      debugPrint('Error toggling item in shopping list: $e');
+    }
+  }
+
+  Future<void> deleteItem(int listId, int productId) async {
+    try {
+      await _service.deleteItem(listId, productId);
+      loadShoppingListItems(listId);
+      notifyListeners();
+
+      debugPrint('✅ Deleted item: productID: $productId');
+    } catch (e) {
+      debugPrint('❌ Error deleting item from shopping list: $e');
       rethrow; // optional: let UI handle error display
     }
   }
