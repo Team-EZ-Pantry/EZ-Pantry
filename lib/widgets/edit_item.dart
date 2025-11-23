@@ -244,8 +244,32 @@ class _EditItemDialogState extends State<EditItemDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
+                  // Delete button
                   TextButton(
-                    onPressed: () => _onDelete(),
+                    onPressed: () => {
+                      showDialog(context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Confirm Deletion'),
+                          content: const Text('Are you sure you want to delete this item from your pantry?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close confirmation dialog
+                                _onDelete(); // Proceed with deletion
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    },
                     child: const Text(
                       style: TextStyle(color: Colors.red),
                       'Delete')
