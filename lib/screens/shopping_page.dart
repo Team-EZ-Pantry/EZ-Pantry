@@ -5,10 +5,12 @@ import 'package:provider/provider.dart';
 
 import '../models/shopping_list_item_model.dart';
 import '../providers/shopping_provider.dart';
+import '../services/shopping_service.dart';
 import '../widgets/add_list.dart';
 
 
 double textScale = 16;
+TextEditingController searchText = TextEditingController();
 
 class ShoppingPage extends StatefulWidget {
   const ShoppingPage({super.key});
@@ -21,7 +23,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
   @override
   void initState() {
     super.initState();
-    // final ShoppingProvider shoppingProvider = context.read<ShoppingProvider>();
+    searchText = TextEditingController();
+
+    
   }
 
 
@@ -32,15 +36,16 @@ class _ShoppingPageState extends State<ShoppingPage> {
     final double screenFontSize  =  MediaQuery.textScalerOf(context).scale(textScale);
 
     Future<void> _AddListButtonPressed() async {
-    final String? result = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => const AddListDialog(title: 'Enter List Name',),
-    );
+      
+      final String? result = await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AddListDialog(title: 'Enter List Name', listName: searchText.text,),
+      );
 
-    if (result == null) {
-      return;
+      if (result == null) {
+        return;
+      }
     }
-  }
 
     return ChangeNotifierProvider(
       create: (_) => ShoppingProvider(),
@@ -55,14 +60,24 @@ class _ShoppingPageState extends State<ShoppingPage> {
                 ],
               ),
 
-              ListSearchBar(screenWidth, screenHeight * .5),
-              IconButton.filled(
-                constraints: BoxConstraints(
-                  maxHeight: screenHeight,
-                  maxWidth: screenWidth * .2),
-                onPressed: () => _AddListButtonPressed(),
-                icon: Icon(Icons.add)),
-
+              Row(
+                children: [ 
+                  SizedBox(width: screenWidth * .01,),
+                  SearchBar(
+                    controller: searchText,      
+                    constraints: BoxConstraints(
+                      maxWidth: screenWidth *.8,
+                      maxHeight: screenHeight * .1,
+                    ),
+                  ),
+                  SizedBox(width: screenWidth * .01,),
+                  IconButton.filled(
+                  constraints: BoxConstraints(
+                    maxHeight: screenHeight,
+                    maxWidth: screenWidth * .2),
+                  onPressed: () => _AddListButtonPressed(),
+                  icon: Icon(Icons.add)),
+              ]),
               SizedBox(height: screenHeight * .02,),
 
               SingleChildScrollView(
@@ -95,33 +110,11 @@ class _ShoppingPageState extends State<ShoppingPage> {
       )
     );
   }
-
 }
-
-Widget ListSearchBar(double width, double height){
-  TextEditingController searchText = TextEditingController();
-  
-  return Row(
-    spacing: width * .025,
-    children: <Widget>[
-      SizedBox(width: width * .01,),
-      SearchBar(
-        controller: searchText,      
-        constraints: BoxConstraints(
-          maxWidth: width *.8,
-          maxHeight: height * .1,
-        ),
-        autoFocus: true,
-      ),
-      
-    ]
-  );          
-}
-
-
 
 /// List View of shopping lists
 Widget shoppingListView(ShoppingProvider shoppingList){
+  debugPrint('${shoppingList.items.length}==================');
   return ListView.builder(
     itemCount: shoppingList.items.length,
     itemBuilder: (BuildContext context, int index) {

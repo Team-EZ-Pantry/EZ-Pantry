@@ -47,11 +47,9 @@ class ShoppingService {
     };
 
     final http.Response response = await http.get(
-      Uri.parse('$baseUrl/shopping-list/'),
+      Uri.parse('$baseUrl/shopping-list'),
       headers: headers,
     );
-
-    debugPrint('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -84,8 +82,6 @@ class ShoppingService {
     );
 
     if (response.statusCode == 200) {
-     debugPrint('Response body: ${response.body}');
-
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
       final List<ShoppingListItemModel> products = decoded['shoppingList']['items'] as List<ShoppingListItemModel>;
 
@@ -93,7 +89,7 @@ class ShoppingService {
           .map((ShoppingListItemModel item) => ShoppingListItemModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
-      throw Exception('Failed to load shopping list items');
+      throw Exception('Failed to load shopping list items ${response.body}');
     }
   }
 

@@ -31,10 +31,9 @@ class AddListDialog extends StatefulWidget {
 class _AddListDialogState extends State<AddListDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _listNameController    = TextEditingController();
+  TextEditingController _listNameController    = TextEditingController();
 
   bool _isSaving = false;
-
   @override
   void dispose() {
     _listNameController.dispose();
