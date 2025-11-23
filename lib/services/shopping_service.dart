@@ -25,7 +25,7 @@ class ShoppingService {
       'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
     };
 
-    final Uri url = Uri.parse('$baseUrl/shopping-list/');
+    final Uri url = Uri.parse('$baseUrl/shopping-list');
 
     final http.Response response = await http.post(
         url,
