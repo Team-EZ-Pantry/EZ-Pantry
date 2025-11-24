@@ -18,28 +18,6 @@ class ShoppingService {
   // or add adb to path then just run
   // adb reverse tcp:3000 tcp:3000
 
-  Future<void> createShoppingList(String shoppingListName) async {
-
-    final Map<String, String> header = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
-    };
-
-    final Uri url = Uri.parse('$baseUrl/shopping-list');
-
-    final http.Response response = await http.post(
-        url,
-        headers: header,
-        body: jsonEncode(<String, Object> {
-          'name': shoppingListName,
-        }),
-    );
-
-    if(response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Failed to create shopping list: ${response.body}');
-    }
-  }
-
   Future<List<ShoppingListModel>> getShoppingLists() async {
     final Map<String, String> headers = <String, String>{
       'Content-Type': 'application/json',
@@ -89,7 +67,29 @@ class ShoppingService {
           .map((ShoppingListItemModel item) => ShoppingListItemModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
-      throw Exception('Failed to load shopping list items ${response.body}');
+      throw Exception('Failed to load shopping list items');
+    }
+  }
+
+  Future<void> createShoppingList(String shoppingListName) async {
+
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final Uri url = Uri.parse('$baseUrl/shopping-list/');
+
+    final http.Response response = await http.post(
+        url,
+        headers: header,
+        body: jsonEncode(<String, Object> {
+          'name': shoppingListName,
+        }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to create shopping list: ${response.body}');
     }
   }
 
@@ -137,7 +137,7 @@ class ShoppingService {
     }
   }
 
-  Future<void> addCustomItem(int listId,int customProductId, int quantity, [String? itemText]) async {
+  Future<void> addCustomItem(int listId, int customProductId, int quantity, [String? itemText]) async {
 
     itemText ??= '';
 
