@@ -1,7 +1,4 @@
 class RecipeDetailsModel {
-  final String id;
-  final List<String> ingredients;
-  final List<String> instructions;
 
   RecipeDetailsModel({
     required this.id,
@@ -9,11 +6,15 @@ class RecipeDetailsModel {
     required this.instructions,
   });
 
+  final String id;
+  final List<String> ingredients;
+  final List<String> instructions;
+
   factory RecipeDetailsModel.fromJson(Map<String, dynamic> json) {
     return RecipeDetailsModel(
       id: json['id'] as String,
-      ingredients: List<String>.from(json['ingredients'] as List),
-      instructions: List<String>.from(json['instructions'] as List),
+      ingredients: List<String>.from(json['ingredients'] as List<String>),
+      instructions: List<String>.from(json['instructions'] as List<String>),
     );
   }
 

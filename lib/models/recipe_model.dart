@@ -1,11 +1,6 @@
+import 'package:flutter/material.dart';
+
 class RecipeModel {
-  final String id;
-  final String name;
-  final String description;
-  final String imageUrl;
-  final int prepTime;
-  final int cookTime;
-  final int servings;
 
   RecipeModel({
     required this.id,
@@ -16,6 +11,16 @@ class RecipeModel {
     required this.cookTime,
     required this.servings,
   });
+  
+  final String id;
+  final String name;
+  final String description;
+  final String imageUrl;
+  final int prepTime;
+  final int cookTime;
+  final int servings;
+
+  
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
     return RecipeModel(
