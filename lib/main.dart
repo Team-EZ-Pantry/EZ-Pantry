@@ -95,17 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: PopupMenuButton(
-          position: PopupMenuPosition.under,
-          shape: RoundedRectangleBorder(borderRadius:BorderRadiusGeometry.circular(25)),
-          itemBuilder: (BuildContext context) => [
-            const PopupMenuItem(child: Text('pantry1')),
-            const PopupMenuItem(child: Text('pantry2')),
-          ],
-          child: Text(
-            widget.title
-          ),
-        ),
+        title: Text('EZ Pantry'),
         centerTitle: true,
       ),
       body: Center(
