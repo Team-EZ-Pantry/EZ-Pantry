@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import '../models/recipe_model.dart';
 import '/../screens/recipe_detail_page.dart';
+import '/../providers/recipe_provider.dart';
+import 'package:provider/provider.dart';
 
 class RecipesPage extends StatefulWidget {
   const RecipesPage({super.key});
@@ -9,22 +12,36 @@ class RecipesPage extends StatefulWidget {
 }
 
 class _RecipesPageState extends State<RecipesPage> {
-  final List<String> recipes = List.generate(10, (i) => 'Recipe ${i + 1}');
-  late List<String> filteredRecipes;
+  List<RecipeModel> allRecipes = [];
+  List<RecipeModel> filteredRecipes = [];
   final TextEditingController _searchController = TextEditingController();
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    filteredRecipes = recipes;
     _searchController.addListener(_filterRecipes);
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadRecipes();
+    });
+  }
+
+  Future<void> _loadRecipes() async {
+    final RecipeProvider recipeProvider = context.read<RecipeProvider>();
+    final recipes = await recipeProvider.getAllRecipes();
+    setState(() {
+      allRecipes = recipes;
+      filteredRecipes = recipes;
+      isLoading = false;
+    });
   }
 
   void _filterRecipes() {
     setState(() {
-      filteredRecipes = recipes
+      filteredRecipes = allRecipes
           .where((recipe) =>
-              recipe.toLowerCase().contains(_searchController.text.toLowerCase()))
+              recipe.name.toLowerCase().contains(_searchController.text.toLowerCase()))
           .toList();
     });
   }
@@ -58,42 +75,43 @@ class _RecipesPageState extends State<RecipesPage> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: filteredRecipes.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ListTile(
-                      leading: const Icon(Icons.add_circle, color: Colors.green),
-                      title: const Text('Add New Recipe'),
-                      subtitle: const Text('Create a custom recipe'),
-                      //trailing: const Icon(Icons.arrow_forward),
-                      onTap: () {
-                        // TODO: Navigate to add recipe page
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Add recipe functionality coming soon!')),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: filteredRecipes.length + 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == 0) {
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            leading: const Icon(Icons.add_circle, color: Colors.green),
+                            title: const Text('Add New Recipe'),
+                            subtitle: const Text('Create a custom recipe'),
+                            onTap: () {
+                              // TODO: Navigate to add recipe page
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Add recipe functionality coming soon!')),
+                              );
+                            },
+                          ),
                         );
-                      },
-                    ),
-                  );
-                }
-                return RecipeTile(
-                  recipeIndex: int.parse(filteredRecipes[index - 1].split(' ')[1]),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RecipeDetailPage(
-                            recipeIndex:
-                                int.parse(filteredRecipes[index - 1].split(' ')[1])),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                      }
+                      final RecipeModel recipe = filteredRecipes[index - 1];
+                      return RecipeTile(
+                        recipe: recipe,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (context) => RecipeDetailPage(
+                                  recipeIndex: int.parse(recipe.id)),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -102,11 +120,11 @@ class _RecipesPageState extends State<RecipesPage> {
 }
 
 class RecipeTile extends StatelessWidget {
-  final int recipeIndex;
+  final RecipeModel recipe;
   final VoidCallback onTap;
 
   const RecipeTile({
-    required this.recipeIndex,
+    required this.recipe,
     required this.onTap,
     super.key,
   });
@@ -116,8 +134,39 @@ class RecipeTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        title: Text('Recipe $recipeIndex'),
-        subtitle: const Text('Tap to view details'),
+        leading: recipe.imageUrl.isNotEmpty
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  recipe.imageUrl,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.restaurant, size: 40),
+                ),
+              )
+            : const Icon(Icons.restaurant, size: 40),
+        title: Text(recipe.name),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              recipe.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${recipe.prepTime + recipe.cookTime} min • ${recipe.servings} servings',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+        isThreeLine: true,
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),
