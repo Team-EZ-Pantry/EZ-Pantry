@@ -4,13 +4,14 @@ import 'package:provider/provider.dart';
 
 import 'providers/pantry_provider.dart';
 import 'providers/recipe_provider.dart';
+import 'providers/user_provider.dart';
+import 'screens/account_page.dart';
 import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipe_page.dart';
 import 'screens/shopping_page.dart';
 import 'utilities/logout_user.dart';
 import 'utilities/session_controller.dart';
-
 
 void main() {  
   SessionController.instance.loadSession();
@@ -24,10 +25,13 @@ void main() {
           ChangeNotifierProvider<RecipeProvider>(
             create: (_) => RecipeProvider(),
           ),
-        ],
+        ChangeNotifierProvider<UserProvider>(
+          create: (_) => UserProvider(),
+        ),
+      ],
       // ignore: prefer_const_constructors
-      child: MyApp()
-      )
+      child: MyApp(),
+    ),
   );
 }
 
@@ -100,7 +104,10 @@ class _MyHomePageState extends State<MyHomePage> {
         leading: IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              logoutUser(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(builder: (context) => const AccountPage()),
+              );
             }
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,

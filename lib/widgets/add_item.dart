@@ -8,9 +8,13 @@ import '../providers/search_provider.dart';
 import '../utilities/debouncer.dart';
 import 'positioned_search_box.dart';
 
-dynamic searchResults = '';
+/// Intialize
+dynamic searchResults      = '';
+int     selectedProductID  = -1;
+String selectedProductType = '';
 
-/// Intialize search
+/// Constants
+const String customProductKey = 'custom_product';
 
 class AddItemDialog extends StatefulWidget {
   const AddItemDialog({
@@ -39,6 +43,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
   final TextEditingController _quantityController       = TextEditingController();
   final TextEditingController _expirationDateController = TextEditingController();
 
+  // Link product name field and search overlay
+  final LayerLink productName = LayerLink(); 
+
   bool _isSaving = false;
 
   final Duration debounceDuration = const Duration(
@@ -51,6 +58,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
     _productNameController.dispose();
     _quantityController.dispose();
     _expirationDateController.dispose();
+    searchResults = ''; 
     super.dispose();
   }
 
@@ -59,22 +67,30 @@ class _AddItemDialogState extends State<AddItemDialog> {
       return;
     }
 
-    final int productId = int.parse(_productNameController.text.trim());
+    final int selectedProductId = selectedProductID;
     final int quantity = int.tryParse(_quantityController.text.trim()) ?? 0;
     final String expirationDate = _expirationDateController.text.trim();
 
     setState(() => _isSaving = true);
 
-    // Send directly to the provider
-    await context.read<PantryProvider>().addItem(
-      productId,
-      quantity,
-      expirationDate,
-    ); // example userId = 2
-
+    // Add custom item if type matches key constant, add regular item if it does not
+    if (selectedProductType == customProductKey) {
+      await context.read<PantryProvider>().addCustomItem(
+        selectedProductId,
+        quantity,
+        expirationDate,
+      );
+    } else {
+      await context.read<PantryProvider>().addItem(
+        selectedProductId,
+        quantity,
+        expirationDate,
+      );
+    }
     setState(() => _isSaving = false);
-
-    Navigator.of(context).pop(); // close dialog
+    if (mounted) {
+      Navigator.of(context).pop(); // close dialog
+    }
   }
 
   @override
@@ -89,25 +105,29 @@ class _AddItemDialogState extends State<AddItemDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                TextFormField(
-                  controller: _productNameController,
-                  autofocus: true,
-                  decoration: const InputDecoration(hintText: 'Product name'),
-                  validator: (String? v) =>
-                      (v == null || v.trim().isEmpty) ? 'Please enter product number' : null,
-                  onChanged: (String value) {
-                    if (_productNameController.text.length > 1) {
-                      Debouncer(delay: debounceDuration).run(() async {
-                        /// Get new results
-                        searchResults = await searchAllProducts(_productNameController.text);
+                SizedBox(width: MediaQuery.sizeOf(context).width * .9),
+                CompositedTransformTarget(
+                  link: productName,
+                  child: TextFormField(
+                    controller: _productNameController,
+                    autofocus: true,
+                    decoration: const InputDecoration(hintText: 'Product Name'),
+                    validator: (String? value) =>
+                        (value == null || value.trim().isEmpty) ? 'Please enter a product name' : null,
+                    onChanged: (String value) {
+                      if (_productNameController.text.length > 1) {
+                        Debouncer(delay: debounceDuration).run(() async {
+                          /// Get new results
+                          searchResults = await searchAllProducts(_productNameController.text);
 
-                        // Show widget changes from search results
-                        setState(() {});
-                      });
-                    }
-                  },
+                          // Show widget changes from search results
+                          setState(() {});
+                        },);
+                      }
+                    },
+                  ),
                 ),
-
+                
                 TextFormField(
                   controller: _quantityController,
                   autofocus: true,
@@ -142,13 +162,18 @@ class _AddItemDialogState extends State<AddItemDialog> {
             ),
           ],
         ),
-        // --- Overlay List for searchResults ---
+
+        /// Show search
         SearchResultsOverlay(
+          layerLink: productName,
+          height: MediaQuery.sizeOf(context).height * 0.5, /// Make % length of screnn  
+          width:  MediaQuery.sizeOf(context).width  * .9,   /// Make % width of screen
           searchResults: searchResults,
-          onItemSelected: (String selectedItemID) {
+          onItemSelected: (dynamic selectedItem) {
             // Handle selected item
-            ///(TODO): Deliver ID number to appropriate place in add_item rework
-            _productNameController.text = selectedItemID;
+            selectedProductID           = selectedItem['id'] as int;
+            _productNameController.text = selectedItem['product_name'].toString();
+            selectedProductType         = selectedItem['product_type'].toString();
 
             // Clear search results
             setState(() {

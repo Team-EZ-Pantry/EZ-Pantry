@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import '../main.dart'; // Correct relative path to import MyHomePage
-import '../providers/login_request.dart';
-import '../utilities/check_login.dart';
-import '../widgets/custom_text_field.dart';
-import 'registration_page.dart'; // Import RegistrationPage class
+import 'package:provider/provider.dart';
+import '../main.dart';
+import '../providers/user_provider.dart';
+import 'registration_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,160 +12,202 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<FormState>  _formKey            = GlobalKey<FormState>();
   final TextEditingController _emailController    = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
-  final FocusNode _emailFocus                     = FocusNode();
-  final FocusNode _passwordFocus                  = FocusNode();
+  final FocusNode             _emailFocusNode     = FocusNode();
+  final FocusNode             _passwordFocusNode  = FocusNode();
+  final double                _elementSpacing     = 15.0;
 
-  final double elementSpacing                     = 15;
-
-  @override
-  void initState() {
-    super.initState();
-    // Request focus after first frame to reliably show keyboard
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _emailFocus.requestFocus();
-    });
-  }
+  // Track provider errors per fields
+  String? _emailProviderError;
+  String? _passwordProviderError;
+  String? _generalError;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _emailFocus.dispose();
-    _passwordFocus.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
+  void _clearProviderErrors() {
+    setState(() {
+      _emailProviderError = null;
+      _passwordProviderError = null;
+      _generalError = null;
+    });
+  }
+
   Future<void> _handleLogin() async {
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
+    _clearProviderErrors();
+    
+    if (!_formKey.currentState!.validate()) return;
 
-    final String loginCheck = checkLogin(email, password);
+    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.clearError();
 
-    if (loginCheck != 'OK') {
-      showDialog<ErrorDescription>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Login Failed'),
-          content: Text(loginCheck),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
+    final bool success = await userProvider.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (success && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute<ActionDispatcher>(
+          builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
         ),
       );
-
-      return;
-    }
-    else
-    {
-      try {
-        final int requestResponse = await loginUser(email: email, password: password);
-      
-        // On success, navigate to MyHomePage (home screen)
-        if (requestResponse == 0) {
-          if (mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute<ActionDispatcher>(
-                builder: (BuildContext context) => const MyHomePage(title: 'EZ Pantry'),
-              ),
-            );
-          }
+    } else if (mounted && userProvider.error != null) {
+      // Map provider errors to specific fields
+      setState(() {
+        if (userProvider.error!.contains('No account found with this email') ||
+            userProvider.error!.contains('email')) {
+          _emailProviderError = userProvider.error;
+          _emailFocusNode.requestFocus();
+        } else if (userProvider.error!.contains('Incorrect password')) {
+          _passwordProviderError = userProvider.error;
+          _passwordController.clear();
+          _passwordFocusNode.requestFocus();
+        } else if (userProvider.error!.contains('Network')) {
+          _generalError = userProvider.error;
         } else {
-          // Show error if credentials are incorrect
-          if (mounted) {
-            showDialog<ErrorDescription>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text('Login Failed'),
-                content: const Text('Incorrect email or password.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
-            );
-          }
+          _generalError = userProvider.error; // Generic fallback
         }
-      } catch (e) {
-        debugPrint('Exception occurred: $e');
-      }
+      });
     }
-  } 
-  
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Image.asset(
-                '../../assets/logo/logo.png', // Ensure this path matches your asset structure
-                height: 300,
-                width: 500,
-              ),
-                SizedBox(height: elementSpacing + 20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Logo
+                Image.asset(
+                  '../../assets/logo/logo.png',
+                  height: 300,
+                  width: 500,
+                ),
+                SizedBox(height: _elementSpacing + 20),
 
-                /// email field
-                CustomTextField(
-                  label: 'Email',
-                  focusNode: _emailFocus,
-                  hintText: 'Enter your email',
+                // Email
+                TextFormField(
                   controller: _emailController,
-                  onSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_passwordFocus);
+                  focusNode: _emailFocusNode,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'Enter your email',
+                    border: const OutlineInputBorder(),
+                    errorText: _emailProviderError, // Provider error shown here
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) return 'Email is required';
+                    if (!value.contains('@')) return 'Enter a valid email';
+                    return null;
+                  },
+                  onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
+                  textInputAction: TextInputAction.next,
+                ),
+                SizedBox(height: _elementSpacing),
+
+                // Password
+                TextFormField(
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
+                    border: const OutlineInputBorder(),
+                    errorText: _passwordProviderError,
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) return 'Password is required';
+                    return null;
+                  },
+                  onFieldSubmitted: (_) => _handleLogin(),
+                  textInputAction: TextInputAction.done,
+                ),
+
+                // General errors (network, unexpected)
+                if (_generalError != null) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.warning_amber_rounded,
+                        color: Theme.of(context).colorScheme.error,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      
+                      // Error Text
+                      Expanded(
+                        child: Text(
+                          _generalError!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+
+                SizedBox(height: _elementSpacing + 5),
+
+                // Login Button with loading state
+                Consumer<UserProvider>(
+                  builder: (context, userProvider, child) {
+                    return ElevatedButton(
+                      onPressed: userProvider.isLoading ? null : _handleLogin,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      child: userProvider.isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 3),
+                            )
+                          : const Text(
+                              'Login',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                    );
                   },
                 ),
 
-                SizedBox(height: elementSpacing),
-
-                /// Password field
-                CustomTextField(
-                  label: 'Password',
-                  focusNode: _passwordFocus,
-                  hintText: 'Enter your password',
-                  controller: _passwordController,
-                  obscureText: true,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _handleLogin(),
-                ),
-
-                SizedBox(height: elementSpacing + 5),
-
-                // Login Button
-                ElevatedButton(
-                  onPressed: _handleLogin,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-
-                /// Sign Up Text Button
+                // Sign Up redirect
                 Padding(
-                  padding:  const EdgeInsets.only(top: 20.0), 
+                  padding: const EdgeInsets.only(top: 20.0),
                   child: TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute<SystemNavigator>(
-                          builder: (BuildContext context) => const RegistrationPage()),
+                    onPressed: () => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute<ActionDispatcher>(
+                        builder: (context) => const RegistrationPage(),
                       ),
-                  child: const Text('New user? Sign up' ),) ,),
-            ],
+                    ),
+                    child: const Text('New user? Sign up'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

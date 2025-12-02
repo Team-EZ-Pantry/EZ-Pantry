@@ -60,13 +60,39 @@ class _EditItemDialogState extends State<EditItemDialog> {
     setState(() => _isSaving = true);
 
     await context.read<PantryProvider>().updateQuantity(widget.item.id, quantity);
-    if(expirationDate != null) {
+    if(mounted && expirationDate != null) {
       await context.read<PantryProvider>().updateExpirationDate(widget.item.id, expirationDate);
     }
-    await context.read<PantryProvider>().loadPantryItems();
+    
+    if (mounted) {
+      await context.read<PantryProvider>().loadPantryItems();
+    }
 
     setState(() => _isSaving = false);
-    Navigator.of(context).pop();
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _onDelete() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    await context.read<PantryProvider>().deleteItem(widget.item.id);
+    
+    if (mounted) {
+      await context.read<PantryProvider>().loadPantryItems();
+    }
+
+    setState(() => _isSaving = false);
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -219,9 +245,17 @@ class _EditItemDialogState extends State<EditItemDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   TextButton(
+                    onPressed: () => _onDelete(),
+                    child: const Text(
+                      style: TextStyle(color: Colors.red),
+                      'Delete')
+                  ),
+                  // Cancel button
+                  TextButton(
                     onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
                     child: const Text('Cancel'),
                   ),
+                  // Save button
                   ElevatedButton(
                     onPressed: () {
                       if(!_isSaving){
