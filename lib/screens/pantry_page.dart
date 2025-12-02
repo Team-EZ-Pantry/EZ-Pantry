@@ -17,6 +17,9 @@ import '../widgets/new_pantry_prompt.dart';
 import '../widgets/pantry_item.dart';
 import 'scan_page.dart';
 
+// TEMPORARY FIX access to pantry service to check for existing pantry
+import '../services/pantry_service.dart';
+
 class PantryPage extends StatefulWidget {
   const PantryPage({super.key});
 
@@ -25,6 +28,10 @@ class PantryPage extends StatefulWidget {
 }
 
 class _PantryPageState extends State<PantryPage> {
+  
+  // TEMPORARY FIX access to pantry service to check for existing pantry
+  final PantryService _service = PantryService();
+
   @override
   void initState() {
     super.initState();
@@ -32,32 +39,41 @@ class _PantryPageState extends State<PantryPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final PantryProvider pantryProvider = context.read<PantryProvider>();
 
-      final bool loaded = await pantryProvider.loadPantryItems();
-
-      if (!loaded) {
-        String? pantryName;
-
-        // Keep showing the dialog until user enters a name
+      // TEMPORARY FIX to stop the alert from popping up when we already have a pantry
+      // First, check if user already has a pantry
+      try {
+        final int pantryId = await _service.getPantryId();
+        debugPrint('User already has pantry ID: $pantryId');
         
-        while (pantryName == null || pantryName.isEmpty) {
-          if (mounted) {
-            pantryName = await showDialog<String>(
-              context: context,
-              barrierDismissible: false,
-              builder: (BuildContext context) => const NewPantryPrompt(),
-            );
-          }
+        // If we got a pantry ID, load items
+        await pantryProvider.loadPantryItems();
+        return; // Exit - user has pantry
+      } catch (e) {
+        debugPrint('No pantry found or error: $e');
+        // Continue to create new pantry
+      }
 
-          if (mounted && (pantryName == null || pantryName.isEmpty)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('You must create a pantry to continue.')),
-            );
-          }
+      // Only show dialog if no pantry exists
+      String? pantryName;
+
+      while (pantryName == null || pantryName.isEmpty) {
+        if (mounted) {
+          pantryName = await showDialog<String>(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) => const NewPantryPrompt(),
+          );
         }
 
-        await pantryProvider.createPantry(pantryName);
-        await pantryProvider.loadPantryItems();
+        if (mounted && (pantryName == null || pantryName.isEmpty)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('You must create a pantry to continue.')),
+          );
+        }
       }
+
+      await pantryProvider.createPantry(pantryName);
+      await pantryProvider.loadPantryItems();
     });
   }
 
@@ -132,23 +148,26 @@ class _PantryPageState extends State<PantryPage> {
                   itemCount: pantry.items.length,
                   itemBuilder: (BuildContext context, int index) {
                     final PantryItemModel item = pantry.items[index];
+                    
                     return PantryItemTile(
                       onTap: () => _onItemTapped(item),
                       item: item,
                       incrementQuantity: () {
-                        item.quantity++;
-                        pantry.updateQuantity(item.id, item.quantity);
+                        final int newQuantity = item.quantity + 1;
+                        item.quantity = newQuantity; // Update UI immediately
+                        pantry.updateQuantity(item, newQuantity); // Pass the item
                       },
                       decrementQuantity: () {
-                        if(item.quantity > 0) {
-                          item.quantity--;
-                          pantry.updateQuantity(item.id, item.quantity);
+                        if (item.quantity > 0) {
+                          final int newQuantity = item.quantity - 1;
+                          item.quantity = newQuantity; // Update UI immediately
+                          pantry.updateQuantity(item, newQuantity); // Pass the item
                         }
                       },
                       changeQuantity: (int newQuantity) {
-                        if(newQuantity >= 0) {
-                          item.quantity = newQuantity;
-                          pantry.updateQuantity(item.id, item.quantity);
+                        if (newQuantity >= 0) {
+                          item.quantity = newQuantity; // Update UI immediately
+                          pantry.updateQuantity(item, newQuantity); // Pass the item
                         }
                       },
                     );

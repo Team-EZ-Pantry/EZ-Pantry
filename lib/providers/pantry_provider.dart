@@ -52,7 +52,7 @@ class PantryProvider extends ChangeNotifier {
     }
   }
 
-  /// Add a cutom product
+  /// Add a custom product
   Future<void> addCustomItem(int productId, int quantity, String? expirationDate) async {
     try {
       // Save to backend
@@ -63,20 +63,6 @@ class PantryProvider extends ChangeNotifier {
       debugPrint('Added custom item: productID: $productId, quantity: $quantity');
     } catch (e) {
       debugPrint('addCustomItem() Error: $e');
-      rethrow; // optional: let UI handle error display
-    }
-  }
-
-  // Delete a product
-  Future<void> deleteItem(int productId) async {
-    try {
-      await _service.deleteItem(productId);
-      loadPantryItems();
-      notifyListeners();
-
-      debugPrint('✅ Deleted item: productID: $productId');
-    } catch (e) {
-      debugPrint('❌ Error deleting pantry item: $e');
       rethrow; // optional: let UI handle error display
     }
   }
@@ -99,18 +85,7 @@ class PantryProvider extends ChangeNotifier {
     return newProductID;
   }
 
-  Future<void> updateExpirationDate(int productId, String expirationDate) async {
-    try {
-      await _service.updateExpirationDate(productId, expirationDate);
-      notifyListeners();
-
-      debugPrint('Updated expiration of $productId to $expirationDate');
-    } catch(e) {
-      debugPrint('Error updating expiration: $e');
-    }
-  }
-
-  Future<void> updateQuantity(int productId, int quantity) async {
+  /*Future<void> updateQuantity(int productId, int quantity) async {
     try {
       await _service.updateQuantity(productId, quantity);
       notifyListeners();
@@ -124,7 +99,57 @@ class PantryProvider extends ChangeNotifier {
     void removeItemAt(int index) {
       items.removeAt(index);
       notifyListeners();
+    }*/
+
+  // Handle both regular and custom products
+  Future<void> updateQuantity(PantryItemModel item, int quantity) async {
+    try {
+      if (item.productType == 'custom_product') {
+        await _service.updateCustomQuantity(item.id, quantity);
+      } else {
+        await _service.updateQuantity(item.id, quantity);
+      }
+      
+      item.quantity = quantity; // Update local model
+      notifyListeners();
+    } catch(e) {
+      debugPrint('Error updating quantity: $e');
     }
+  }
+
+  Future<void> updateExpirationDate(PantryItemModel item, String expirationDate) async {
+    try {
+      if (item.productType == 'custom_product') {
+        await _service.updateCustomExpirationDate(item.id, expirationDate);
+      } else {
+        await _service.updateExpirationDate(item.id, expirationDate);
+      }
+
+      //item.expirationDate = expirationDate; // Update local model
+      notifyListeners();
+    } catch(e) {
+      debugPrint('Error updating expiration: $e');
+    }
+  }
+
+  // Delete a product
+  Future<void> deleteItem(PantryItemModel item) async {
+    try {
+      if( item.productType == 'custom_product') {
+        await _service.deleteCustomItem(item.id);
+      } else {
+        await _service.deleteItem(item.id);
+      }
+
+      loadPantryItems();
+      notifyListeners();
+      debugPrint('✅ Deleted item: productID: $item.id');
+    } catch (e) {
+      debugPrint('❌ Error deleting pantry item: $e');
+      rethrow; // optional: let UI handle error display
+    }
+  }
+
 
   Future<void> createPantry(String pantryName) async {
     try {

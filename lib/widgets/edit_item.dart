@@ -59,9 +59,9 @@ class _EditItemDialogState extends State<EditItemDialog> {
 
     setState(() => _isSaving = true);
 
-    await context.read<PantryProvider>().updateQuantity(widget.item.id, quantity);
+    await context.read<PantryProvider>().updateQuantity(widget.item, quantity);
     if(mounted && expirationDate != null) {
-      await context.read<PantryProvider>().updateExpirationDate(widget.item.id, expirationDate);
+      await context.read<PantryProvider>().updateExpirationDate(widget.item, expirationDate);
     }
     
     if (mounted) {
@@ -82,7 +82,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
 
     setState(() => _isSaving = true);
 
-    await context.read<PantryProvider>().deleteItem(widget.item.id);
+    await context.read<PantryProvider>().deleteItem(widget.item);
     
     if (mounted) {
       await context.read<PantryProvider>().loadPantryItems();

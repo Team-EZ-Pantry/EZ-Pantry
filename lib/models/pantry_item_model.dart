@@ -18,23 +18,23 @@ class PantryItemModel {
   });
 
   factory PantryItemModel.fromJson(Map<String, dynamic> json) {
-    debugPrint('.fromJson Started');
-    return PantryItemModel(
-      id: json['id'] as int,
-      productType: json['product_type'] as String,
-      name: json['product_name'] as String,
-      brand: json['brand'] as String,
-      quantity: json['quantity'] != null ? json['quantity'] as int : 0,
-      expirationDate: json['expiration_date']?.toString(),
-      imageUrl: json['image_url']?.toString(),
-      calories: json['calories_per_100g'] != null ? json['calories_per_100g'].toString() : '',
-      protein: json['protein_per_100g']?.toString() ?? '',
-      carbs: json['carbs_per_100g']?.toString() ?? '',
-      fat: json['fat_per_100g']?.toString() ?? '',
-      nutritionFacts: json['nutrition'] as Map<String, dynamic>? ?? <String, dynamic>{},
-      createdAt: DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now(),
-    );
-  }
+  debugPrint('.fromJson Started');
+  return PantryItemModel(
+    id: json['id'] as int,
+    productType: json['product_type'] as String? ?? '',
+    name: json['product_name'] as String? ?? '',
+    brand: json['brand'] as String? ?? '',
+    quantity: json['quantity'] != null ? json['quantity'] as int : 0,
+    expirationDate: json['expiration_date']?.toString(),
+    imageUrl: json['image_url']?.toString(),
+    calories: json['calories_per_100g'] != null ? json['calories_per_100g'].toString() : '',
+    protein: json['protein_per_100g']?.toString() ?? '',
+    carbs: json['carbs_per_100g']?.toString() ?? '',
+    fat: json['fat_per_100g']?.toString() ?? '',
+    nutritionFacts: json['nutrition'] as Map<String, dynamic>? ?? <String, dynamic>{},
+    createdAt: DateTime.tryParse(json['added_at']?.toString() ?? json['created_at']?.toString() ?? '') ?? DateTime.now(),
+  );
+}
 
   final int id;
   final String productType;

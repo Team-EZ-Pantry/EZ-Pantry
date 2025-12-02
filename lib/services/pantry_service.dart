@@ -39,7 +39,7 @@ class PantryService {
 
       }
 
-      final int pantryId = pantries[0]['pantry_id'] as int;
+      final int pantryId = pantries[0]['pantry_id'] as int; // just takes the first pantry
       debugPrint('Pantry ID: $pantryId ------------------------------------------------------');
       return pantryId;
     } else {
@@ -147,6 +147,24 @@ class PantryService {
     } 
   }
 
+  Future<void> deleteCustomItem(int productId) async {
+    final int pantryId = await getPantryId();
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/custom-products/$productId');
+    final header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final http.Response response = await http.delete(
+      url,
+      headers: header,
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to delete item: ${response.body}');
+    } 
+  }
+
   Future<int> defineCustomItem(Map<String, dynamic> customItem) async {
     int newProductID = -1; // ID given upon failure
 
@@ -208,6 +226,33 @@ class PantryService {
     }
   }
 
+  Future<void> updateCustomExpirationDate(int productId, String expirationDate) async {
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final int pantryId = await getPantryId(); // async returns a String
+
+    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/custom-products/$productId/expiration');
+
+      debugPrint(expirationDate);
+      debugPrint(jsonEncode(<String, String> {
+        'expirationDate': '$expirationDate',
+      }));
+    final http.Response response = await http.patch(
+      url,
+      headers: header,
+      body: jsonEncode(<String, String> {
+        'expirationDate': expirationDate,
+      }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to change expiration date: ${response.body}');
+    }
+  }
+
   Future<void> updateQuantity(int productId, int quantity) async {
 
     final Map<String, String> header = <String, String>{
@@ -233,6 +278,34 @@ class PantryService {
       throw Exception('Failed to change quantity: ${response.body}');
     }
   }
+
+  // Update custom product quantity
+  Future<void> updateCustomQuantity(int productId, int quantity) async {
+
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final int pantryId = await getPantryId();
+
+    final Uri url = Uri.parse('$baseUrl/pantry/$pantryId/custom-products/$productId/quantity');
+
+    final String requestBody = jsonEncode(<String, Object> {
+        'quantity' : '$quantity',
+      });
+
+    final http.Response response = await http.patch(
+      url,
+      headers: header,
+      body: requestBody
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to change quantity: ${response.body}');
+    }
+  }
+
 
   Future<void> createPantry(String pantryName) async {
 

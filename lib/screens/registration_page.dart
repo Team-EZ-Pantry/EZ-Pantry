@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../main.dart';
 import '../providers/user_provider.dart';
@@ -216,7 +217,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   child: TextButton(
                     onPressed: () => Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute<ActionDispatcher>(
+                      MaterialPageRoute<void>(
                         builder: (context) => const LoginPage(),
                       ),
                     ),
