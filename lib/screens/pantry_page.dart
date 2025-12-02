@@ -3,7 +3,6 @@ library;
 
 /// Core Packages
 import 'package:flutter/material.dart';
-
 /// Dependencies
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +10,7 @@ import 'package:provider/provider.dart';
 /// Internal Imports
 import '../models/pantry_item_model.dart';
 import '../providers/pantry_provider.dart';
+import '../widgets/add_custom_item.dart';
 import '../widgets/add_item.dart';
 import '../widgets/edit_item.dart';
 import '../widgets/new_pantry_prompt.dart';
@@ -74,7 +74,7 @@ class _PantryPageState extends State<PantryPage> {
         );
       
       debugPrint('Scanned barcode: $result');
-      ///(TODO): Call API or update pantry items with this barcode
+      ///(TODO): Call API or update pantry items with this barcode    
     }
   }
 
@@ -82,6 +82,17 @@ class _PantryPageState extends State<PantryPage> {
     final String? result = await showDialog<String>(
       context: context,
       builder: (BuildContext context) => const AddItemDialog(title: 'Enter item', hintText: 'hintText'),
+    );
+
+    if (result == null) {
+      return;
+    }
+  }
+
+  Future<void> _onCustomItemButtonPressed() async {
+    final String? result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => const AddCustomItemDialog(),
     );
 
     if (result == null) {
@@ -105,6 +116,7 @@ class _PantryPageState extends State<PantryPage> {
       body: Stack(
         children: <Widget>[
           Material(
+            color: Colors.grey[300],
             child: Consumer<PantryProvider>(
               builder: (BuildContext context, PantryProvider pantry, Widget? child) {
                 if (pantry.loading) {
@@ -116,6 +128,7 @@ class _PantryPageState extends State<PantryPage> {
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 100),
                   itemCount: pantry.items.length,
                   itemBuilder: (BuildContext context, int index) {
                     final PantryItemModel item = pantry.items[index];
@@ -150,6 +163,8 @@ class _PantryPageState extends State<PantryPage> {
         icon: Icons.add,
         activeIcon: Icons.close,
         backgroundColor: Colors.blue,
+        buttonSize: const Size(70, 70),
+        childrenButtonSize: const Size (70, 70),
         children: <SpeedDialChild>[
           SpeedDialChild(
             child: const Icon(Icons.qr_code_scanner),
@@ -160,6 +175,11 @@ class _PantryPageState extends State<PantryPage> {
             child: const Icon(Icons.menu),
             label: 'Add Item',
             onTap: () => _onAddItemButtonPressed(),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.new_label),
+            label: 'Custom Item',
+            onTap: () => _onCustomItemButtonPressed(),
           ),
         ],
       ),

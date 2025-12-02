@@ -60,13 +60,39 @@ class _EditItemDialogState extends State<EditItemDialog> {
     setState(() => _isSaving = true);
 
     await context.read<PantryProvider>().updateQuantity(widget.item.id, quantity);
-    if(expirationDate != null) {
+    if(mounted && expirationDate != null) {
       await context.read<PantryProvider>().updateExpirationDate(widget.item.id, expirationDate);
     }
-    await context.read<PantryProvider>().loadPantryItems();
+    
+    if (mounted) {
+      await context.read<PantryProvider>().loadPantryItems();
+    }
 
     setState(() => _isSaving = false);
-    Navigator.of(context).pop();
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _onDelete() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    await context.read<PantryProvider>().deleteItem(widget.item.id);
+    
+    if (mounted) {
+      await context.read<PantryProvider>().loadPantryItems();
+    }
+
+    setState(() => _isSaving = false);
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -179,13 +205,16 @@ class _EditItemDialogState extends State<EditItemDialog> {
                   children: <Widget>[
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,        // in the future, let's add: energy-kcal, energy-kcal per serving,
+                        crossAxisAlignment: CrossAxisAlignment.center,        // in the future, let's add: energy-kcal, energy-kcal per serving,
                         children: <Widget>[                                          // nutrition score, salt, sodium, sugar, vitamins?, serving size
                           const Text('Calories'),
                           Text(widget.item.calories),
                           const SizedBox(height: 15),
                           const Text('Carbs'),
                           Text(widget.item.carbs),
+                          const SizedBox(height: 15),
+                          const Text('Sodium'),
+                          //Text(widget.item.)
                         ],
                       ),
                     ),
@@ -198,6 +227,9 @@ class _EditItemDialogState extends State<EditItemDialog> {
                           const SizedBox(height: 15),
                           const Text('Protein'),
                           Text(widget.item.protein, textAlign: TextAlign.center),
+                          const SizedBox(height: 15),
+                          const Text('Fiber'),
+                          //Text(widget.item.)
                         ],
                       ),
                     ),
@@ -213,9 +245,17 @@ class _EditItemDialogState extends State<EditItemDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   TextButton(
+                    onPressed: () => _onDelete(),
+                    child: const Text(
+                      style: TextStyle(color: Colors.red),
+                      'Delete')
+                  ),
+                  // Cancel button
+                  TextButton(
                     onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
                     child: const Text('Cancel'),
                   ),
+                  // Save button
                   ElevatedButton(
                     onPressed: () {
                       if(!_isSaving){

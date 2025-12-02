@@ -101,6 +101,86 @@ class PantryService {
     }
   }
 
+  /// Add custom item to pantry
+  /// * Returns ID if successful
+  /// * Returns -1 if request is not sucessful
+  Future<void> addCustomItem(int customProductId, int quantity, String? expirationDate) async {
+    final int pantryId = await getPantryId(); // async returns a String
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/custom-products/$customProductId');
+
+    final header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final http.Response response = await http.post(
+      // Request URL
+      url,
+      headers: header,
+      body: jsonEncode(<String, dynamic>{
+        'quantity': quantity,
+        'expirationDate': expirationDate,
+      }),
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to add item: ${response.body}');
+    } 
+
+  }
+
+  Future<void> deleteItem(int productId) async {
+    final int pantryId = await getPantryId();
+    final url = Uri.parse('$baseUrl/pantry/$pantryId/products/$productId');
+    final header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final http.Response response = await http.delete(
+      url,
+      headers: header,
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to delete item: ${response.body}');
+    } 
+  }
+
+  Future<int> defineCustomItem(Map<String, dynamic> customItem) async {
+    int newProductID = -1; // ID given upon failure
+
+    debugPrint('DEFINE custom item==================');
+    final Map<String, String> header = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${await SessionController.instance.getAuthToken()}',
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse('$baseUrl/products/custom'),
+      headers: header,
+      body: jsonEncode(customItem)
+    );
+
+    if(response.statusCode != 200 && response.statusCode != 201) {
+      debugPrint('Error Code: ${response.statusCode} ');
+      throw Exception('Failed to defineCustomItem(): ${response.body}');
+    } else {
+      final Map<String, dynamic>decoded = jsonDecode(response.body) as Map<String, dynamic>;
+      
+      // Json property that contains new id
+      final int? productIdFromJson = decoded['customProduct']?['custom_product_id'] as int;
+
+      if (productIdFromJson != null) {
+        newProductID = productIdFromJson;
+      } else {
+        debugPrint('Failed to get new custom_product_id, returning -1');
+      }
+    }
+
+    return newProductID;
+  }
+
   Future<void> updateExpirationDate(int productId, String expirationDate) async {
     final Map<String, String> header = <String, String>{
       'Content-Type': 'application/json',
@@ -113,7 +193,7 @@ class PantryService {
 
       debugPrint(expirationDate);
       debugPrint(jsonEncode(<String, String> {
-        'expirationDate': expirationDate,
+        'expirationDate': '$expirationDate',
       }));
     final http.Response response = await http.patch(
       url,

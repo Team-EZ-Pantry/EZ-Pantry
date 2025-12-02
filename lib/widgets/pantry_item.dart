@@ -21,11 +21,18 @@ class PantryItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 52,
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey, width: 0.9),
-        ),
+      height: 70,
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black38,
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          )
+        ]
       ),
       child: InkWell(
         onTap: onTap,
@@ -68,11 +75,11 @@ class PantryItemTile extends StatelessWidget {
                   Text(
                     item.name,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
                   ),
                   Text(
                     item.brand ?? 'None',
-                    style: const TextStyle(color: Colors.black54, fontSize: 13),
+                    style: const TextStyle(color: Colors.black54, fontSize: 15),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -93,7 +100,7 @@ class PantryItemTile extends StatelessWidget {
                   '-',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 22,
                   ),
                 ),
               ),
@@ -175,7 +182,7 @@ class PantryItemTile extends StatelessWidget {
                   '+',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontSize: 20,
                   ),
                 ),
               ),
