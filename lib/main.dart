@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/pantry_provider.dart';
+import 'providers/user_provider.dart';
+import 'screens/account_page.dart';
 import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
 import 'screens/recipes_page.dart';
@@ -10,16 +12,22 @@ import 'screens/shopping_page.dart';
 import 'utilities/logout_user.dart';
 import 'utilities/session_controller.dart';
 
-
 void main() {  
   SessionController.instance.loadSession();
 
   runApp(
-      ChangeNotifierProvider<PantryProvider>(
-        create: (_) => PantryProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PantryProvider>(
+          create: (_) => PantryProvider(),
+        ),
+        ChangeNotifierProvider<UserProvider>(
+          create: (_) => UserProvider(),
+        ),
+      ],
       // ignore: prefer_const_constructors
-      child: MyApp()
-      )
+      child: MyApp(),
+    ),
   );
 }
 
@@ -91,7 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
         leading: IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              logoutUser(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(builder: (context) => const AccountPage()),
+              );
             }
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
