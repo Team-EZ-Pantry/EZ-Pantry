@@ -3,11 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/pantry_provider.dart';
+import 'providers/recipe_provider.dart';
 import 'providers/user_provider.dart';
 import 'screens/account_page.dart';
 import 'screens/login_page.dart';
 import 'screens/pantry_page.dart';
-import 'screens/recipes_page.dart';
+import 'screens/recipe_page.dart';
 import 'screens/shopping_page.dart';
 import 'utilities/logout_user.dart';
 import 'utilities/session_controller.dart';
@@ -16,11 +17,14 @@ void main() {
   SessionController.instance.loadSession();
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<PantryProvider>(
-          create: (_) => PantryProvider(),
-        ),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<PantryProvider>(
+            create: (_) => PantryProvider(),
+          ),
+          ChangeNotifierProvider<RecipeProvider>(
+            create: (_) => RecipeProvider(),
+          ),
         ChangeNotifierProvider<UserProvider>(
           create: (_) => UserProvider(),
         ),
@@ -74,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     _widgetOptions = <Widget>[
-      const RecipesPage(),
+      RecipesPage(),
       // ignore: prefer_const_constructors
       PantryPage(), // non-const
       const ShoppingPage(),
@@ -83,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Safe async call after first build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PantryProvider>().loadPantryItems();
+      context.read<RecipeProvider>().getAllRecipes();
     });
   }
 
