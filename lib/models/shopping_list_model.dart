@@ -16,9 +16,9 @@ class ShoppingListModel {
       listId: json['list_id'] as int,
       userId: json['user_id'] as int,
       name: json['name'] as String,
-      createdAt: json['created_at'] as DateTime,
-      updatedAt: json['updated_at'] as DateTime,
-      isComplete: ['is_complete'] as bool
+      createdAt: DateTime.tryParse(json['created_at'].toString())!,
+      updatedAt: DateTime.tryParse(json['updated_at'].toString())!,
+      isComplete: json['is_complete'] as bool
     );
   }
 
@@ -43,7 +43,7 @@ class ShoppingListModel {
 
   @override
   String toString() {
-    return 'PantryItemModel('
+    return 'ShoppingListModel('
         'list_id: $listId, '
         'user_id: $userId, '
         'name: $name, '

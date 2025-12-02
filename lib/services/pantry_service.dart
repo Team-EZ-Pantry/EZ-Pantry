@@ -62,8 +62,6 @@ class PantryService {
     );
     
     if (response.statusCode == 200) {
-     debugPrint('Response body: ${response.body}');
-
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
 
       final List<dynamic> products = decoded['pantry']['products'] as List<dynamic>;
@@ -73,6 +71,7 @@ class PantryService {
 
       return newProducts.toList();
     } else {
+      debugPrint('Response body: ${response.body}');
       throw Exception('Failed to load pantry items');
     }
   }
