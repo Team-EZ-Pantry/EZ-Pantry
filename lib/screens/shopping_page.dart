@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 import '../models/shopping_list_item_model.dart';
 import '../models/shopping_list_model.dart';
 import '../providers/shopping_provider.dart';
-import '../services/shopping_service.dart';
 import '../widgets/add_list.dart';
+import '../widgets/shopping_list_view.dart';
+import '../widgets/sort_button.dart';
 
 double textScale = 16;
 TextEditingController searchText = TextEditingController();
@@ -27,17 +28,16 @@ class _ShoppingPageState extends State<ShoppingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.sizeOf(context).width;
-    final double screenHeight = MediaQuery.sizeOf(context).height;
-    final double screenFontSize = MediaQuery.textScalerOf(context).scale(textScale);
+    final double screenWidth = MediaQuery.sizeOf(context).width;   // Get device's max width
+    final double screenHeight = MediaQuery.sizeOf(context).height; // Get device's max height
 
-    Future<void> _AddListButtonPressed() async {
+    Future<void> addListButtonPressed() async {
       final String? result = await showDialog<String>(
         context: context,
         builder: (BuildContext context) =>
             AddListDialog(title: 'Enter List Name', listName: searchText.text),
       );
-
+      
       if (result == null) {
         return;
       }
@@ -52,9 +52,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
       child: Scaffold(
         body: SafeArea(
           child: Column(
-            children: [
+            children: <Widget>[
               /// Sorting and top of page options
-              const Row(children: <Widget>[_SortButton()]),
+              const Row(children: <Widget>[SortButton()]),
 
               Row(
                 children: <Widget>[
@@ -72,35 +72,17 @@ class _ShoppingPageState extends State<ShoppingPage> {
                       maxHeight: screenHeight,
                       maxWidth: screenWidth * .2,
                     ),
-                    onPressed: () => _AddListButtonPressed(),
+                    onPressed: () => addListButtonPressed(),
                     icon: const Icon(Icons.add_shopping_cart_rounded),
                   ),
                 ],
               ),
               SizedBox(height: screenHeight * .02),
-              Consumer<ShoppingProvider>(
-                builder: (BuildContext context, ShoppingProvider shoppingLists, Widget? child) {
-                  if (shoppingLists.loading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
 
-                  if (shoppingLists.lists.isEmpty) {
-                    return Center(
-                      child: Column(
-                        children: <Widget>[
-                          Icon(Icons.shopping_cart, size: screenWidth * .1),
-                          Text(
-                            "What's on the next list...",
-                            style: TextStyle(fontSize: screenFontSize),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return shoppingListView(shoppingLists, screenHeight * .2);
-                },
-              ),
+              Column( children: <Widget>[
+                shoppingListView(screenHeight * .4, screenWidth),
+              ],),
+              
             ],
           ),
         ),
@@ -109,75 +91,41 @@ class _ShoppingPageState extends State<ShoppingPage> {
   }
 }
 
-/// List View of shopping lists
-Widget shoppingListView(ShoppingProvider shoppingLists, double maxHeight) {
-  debugPrint('Shopping Lists:${shoppingLists.lists.length}');
-  return ConstrainedBox(
-    constraints: BoxConstraints(maxHeight: maxHeight),
-    child: ListView.builder(
-      itemCount: shoppingLists.lists.length,
-      itemBuilder: (BuildContext context, int index) {
-        final ShoppingListModel list = shoppingLists.lists[index];
-        var listTextColor = Theme.of(context).primaryColorLight;
-        var listTileColor = Theme.of(context).primaryColorDark;
-        if (list.isComplete) {
-          listTextColor = Theme.of(context).shadowColor;
-          listTileColor = Theme.of(context).shadowColor;
-        }
-        return ListTile(
-          title: Text(list.name),
-          tileColor: listTileColor,
-          textColor: listTextColor, 
-          );
-      },
-    ),
+/// View of shopping lists
+Widget shoppingListView(double maxHeight, double maxWidth) {
+  /// Gets lists from provider
+  return Consumer<ShoppingProvider>(
+    builder: (BuildContext context, ShoppingProvider shoppingLists, Widget? child) {
+      debugPrint('Shopping Lists:${shoppingLists.lists.length}');
+      // Show while loading
+      if (shoppingLists.loading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      // Show if empty
+      if (shoppingLists.lists.isEmpty) {
+        return Center(
+          child: Column(
+            children: <Widget>[
+              Icon(Icons.remove_shopping_cart_outlined, size: maxWidth * .1),
+              const Text("What's on the next list..."),
+            ],
+          ),
+        );
+      }
+
+      // View of shopping lists
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        child: ListView.builder(
+          clipBehavior: Clip.antiAlias,
+          itemCount: shoppingLists.lists.length,
+          itemBuilder: (BuildContext context, int index) {
+            final ShoppingListModel list = shoppingLists.lists[index];          
+            return ShoppingListTile(shoppingList: list);
+          },
+        ),
+      );
+    }
   );
-}
-
-/// States for sort button
-class SortState<T> {
-  SortState({required this.display, required this.value});
-
-  final String display;
-  final T value;
-}
-
-// List of available sorting methods
-final List<SortState<int>> sortingStates = [
-  SortState<int>(display: 'Name', value: 0),
-  SortState<int>(display: 'Created Date', value: 1),
-];
-
-// Generate sort button
-class _SortButton extends StatefulWidget {
-  const _SortButton({super.key});
-
-  @override
-  SortButtonState createState() => SortButtonState();
-}
-
-// Actual widget and methods
-// * Where state variables can be found
-class SortButtonState extends State<_SortButton> {
-  // Current sort index for list
-  int currentIndex = 0;
-
-  // Move to next sort
-  void nextState() {
-    setState(() {
-      // Modulus loops around list
-      currentIndex = (currentIndex + 1) % sortingStates.length;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final SortState<int> currentSort = sortingStates[currentIndex];
-    final double screenFontSize = MediaQuery.textScalerOf(context).scale(textScale);
-
-    return TextButton(
-      onPressed: nextState, // move to next sort
-      child: Text('Sort by: ${currentSort.display}', style: TextStyle(fontSize: screenFontSize)),
-    );
-  }
 }

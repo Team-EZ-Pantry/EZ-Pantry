@@ -27,7 +27,7 @@ class ShoppingListModel {
   final String name;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final bool isComplete;
+        bool isComplete;    // Completion should be changeable
 
 
   Map<String, dynamic> toJson() {
