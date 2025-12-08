@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/shopping_list_item_model.dart';
+// Internal Imports
 import '../models/shopping_list_model.dart';
 import '../providers/shopping_provider.dart';
 import '../widgets/add_list.dart';
-import '../widgets/shopping_list_view.dart';
+import '../widgets/shopping_list_tile.dart';
 import '../widgets/sort_button.dart';
 
 double textScale = 16;
@@ -23,26 +23,31 @@ class _ShoppingPageState extends State<ShoppingPage> {
   @override
   void initState() {
     super.initState();
-    searchText = TextEditingController();
+    searchText = TextEditingController(); // reset text state
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.sizeOf(context).width;   // Get device's max width
+    final double screenWidth  = MediaQuery.sizeOf(context).width;  // Get device's max width
     final double screenHeight = MediaQuery.sizeOf(context).height; // Get device's max height
 
+    final ColorScheme colorScheme = Theme.of(context).colorScheme; // Get app's color scheme 
+
+    /// Create dialog to add list
     Future<void> addListButtonPressed() async {
       final String? result = await showDialog<String>(
         context: context,
         builder: (BuildContext context) =>
-            AddListDialog(title: 'Enter List Name', listName: searchText.text),
+          AddListDialog(title: 'Enter List Name'),
       );
-      
+
+      // Leave after dialog is closed
       if (result == null) {
         return;
       }
     }
 
+    // Local provider is contained within this scope
     return ChangeNotifierProvider(
       create: (BuildContext context) {
         final ShoppingProvider shoppingProvider = ShoppingProvider();
@@ -55,34 +60,39 @@ class _ShoppingPageState extends State<ShoppingPage> {
             children: <Widget>[
               /// Sorting and top of page options
               const Row(children: <Widget>[SortButton()]),
-
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(width: screenWidth * .01),
                   SearchBar(
                     controller: searchText,
-                    constraints: BoxConstraints(
-                      maxWidth: screenWidth * .8,
-                      maxHeight: screenHeight * .1,
-                    ),
+                    constraints: BoxConstraints(maxWidth: screenWidth * .80),
+                    hintText: "WIP"
                   ),
-                  SizedBox(width: screenWidth * .01),
+                  SizedBox(width: screenWidth * .02),
+                  // Add List button
+                  // TODO: Ask user to add new list based on text that is entered in search bar
                   IconButton.filled(
+                    color: colorScheme.primary,
                     constraints: BoxConstraints(
                       maxHeight: screenHeight,
                       maxWidth: screenWidth * .2,
                     ),
                     onPressed: () => addListButtonPressed(),
-                    icon: const Icon(Icons.add_shopping_cart_rounded),
+                    icon: Icon(
+                      Icons.add_shopping_cart_rounded,
+                      color: colorScheme.onPrimary),
                   ),
                 ],
               ),
+
+              // Spacing between
               SizedBox(height: screenHeight * .02),
 
-              Column( children: <Widget>[
-                shoppingListView(screenHeight * .4, screenWidth),
-              ],),
-              
+              // Expanded keeps scroll view contained within screen bounds
+              // Necessary to stop scroll view from not actually appearing on screen
+              Expanded(
+                child: shoppingListView(),
+              ),
             ],
           ),
         ),
@@ -92,7 +102,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
 }
 
 /// View of shopping lists
-Widget shoppingListView(double maxHeight, double maxWidth) {
+Widget shoppingListView() {
   /// Gets lists from provider
   return Consumer<ShoppingProvider>(
     builder: (BuildContext context, ShoppingProvider shoppingLists, Widget? child) {
@@ -104,28 +114,26 @@ Widget shoppingListView(double maxHeight, double maxWidth) {
 
       // Show if empty
       if (shoppingLists.lists.isEmpty) {
-        return Center(
+        return const Center(
           child: Column(
             children: <Widget>[
-              Icon(Icons.remove_shopping_cart_outlined, size: maxWidth * .1),
-              const Text("What's on the next list..."),
+              Icon(Icons.remove_shopping_cart_outlined),
+              Text("What's on the next list..."),
             ],
           ),
         );
       }
 
       // View of shopping lists
-      return ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
+      return Material(
         child: ListView.builder(
-          clipBehavior: Clip.antiAlias,
           itemCount: shoppingLists.lists.length,
           itemBuilder: (BuildContext context, int index) {
-            final ShoppingListModel list = shoppingLists.lists[index];          
+            final ShoppingListModel list = shoppingLists.lists[index];
             return ShoppingListTile(shoppingList: list);
           },
         ),
       );
-    }
+    },
   );
 }
