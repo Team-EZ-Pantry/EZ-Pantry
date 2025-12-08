@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // Internal Imports
+import '../models/shopping_list_item_model.dart';
 import '../models/shopping_list_model.dart';
 import '../providers/shopping_provider.dart';
 import '../widgets/add_list.dart';
@@ -129,8 +130,9 @@ Widget shoppingListView() {
         child: ListView.builder(
           itemCount: shoppingLists.lists.length,
           itemBuilder: (BuildContext context, int index) {
-            final ShoppingListModel list = shoppingLists.lists[index];
-            return ShoppingListTile(shoppingList: list);
+            final ShoppingListModel      list = shoppingLists.lists[index];
+            final List<ShoppingListItemModel> items = shoppingLists.items;
+            return ShoppingListTile(shoppingList: list, shoppingItems: items);
           },
         ),
       );
