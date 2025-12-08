@@ -25,22 +25,24 @@ class ShoppingService {
     };
 
     final http.Response response = await http.get(
-      Uri.parse('$baseUrl/shopping-list/'),
+      Uri.parse('$baseUrl/shopping-list'),
       headers: headers,
     );
 
-    debugPrint('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final List<ShoppingListModel> shoppingLists = data['shoppingLists'] as List<ShoppingListModel>;
+      List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      // final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+      debugPrint('==================');
+      debugPrint(data.toString());
+      var shoppingLists = data.map((item) => ShoppingListModel.fromJson(item as Map<String, dynamic>)).toList();
+      
       if (shoppingLists.isEmpty) {
         throw Exception('No shopping lists found for this user.');
       }
-      final List<int> listIds = shoppingLists.map<int>((ShoppingListModel item) => item.listId).toList();
-
-      debugPrint('Shopping List IDs: $listIds');
+      //final List<int> listIds = shoppingLists.map<int>((ShoppingListModel item) => item.listId).toList();
+      debugPrint('==================');
+      debugPrint(shoppingLists.toString());
+      // debugPrint('Shopping List IDs: $listIds');
       return shoppingLists;
     } else {
       throw Exception('Failed to fetch shopping list IDs: ${response.statusCode}');
@@ -62,8 +64,6 @@ class ShoppingService {
     );
 
     if (response.statusCode == 200) {
-     debugPrint('Response body: ${response.body}');
-
       final Map<String, dynamic> decoded = jsonDecode(response.body) as Map<String, dynamic>;
       final List<ShoppingListItemModel> products = decoded['shoppingList']['items'] as List<ShoppingListItemModel>;
 

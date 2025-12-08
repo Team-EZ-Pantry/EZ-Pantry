@@ -45,7 +45,6 @@ class ShoppingProvider extends ChangeNotifier {
   Future<bool> loadShoppingListItems(int listId) async {
     _loading = true;
     notifyListeners();
-
     try {
       debugPrint('Fetched shopping list id: $listId in provider');
       _items = await _service.fetchShoppingListItems(listId);
